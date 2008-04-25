@@ -1,0 +1,7 @@
+=HOW TO USE SVN=
+==overview of this page==
+Pretty obvious, this is about using the svn to get code, update stuff, and do wiki.
+==svn clients==
+Ethan uses RapidSVN- for more info visit http://rapidsvn.tigris.org
+==google code svn help section==
+http://code.google.com/p/support/wiki/FAQ
