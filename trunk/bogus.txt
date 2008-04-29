@@ -1,1 +1,3 @@
-this text is bogus
+this I <3 optical flow text is bogus
+
+this text is different and should be flagged by diff
