@@ -18,11 +18,35 @@ void init(void)
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glPushMatrix();
-	glRotatef(spin, 0.0, 0.0, 1.0);
+	
+	glLoadIdentity();
+	glTranslatef(spin/5.0,spin/5.0,-20.0);
+	glRotatef(spin, 0.5, 0.0, 0.0);
 	glColor3f(1.0, 1.0, 1.0);
-	glRectf(-25.0, -25.0, 25.0, 25.0);
-	glPopMatrix();
+
+	glBegin(GL_POLYGON);
+		glVertex3f(0.0,25.0,0.0);
+		glVertex3f(-25.0,0.0,0.0);
+		glVertex3f(25.0,0.0,0.0);
+		glVertex3f(0.0,-25.0,25.0);
+		glVertex3f(-25.0,0.0,25.0);
+		glVertex3f(25.0,0.0,25.0);
+	glEnd();
+	
+
+	glLoadIdentity();
+	glRotatef(spin, 0.5, 0.0, 0.0);
+	glColor3f(0.0, 0.0, 1.0);
+
+	glBegin(GL_POLYGON);
+		glVertex3f(0.0,25.0,0.0);
+		glVertex3f(-25.0,0.0,0.0);
+		glVertex3f(25.0,0.0,0.0);
+		glVertex3f(0.0,-25.0,25.0);
+		glVertex3f(-25.0,0.0,25.0);
+		glVertex3f(25.0,0.0,25.0);
+	glEnd();
+
 	glutSwapBuffers();
 }
 
@@ -40,7 +64,8 @@ void reshape(int w, int h)
 	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-50.0, 50.0, -50.0, 50.0, -1.0, 1.0);
+	glOrtho(-50.0, 50.0, -50.0, 50.0, -50.0, 50.0);
+	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -52,7 +77,7 @@ void mouse(int button, int state, int x, int y)
 			if( state == GLUT_DOWN)
 				glutIdleFunc(spinDisplay);
 			break;
-		case GLUT_MIDDLE_BUTTON:
+		case GLUT_RIGHT_BUTTON:
 			if( state == GLUT_DOWN )
 				glutIdleFunc(NULL);
 			break;
@@ -65,7 +90,7 @@ int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutInitWindowSize(250, 250);
+	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(100,100);
 	glutCreateWindow(argv[0]);
 	init();
