@@ -17,6 +17,7 @@ public:
 	VNEObject( char* dataFileName ); // construct from a file with vertex coords
 	VNEObject( ); // default constructor (equi-sided tetrahedron ? )
 	~VNEObject( ); // destructor 
+	int GetNumFaces(){ return numFaces; }
 	int GetCurTriVerts( double* pdVerts );
 	int GetRefTriVerts( double* pdVerts );
 	int Translate( double dx, double dy, double dz );

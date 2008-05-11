@@ -7,6 +7,7 @@ class VNEApp
 {
 private:
 	VNEWorld* world;
+	int counter;
 
 public:
 	VNEApp();

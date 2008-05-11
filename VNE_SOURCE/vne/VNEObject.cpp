@@ -59,7 +59,13 @@ VNEObject::VNEObject()
 }
 
 
+int VNEObject::GetCurTriVerts(double *pdVerts)
+{
+// return the vertices in OpenGL vertex array format
+// [x0 y0 z0 x1 y1 z1 ... ]
 
+	return 0;
+}
 
 
 

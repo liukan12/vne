@@ -13,6 +13,7 @@ VNEApp::VNEApp()
 	world = new VNEWorld();
 	glClearColor(0.0, 0.0 , 0.0, 0.0 );
 	glShadeModel(GL_FLAT);
+	counter = 0;
 }
 
 void VNEApp::IdleCallback()
@@ -32,16 +33,22 @@ void VNEApp::MouseCallback()
 
 void VNEApp::DisplayCallback()
 {
+	
+	this->world->TimeStep();
+	this->world->Redraw();
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(1.0, 1.0, 1.0);
+
+	counter++;
+	counter = (counter < 360) ? counter : 0;
 
 	glPushMatrix();
 	glRotatef( 90.0, 0.0, 1.0, 0.0 );
 	glutWireCube(2.0);
 	glPopMatrix();
 	glPushMatrix();
-	glRotatef( 20.0, 0.0, 1.0, 0.0 );
+	glRotatef( 20.0+counter, 0.0, 1.0, 0.0 );
 	glTranslatef(2.0, 0.0, 0.0);
 	glRotatef(20.0, 0.0, 1.0, 0.0);
 	glutWireSphere(0.2, 10, 8 ); // a planet
@@ -59,7 +66,7 @@ void VNEApp::ResizeCallback(int w, int h)
 	gluPerspective(60.0, (GLfloat) w / (GLfloat) h, 1.0, 20.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(0.0, 0.0, this->world->Getzmax(), 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 }
 
 
