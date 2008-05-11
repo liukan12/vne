@@ -13,13 +13,13 @@ using std::cout;
 VNEWorld::VNEWorld()
 {
 	DemoObj = new VNEObject();
-	xmin = -1;
-	xmax = 1;
-	ymin = -1;
-	ymax = 1;
-	zmin = -1;
-	zmax = 1;
-	space = 1.0;
+	xmin = -5;
+	xmax = 5;
+	ymin = -5;
+	ymax = 5;
+	zmin = -5;
+	zmax = 5;
+	space = 0.1;
 	//AllocateVertexCoordsUniform();
 	AllocateVertexCoordsFromObj( );
 }
@@ -27,10 +27,13 @@ VNEWorld::VNEWorld()
 int VNEWorld::AllocateVertexCoordsFromObj( )
 {
 	// each triangle face has three vertices, each of which have an x,y, and z component
-	coordSize = this->DemoObj->GetNumFaces() * 9;
-	coords = new double[coordSize];
+	
+	// Note: this shouldn't be necessary, just have each object allocate coordinates
+	// on the fly...
 
-	this->DemoObj->GetCurTriVerts( coords );
+	//coordSize = this->DemoObj->GetNumFaces() * 9;
+	//coords = new double[coordSize];
+	//this->DemoObj->GetCurTriVerts( coords, coordIdx );
 
 	return 0;
 }
@@ -102,6 +105,7 @@ int VNEWorld::Redraw()
 {
 	int result = 0;
 	
+	this->DemoObj->DrawSelf();
 	// one: we need the know what the vertices of the world coord system are
 	// this can be done uniformly during initialization
 
