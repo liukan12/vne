@@ -33,12 +33,12 @@ void VNEApp::MouseCallback()
 
 void VNEApp::DisplayCallback()
 {
-	
+	glClear(GL_COLOR_BUFFER_BIT);
+
 	this->world->TimeStep();
 	this->world->Redraw();
 
-	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(1.0, 1.0, 1.0);	
 
 	counter++;
 	counter = (counter < 360) ? counter : 0;

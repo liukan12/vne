@@ -1,13 +1,18 @@
-#include "VNEObject.h"
 #include <math.h>
-#include <iostream>
-#include <fstream>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <iostream>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+#include "VNEObject.h"
 
 VNEObject::VNEObject()
 {
 // default: make a regular tetrahedron centered at global origin
+	unitDrift1 = 45.0;
+
 	CVector GlobalCentCoord(3);
 	GlobalCentCoord.SetValueAt(0,0.0);
 	GlobalCentCoord.SetValueAt(1,0.0);
@@ -17,6 +22,8 @@ VNEObject::VNEObject()
 	Velocity.SetValueAt(0,0.0);
 	Velocity.SetValueAt(0,0.0);
 	Velocity.SetValueAt(0,0.0);
+
+	this->numFaces = 4;
 
 	// 0  1 0 | 0 1 0 | 0 0 0 | 1 0 0
  	// 0  0 1 | 0 0 0 | 0 1 0 | 0 1 0
@@ -59,7 +66,7 @@ VNEObject::VNEObject()
 }
 
 
-int VNEObject::GetCurTriVerts(double *pdVerts)
+int VNEObject::GetCurTriVerts(double *pdVerts, int *piIdx)
 {
 // return the vertices in OpenGL vertex array format
 // [x0 y0 z0 x1 y1 z1 ... ]
@@ -67,46 +74,51 @@ int VNEObject::GetCurTriVerts(double *pdVerts)
 	return 0;
 }
 
+int VNEObject::DrawSelf()
+{
+	int coordSize = this->numFaces * 9;
+	int* idx = new int[numFaces * 3];
+	double* verts = new double[coordSize];
 
+	glColor3f(1.0, 0.5, 0.0 ); // TODO: make color an object and/or per-face property
 
+	double dx, dy, dz;
+	GlobalCentCoord.GetValueAt(0, &dx);
+	GlobalCentCoord.GetValueAt(0, &dy);
+	GlobalCentCoord.GetValueAt(0, &dz);
 
+	int i;
+	for( i = 0; i < coordSize; i+= 3 )
+	{
+		verts[i] = this->CurTriVert->GetValueAt(0,i/3);
+		verts[i+1] = this->CurTriVert->GetValueAt(1,i/3);
+		verts[i+2] = this->CurTriVert->GetValueAt(2,i/3);
+		idx[i/3] = i/3;
+	}
+	////glEnableClientState(GL_VERTEX_ARRAY);
+	////glVertexPointer(3, GL_DOUBLE, 0, verts);
+	//glLoadIdentity();
+	glPushMatrix();
+	glTranslatef(dx, dy, dz);
 
+	//glDrawElements(GL_TRIANGLES, coordSize/3, GL_INT, idx);
+	glRotatef(this->unitDrift1,1.0,1.0,0.0);
+	unitDrift1 += (rand()%7)/6.0 - 3.0;
+	for( i = 0; i < numFaces; i++ )
+	{
+		glColor3f((rand()%7)/6.0,(rand()%7)/6.0,(rand()%7)/6.0);
+		glBegin(GL_TRIANGLES);
+			glVertex3d(verts[i*9+0+0], verts[i*9+0+1], verts[i*9+0+2]);
+			glVertex3d(verts[i*9+3+0], verts[i*9+3+1], verts[i*9+3+2]);
+			glVertex3d(verts[i*9+6+0], verts[i*9+6+1], verts[i*9+6+2]); 
+			//glVertex3d(1.0,0.0,0.0);
+			//glVertex3d(0.0,1.0,0.0);
+			//glVertex3d(1.0,1.0,0.0);
+		glEnd();
+	}
+	glPopMatrix();
+	delete verts;
+	delete idx;
 
-//#ifndef VNEOBJECT
-//#define VNEOBJECT
-//
-//class VNEObject
-//{
-//private:
-//	CMatrix CurTriVert; // current vertices of triangle faces w.r.t. local coordinate system
-//	CMatrix RefTriVert; // original / refernce vertex coordinates
-//	CVector Velocity;   // x,y,z velocity
-//	
-//	double md_GlobalCentCoord; // where is my local "origin" located in the global coordinate system?
-//	
-//
-//
-//public:
-//	VNEObject( char* dataFileName ); // construct from a file with vertex coords
-//	VNEObject( ); // default constructor (equi-sided tetrahedron ? )
-//	~VNEObject( ); // destructor 
-//	int GetCurTriVerts( double* pdVerts );
-//	int GetRefTriVerts( double* pdVerts );
-//	int Translate( double dx, double dy, double dz );
-//	int RotateLocal( double anglex, double angley, double anglez );
-//	// rotate locally (in-place about object centroid)
-//	int RotateAbout( double xt, double xc, double yt, double yc,
-//					 double zt, double zc, double angle ); 
-//	// rotate about a line parametrized as z = zt * t + zc, y = yt * t + yc, x = xt * t + xc
-//	// where zt, yt, xt are constants; right-handed coordinate system assumed
-//	// using direction of increasing t parameter
-//
-//}
-//
-//
-//
-//
-//
-//
-//
-//#endif
+	return 0;
+}

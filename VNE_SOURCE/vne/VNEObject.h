@@ -12,14 +12,17 @@ private:
 	CVector Velocity;   // x,y,z velocity
 	CVector GlobalCentCoord; // where is my local "origin" located in the global coordinate system?
 	int numFaces;
+	double unitDrift1; // parameter for applying "brownian motion"
+	double unitDrift2;
 
 public:
 	VNEObject( char* dataFileName ); // construct from a file with vertex coords
 	VNEObject( ); // default constructor (equi-sided tetrahedron ? )
 	~VNEObject( ); // destructor 
+	int DrawSelf();
 	int GetNumFaces(){ return numFaces; }
-	int GetCurTriVerts( double* pdVerts );
-	int GetRefTriVerts( double* pdVerts );
+	int GetCurTriVerts( double* pdVerts  , int *piIdx );
+	int GetRefTriVerts( double* pdVerts  , int *piIdx );
 	int Translate( double dx, double dy, double dz );
 	int RotateLocal( double anglex, double angley, double anglez );
 	// rotate locally (in-place about object centroid)

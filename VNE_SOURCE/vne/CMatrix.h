@@ -13,7 +13,7 @@ public:
 	CMatrix( CMatrix* other );
 	~CMatrix();
 	int Resize( int iRows, int iCols );
-	int GetValueAt( int iRow, int iCol, double* output );
+	double GetValueAt( int iRow, int iCol);
 	int SetValueAt( int iRow, int iCol, double input );
 	void GetSize( int* rowOut, int* colOut );
 
