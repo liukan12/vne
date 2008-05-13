@@ -7,6 +7,7 @@
 #include <GL/glut.h>
 #include "VNEApp.h"
 #include "VNEWorld.h"
+#include <time.h>
 
 using std::cout;
 
@@ -19,76 +20,8 @@ VNEWorld::VNEWorld()
 	ymax = 5;
 	zmin = -5;
 	zmax = 5;
-	space = 0.1;
-	//AllocateVertexCoordsUniform();
-	AllocateVertexCoordsFromObj( );
-}
-
-int VNEWorld::AllocateVertexCoordsFromObj( )
-{
-	// each triangle face has three vertices, each of which have an x,y, and z component
-	
-	// Note: this shouldn't be necessary, just have each object allocate coordinates
-	// on the fly...
-
-	//coordSize = this->DemoObj->GetNumFaces() * 9;
-	//coords = new double[coordSize];
-	//this->DemoObj->GetCurTriVerts( coords, coordIdx );
-
-	return 0;
-}
-
-int VNEWorld::AllocateVertexCoordsUniform()
-{
-	int result = 0;
-	int i = 0;
-	coordSize = 0;
-	double xcurr = xmin;
-	double ycurr = ymin;
-	double zcurr = zmin;
-
-	while( xcurr <= xmax )
-	{
-		while( ycurr <= ymax )
-		{
-			while( zcurr <= zmax )
-			{
-				coordSize++;
-				zcurr += space;
-			}
-			zcurr = zmin;
-			ycurr += space;
-		}
-		ycurr = ymin;
-		xcurr += space;
-	}
-
-	xcurr = xmin;
-	ycurr = ymin;
-	zcurr = zmin;
-
-	coords = new double[coordSize * 3];
-	while( xcurr <= xmax )
-	{
-		while( ycurr <= ymax )
-		{
-			while( zcurr <= zmax )
-			{
-				this->coords[i] = xcurr;
-				this->coords[i+1] = ycurr;
-				this->coords[i+2] = zcurr;
-				cout<<xcurr<<" "<<ycurr<<" "<<zcurr<<" \n";
-				i += 3;
-				zcurr += space;
-			}
-			zcurr = zmin;
-			ycurr += space;
-		}
-		ycurr = ymin;
-		xcurr += space;
-	}
-
-	return result;
+	clock1 = clock();
+	elapsedTime = 0.0;
 }
 
 int VNEWorld::TimeStep()
@@ -97,6 +30,14 @@ int VNEWorld::TimeStep()
 
 	// for now do nothing; later, following a script or physics sim
 	// the objects will update position / rotation
+
+	clock2 = clock();
+	double dt = ( (double) (clock2 - clock1) ) / CLOCKS_PER_SEC ;
+	elapsedTime += dt;
+	clock1 = clock();
+
+	DemoObj->IncrementTime(); // use constant time flow, otherwise user interaction
+	// causes errors (too much delay)
 
 	return result;
 }
@@ -131,35 +72,3 @@ double VNEWorld::Getymin()
 
 double VNEWorld::Getzmin()
 { return zmin; }
-
-
-//class VNEWorld
-//{
-//	// VNE World contains a list of objects
-//	// a global coordinate system
-//	// lighting (later)
-//	// global physical effects (later)
-//	// it interfaces with the drawing engine
-//
-//private:
-//	VNEObject* DemoObj; // a single demo object to start with
-//	// VNEObjList* ObjList;   // later: a linked list of objects
-//	double xmin;
-//	double xmax;
-//	double ymin;
-//	double ymax;
-//	double zmin;
-//	double zmax;
-//
-//public:
-//	VNEWorld();
-//	~VNEWorld();
-//	double Getxmin();
-//	double Getymin();
-//	double Getzmin();
-//	double Getxmax();
-//	double Getymax();
-//	double Getzmax();
-//	
-//
-//};
