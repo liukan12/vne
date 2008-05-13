@@ -5,6 +5,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include <math.h>
 #include "VNEApp.h"
 #include "VNEWorld.h"
 
@@ -41,19 +42,19 @@ void VNEApp::DisplayCallback()
 	glColor3f(1.0, 1.0, 1.0);	
 
 	counter++;
-	counter = (counter < 360) ? counter : 0;
-
-	glPushMatrix();
-	glRotatef( 90.0, 0.0, 1.0, 0.0 );
-	glutWireCube(2.0);
-	glPopMatrix();
-	glPushMatrix();
-	glRotatef( 20.0+counter, 0.0, 1.0, 0.0 );
-	glTranslatef(2.0, 0.0, 0.0);
-	glRotatef(20.0, 0.0, 1.0, 0.0);
-	glutWireSphere(0.2, 10, 8 ); // a planet
-	glTranslatef(30.0, 30.0, 0.0 );
-	glPopMatrix();
+	counter = (counter < pow(2.0,31) ) ? counter : 0;
+	
+	//glPushMatrix();
+	//glRotatef( 90.0, 0.0, 1.0, 0.0 );
+	//glutWireCube(2.0);
+	//glPopMatrix();
+	//glPushMatrix();
+	//glRotatef( 20.0+counter, 0.0, 1.0, 0.0 );
+	//glTranslatef(2.0, 0.0, 0.0);
+	//glRotatef(20.0, 0.0, 1.0, 0.0);
+	//glutWireSphere(0.2, 10, 8 ); // a planet
+	//glTranslatef(30.0, 30.0, 0.0 );
+	//glPopMatrix();
 	glutSwapBuffers();
 
 }
