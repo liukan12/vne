@@ -10,13 +10,14 @@ private:
 	CMatrix* CurTriVert; // current vertices of triangle faces w.r.t. local coordinate system
 	CMatrix* RefTriVert; // original / refernce vertex coordinates
 	CVector* Velocity;   // x,y,z velocity
-	CVector* AngularVelocity;   // x,y,z angular velocity
+	CVector* Moment;   // x,y,z angular velocity
 	CVector* GlobalCentCoord; // where is my local "origin" located in the global coordinate system?
 	CVector* Centroid; // the euclidean center of the object;
 	int numFaces;
 	double unitDrift1; // parameter for applying "brownian motion"
 	double unitDrift2;
 	double elapsedTime;
+	double angularVelocity;
 
 	int ComputeCentroid();
 
@@ -32,7 +33,7 @@ public:
 	int SpinAboutCentroid();
 	int TranslateTo( double dx, double dy, double dz );
 	int TranslateBy( double dx, double dy, double dz );
-	int RotateLocal( double anglex, double angley, double anglez );
+	int RotateLocal( double dangle  );
 	// rotate locally (in-place about object centroid)
 	int RotateAbout( double xt, double xc, double yt, double yc,
 					 double zt, double zc, double angle );

@@ -20,7 +20,7 @@ CMatrix::~CMatrix()
 {
 	int i;
 	for( i = 0; i < m_iRows; i++ )
-		delete m_ppdData[i];
+		delete [] m_ppdData[i];
 	delete [] m_ppdData;
 	//delete m_ppdData;
 }
