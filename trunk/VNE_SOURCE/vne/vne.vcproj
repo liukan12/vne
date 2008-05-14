@@ -184,6 +184,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RotationMatrix.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\vne.cpp"
 				>
 			</File>
@@ -215,6 +219,10 @@
 			</File>
 			<File
 				RelativePath=".\CVector.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RotationMatrix.h"
 				>
 			</File>
 			<File

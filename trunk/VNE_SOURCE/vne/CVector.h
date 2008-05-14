@@ -19,7 +19,9 @@ public:
 	int  MultByMatrix( CMatrix* mtrx );
 	double Max();
 	int  Length();
+	void PrintSelf();
 };
+
 
 bool TestVectorTest();
 
