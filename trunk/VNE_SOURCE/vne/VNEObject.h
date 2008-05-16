@@ -3,6 +3,11 @@
 
 #include "CMatrix.h"
 #include "CVector.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
+
+using namespace std;
 
 class VNEObject
 {
@@ -14,6 +19,7 @@ private:
 	CVector* GlobalCentCoord; // where is my local "origin" located in the global coordinate system?
 	CVector* Centroid; // the euclidean center of the object;
 	int numFaces;
+	string objName;
 	double unitDrift1; // parameter for applying "brownian motion"
 	double unitDrift2;
 	double elapsedTime;
@@ -26,11 +32,14 @@ public:
 	VNEObject( ); // default constructor (equi-sided tetrahedron ? )
 	~VNEObject( ); // destructor 
 	int DrawSelf();
+	void PrintSelf();
 	void IncrementTime( );
 	double GetElapsedTime() { return elapsedTime; };
 	int GetNumFaces(){ return numFaces; }
 	CVector GetCentroid();
 	int SpinAboutCentroid();
+	int TiltAxisBy( CVector* myVec, double dalpha );
+	int TiltAxisTo( CVector* myVec );
 	int TranslateTo( double dx, double dy, double dz );
 	int TranslateBy( double dx, double dy, double dz );
 	int RotateLocal( double dangle  );

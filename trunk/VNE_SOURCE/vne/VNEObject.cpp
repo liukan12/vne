@@ -30,7 +30,7 @@ int VNEObject::DrawSelf()
 
 	for( i = 0; i < numFaces; i++ )
 	{
-		glColor3f((rand()%7)/6.0,1.0,0.0);
+		glColor3f( ((float)i)/numFaces, 1.0 - ((float)i)/numFaces,((float)i)/numFaces);
 		glBegin(GL_TRIANGLES);
 			glVertex3d(verts[i*9+0+0], verts[i*9+0+1], verts[i*9+0+2]);
 			glVertex3d(verts[i*9+3+0], verts[i*9+3+1], verts[i*9+3+2]);
@@ -43,10 +43,16 @@ int VNEObject::DrawSelf()
 	return iRet;
 }
 
+void VNEObject::PrintSelf()
+{
+	cout<<"Hi, I am VNEObject named: "<<this->objName<<" \n ";
+}
+
 void VNEObject::IncrementTime()
 {
 	double dt = .01;
 	elapsedTime += dt;
+	
 	int iVcode = 1; // velocity code; later this needs to be input from a script somewhere
 	this->SetVelocityProfile( elapsedTime, elapsedTime, 0.0, 1 );
 
@@ -57,6 +63,10 @@ void VNEObject::IncrementTime()
 	
 	this->TranslateBy( vx*dt, vy*dt, vz*dt );
 	this->RotateLocal( angularVelocity * dt );
+
+	// not sure if this is right, it is pretty hard to verify (complex motion)
+	//CVector spin( sin(elapsedTime), cos(elapsedTime), 0.0 );
+	//this->TiltAxisBy( &spin, dt );
 	// now perform a spin according to current angular velocity
 
 	
@@ -77,13 +87,13 @@ int VNEObject::RotateLocal( double dangle )
 	// TODO: write matrix multiply function to do this (and other) operations
 
 	CVector tempVec(3);
-	int i;
+	int i, iRet;
 	double x1, y1, z1;
 	double cx, cy, cz;
 
-	this->GlobalCentCoord->GetValueAt(0, &cx);
-	this->GlobalCentCoord->GetValueAt(1, &cy);
-	this->GlobalCentCoord->GetValueAt(2, &cz);
+	this->Centroid->GetValueAt(0, &cx);
+	this->Centroid->GetValueAt(1, &cy);
+	this->Centroid->GetValueAt(2, &cz);
 
 	for( i = 0; i < this->numFaces*3; i++ )
 	{
@@ -102,10 +112,29 @@ int VNEObject::RotateLocal( double dangle )
 		this->CurTriVert->SetValueAt(2,i, z1 + cz);
 	}
 	
-	
-	return 0;
+	iRet = ComputeCentroid();
+
+	// debug check: rotation should NOT affect the centroid (seems like it is OK...)
+	//double cx2, cy2, cz2;
+	//this->Centroid->GetValueAt(0, &cx2);
+	//this->Centroid->GetValueAt(1, &cy2);
+	//this->Centroid->GetValueAt(2, &cz2);
+
+
+	return iRet;
 
 }
+
+int VNEObject::TiltAxisBy( CVector* myVec, double dalpha )
+{
+int iRet = 0;
+
+	RotationMatrix mtrx( myVec, dalpha );
+	this->Moment->MultByMatrix( &mtrx );
+
+	return iRet;
+}
+
 int VNEObject::ComputeCentroid()
 {
 	int iRet = 0;
@@ -116,9 +145,9 @@ int VNEObject::ComputeCentroid()
 
 	for( i = 0; i < this->numFaces*3; i++ )
 	{
-		cx = cx + this->RefTriVert->GetValueAt(0,i);
-		cy = cy + this->RefTriVert->GetValueAt(1,i);
-		cz = cz + this->RefTriVert->GetValueAt(2,i);
+		cx = cx + this->CurTriVert->GetValueAt(0,i);
+		cy = cy + this->CurTriVert->GetValueAt(1,i);
+		cz = cz + this->CurTriVert->GetValueAt(2,i);
 	}
 	cx = cx / (this->numFaces * 3);
 	cy = cy / (this->numFaces * 3);
@@ -146,7 +175,7 @@ int VNEObject::TranslateTo(double dx, double dy, double dz)
 	GlobalCentCoord->SetValueAt(1, dy);
 	GlobalCentCoord->SetValueAt(2, dz);
 
-	return 0;
+	return ComputeCentroid();
 }
 
 int VNEObject::TranslateBy(double dx, double dy, double dz)
@@ -168,7 +197,7 @@ int VNEObject::TranslateBy(double dx, double dy, double dz)
 	GlobalCentCoord->SetValueAt(1, dy+cz);
 	GlobalCentCoord->SetValueAt(2, dz+cz);
 
-	return 0;
+	return ComputeCentroid();
 }
 
 int VNEObject::SpinAboutCentroid()

@@ -200,6 +200,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\VNEObjList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\VNEWorld.cpp"
 				>
 			</File>
@@ -231,6 +235,10 @@
 			</File>
 			<File
 				RelativePath=".\VNEObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VNEObjList.h"
 				>
 			</File>
 			<File

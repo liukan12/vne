@@ -64,7 +64,15 @@
 			Name="Data Files"
 			>
 			<File
+				RelativePath=".\code_improvement_todo.txt"
+				>
+			</File>
+			<File
 				RelativePath=".\credits.txt"
+				>
+			</File>
+			<File
+				RelativePath=".\rotations.PNG"
 				>
 			</File>
 			<File

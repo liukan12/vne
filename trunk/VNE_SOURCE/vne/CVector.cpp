@@ -18,6 +18,14 @@ CVector::~CVector()
 {
 	m_cdaData->~CDoubleArray();
 }
+CVector::CVector( double dx, double dy, double dz )
+{
+	m_cdaData = new CDoubleArray(3);
+	m_cdaData->SetValueAt(0,dx);
+	m_cdaData->SetValueAt(1,dy);
+	m_cdaData->SetValueAt(2,dz);
+}
+
 
 void CVector::PrintSelf()
 {
@@ -72,6 +80,33 @@ bool CVector::GetValueAt(int iIndex, double* output)
 {
 	return m_cdaData->GetValueAt(iIndex, output);
 }
+
+bool CVector::GetValueAt(double* dx, double* dy, double* dz)
+{
+	if( this->Length() != 3 )
+		return false;
+	else
+	{
+		GetValueAt(0, dx);
+		GetValueAt(1, dy);
+		GetValueAt(2, dz);
+	}
+	return true;
+}
+
+bool CVector::SetValues( double dx, double dy, double dz )
+{
+	if( this->Length() != 3 )
+		return false;
+	else
+	{
+		SetValueAt(0, dx);
+		SetValueAt(1, dy);
+		SetValueAt(2, dz);
+	}
+	return true;
+}
+
 bool CVector::SetValueAt(int iIndex, double value)
 {
 	return this->m_cdaData->SetValueAt( iIndex, value );

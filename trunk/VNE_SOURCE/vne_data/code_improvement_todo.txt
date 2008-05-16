@@ -1,0 +1,16 @@
+VNE Code Refactoring / Improvement TODO list:
+
+0. Make color an object property instead of current "random green" hack in the display function
+
+0.5. Implement Vertex Normals (use openGL cross product function?)
+
+1. Fix the ReSize() functions in vectors and matrices
+
+2. See if there is a more intelligent way to use templates instead of
+current vector format (maybe irrelevant since all vectors used are likely doubles)
+
+3. Make class structure for movement instructions
+   Then objects can have scripts attached to them
+   
+4. Fix those functions that take (dx, dy, dz) arguements to instead take CVector arguments (maybe).
+   Assuming CVector does not leak memory... d'oh if it does.
