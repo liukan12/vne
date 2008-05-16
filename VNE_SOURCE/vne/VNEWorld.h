@@ -2,6 +2,7 @@
 #define VNEWORLD
 
 #include "VNEObject.h"
+#include "VNEObjList.h"
 #include <time.h>
 
 class VNEWorld
@@ -15,7 +16,7 @@ class VNEWorld
 private:
 	VNEObject* DemoObj; // a single demo object to start with
 
-	// VNEObjList* ObjList;   // later: a linked list of objects
+	VNEObjList* ObjList;   // later: a linked list of objects
 	double xmin;
 	double xmax;
 	double ymin;

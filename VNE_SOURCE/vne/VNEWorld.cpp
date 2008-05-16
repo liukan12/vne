@@ -22,6 +22,7 @@ VNEWorld::VNEWorld()
 	zmax = 5;
 	clock1 = clock();
 	elapsedTime = 0.0;
+	glShadeModel( GL_SMOOTH );
 }
 
 int VNEWorld::TimeStep()
@@ -39,6 +40,8 @@ int VNEWorld::TimeStep()
 	DemoObj->IncrementTime(); // use constant time flow, otherwise user interaction
 	// causes errors (too much delay)
 
+	result = this->ObjList->TimeStepAll();
+
 	return result;
 }
 
@@ -50,7 +53,7 @@ int VNEWorld::Redraw()
 	// one: we need the know what the vertices of the world coord system are
 	// this can be done uniformly during initialization
 
-	// alternate method: only allocate the ones that are in the object
+	result = this->ObjList->DrawAll();
 
 	return result;
 }
