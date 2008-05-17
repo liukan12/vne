@@ -14,8 +14,7 @@ class VNEWorld
 	// it interfaces with the drawing engine
 
 private:
-	VNEObject* DemoObj; // a single demo object to start with
-
+	
 	VNEObjList* ObjList;   // later: a linked list of objects
 	double xmin;
 	double xmax;
@@ -30,7 +29,7 @@ private:
 public:
 	VNEWorld();
 	~VNEWorld();
-
+	VNEObject* DemoObj; // a single demo object to start with
 	int TimeStep();
 	int Redraw();
 

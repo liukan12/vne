@@ -14,6 +14,24 @@ VNEObjList::VNEObjList( VNEObject *firstObj )
 
 }
 
+int VNEObjList::AddObj( VNEObject *newObj )
+{
+int iRet = 0;
+	
+	ObjNode* newNode;
+	newNode->curObj = newObj;
+	this->lastNode->nextNode = newNode;
+
+	ObjNode* tempNode = this->lastNode;
+
+	this->lastNode->bIsLast = false;
+	this->lastNode = newNode;
+	this->lastNode->bIsLast = true;
+	this->lastNode->prevNode = tempNode;
+
+	return iRet;
+}
+
 int VNEObjList::TimeStepAll( )
 {
 int iRet = 0;

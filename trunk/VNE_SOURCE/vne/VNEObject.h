@@ -20,6 +20,7 @@ private:
 	CVector* Centroid; // the euclidean center of the object;
 	int numFaces;
 	string objName;
+	double speedFactor;
 	double unitDrift1; // parameter for applying "brownian motion"
 	double unitDrift2;
 	double elapsedTime;
@@ -28,18 +29,24 @@ private:
 	int ComputeCentroid();
 
 public:
-	VNEObject( char* dataFileName ); // construct from a file with vertex coords
+	VNEObject( string dataFileName, string objName ); // construct from a file with vertex coords
+	VNEObject( string objName );
 	VNEObject( ); // default constructor (equi-sided tetrahedron ? )
 	~VNEObject( ); // destructor 
 	int DrawSelf();
 	void PrintSelf();
 	void IncrementTime( );
+	double GetSpeed( ) { return speedFactor; }
+	double GetAngVel( ) { return angularVelocity; }
 	double GetElapsedTime() { return elapsedTime; };
 	int GetNumFaces(){ return numFaces; }
 	CVector GetCentroid();
 	int SpinAboutCentroid();
-	int TiltAxisBy( CVector* myVec, double dalpha );
-	int TiltAxisTo( CVector* myVec );
+	void SetSpeed( double dSpeed ) { speedFactor = dSpeed; }
+	void SetAngularVelocity( double dAngVel ) { angularVelocity = dAngVel; }
+	int TiltAxisBy( CVector* vec, double dalpha );
+	int TiltAxisTo( CVector* vec );
+	int TiltAxisTo( double dx, double dy, double dz );
 	int TranslateTo( double dx, double dy, double dz );
 	int TranslateBy( double dx, double dy, double dz );
 	int RotateLocal( double dangle  );

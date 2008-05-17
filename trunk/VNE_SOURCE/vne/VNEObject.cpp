@@ -52,23 +52,26 @@ void VNEObject::IncrementTime()
 {
 	double dt = .01;
 	elapsedTime += dt;
-	
+
 	int iVcode = 1; // velocity code; later this needs to be input from a script somewhere
 	this->SetVelocityProfile( elapsedTime, elapsedTime, 0.0, 1 );
 
 	double vx, vy, vz;
+	
 	this->Velocity->GetValueAt(0, &vx);
 	this->Velocity->GetValueAt(1, &vy);
 	this->Velocity->GetValueAt(2, &vz);
 	
+	vx = vx * this->speedFactor;
+	vy = vy * this->speedFactor;
+	vz = vz * this->speedFactor;
+
 	this->TranslateBy( vx*dt, vy*dt, vz*dt );
 	this->RotateLocal( angularVelocity * dt );
 
 	// not sure if this is right, it is pretty hard to verify (complex motion)
 	//CVector spin( sin(elapsedTime), cos(elapsedTime), 0.0 );
 	//this->TiltAxisBy( &spin, dt );
-	// now perform a spin according to current angular velocity
-
 	
 
 }
@@ -114,13 +117,6 @@ int VNEObject::RotateLocal( double dangle )
 	
 	iRet = ComputeCentroid();
 
-	// debug check: rotation should NOT affect the centroid (seems like it is OK...)
-	//double cx2, cy2, cz2;
-	//this->Centroid->GetValueAt(0, &cx2);
-	//this->Centroid->GetValueAt(1, &cy2);
-	//this->Centroid->GetValueAt(2, &cz2);
-
-
 	return iRet;
 
 }
@@ -133,6 +129,27 @@ int iRet = 0;
 	this->Moment->MultByMatrix( &mtrx );
 
 	return iRet;
+}
+
+int VNEObject::TiltAxisTo( CVector* vec )
+{
+int iRet = 0;
+	
+	//iRet = this->Moment->SetValues( vec );
+
+	return iRet;
+}	
+
+int VNEObject::TiltAxisTo( double dx, double dy, double dz )
+{
+	
+	int iRet = 0;
+	
+	iRet = this->Moment->SetValues( dx,dy,dz );
+
+	return iRet;
+
+
 }
 
 int VNEObject::ComputeCentroid()
@@ -200,28 +217,6 @@ int VNEObject::TranslateBy(double dx, double dy, double dz)
 	return ComputeCentroid();
 }
 
-int VNEObject::SpinAboutCentroid()
-{
-	double dx, dy, dz;
-	double cx, cy, cz;
-	GlobalCentCoord->GetValueAt(0, &dx);
-	GlobalCentCoord->GetValueAt(1, &dy);
-	GlobalCentCoord->GetValueAt(2, &dz);
-	Centroid->GetValueAt(0, &cx);
-	Centroid->GetValueAt(1, &cy);
-	Centroid->GetValueAt(2, &cz);
-
-	dx = dx - cx;
-	dy = dy - cy;
-	dz = dz - cz;
-	
-	
-	unitDrift1 += (rand()%7)/6.0 - 3.0;
-
-	return 0;
-
-}
-
 int VNEObject::SetVelocityProfile(double xval, double yval, double zval, int iCode )
 {
 	switch (iCode)
@@ -232,8 +227,8 @@ int VNEObject::SetVelocityProfile(double xval, double yval, double zval, int iCo
 		this->Velocity->SetValueAt(2,zval);
 		break;
 	case 1: // orthogonal sinusoidal velocities
-		this->Velocity->SetValueAt(0,6*cos(5*xval) );
-		this->Velocity->SetValueAt(1,6*sin(5*yval) );
+		this->Velocity->SetValueAt(0,3*cos(5*xval ) );
+		this->Velocity->SetValueAt(1,3*sin(5*yval ) );
 		this->Velocity->SetValueAt(2,zval);
 		break;
 	default:
@@ -241,6 +236,13 @@ int VNEObject::SetVelocityProfile(double xval, double yval, double zval, int iCo
 		break;
 	}
 	return 0;
+}
+
+VNEObject::VNEObject( string objName )
+{
+	this->objName = objName;
+	
+
 }
 
 VNEObject::VNEObject()
@@ -271,7 +273,7 @@ VNEObject::VNEObject()
 	Moment->SetValueAt(2,0.0);
 
 	this->angularVelocity = 10.0;
-
+	this->speedFactor = 1.0;
 	this->numFaces = 4;
 
 	// 0  1 0 | 0 1 0 | 0 0 0 | 1 0 0
@@ -315,7 +317,7 @@ VNEObject::VNEObject()
 	this->TranslateTo( 0.0, 0.0, 0.0);
 
 	ComputeCentroid();
-	this->Centroid->PrintSelf();
+	
 	double dVal, cVal;
 	for( int i = 0; i < this->numFaces * 3; i++ )
 	{
@@ -333,6 +335,6 @@ VNEObject::VNEObject()
 		RefTriVert->SetValueAt(2,i, dVal - cVal);
 	}
 	ComputeCentroid();
-	this->Centroid->PrintSelf();
+	
 
 }

@@ -14,7 +14,7 @@ public:
 	~VNEApp();
 
 	//static VNEWorld* world;
-	void KeyboardCallback();
+	void KeyboardCallback(unsigned char key, int x, int y);
 	void MouseCallback();
 	void IdleCallback();
 	void DisplayCallback();
