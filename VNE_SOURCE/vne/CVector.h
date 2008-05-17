@@ -18,6 +18,7 @@ public:
 	bool SetValueAt(int iIndex, double value);
 	bool GetValueAt(double *dx, double *dy, double* dz);
 	bool SetValues( double dx, double dy, double dz );
+	bool SetValues( CVector* vec );
 	bool Resize(int iNewSize);
 	int  MultByMatrix( CMatrix* mtrx );
 	double Max();
