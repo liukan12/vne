@@ -1,0 +1,12 @@
+use this file to save links to useful links.
+give a brief annotation of the links.
+- PK 18 May 2008
+
+1. http://www.cs.hmc.edu/~geoff/classes/hmc.cs070.200109/notes/io.html
+An overview of input/output in C/C++
+
+2. http://www.cppreference.com/cppstring/index.html
+standard template library strings class
+
+3. http://cslibrary.stanford.edu/103/
+linked lists overview, other CS links (trees, recursion, etc)

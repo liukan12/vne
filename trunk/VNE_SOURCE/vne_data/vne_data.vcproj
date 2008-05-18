@@ -72,7 +72,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\faces1.dat"
+				>
+			</File>
+			<File
+				RelativePath=".\links.txt"
+				>
+			</File>
+			<File
+				RelativePath=".\model_gen1.m"
+				>
+			</File>
+			<File
 				RelativePath=".\rotations.PNG"
+				>
+			</File>
+			<File
+				RelativePath=".\verts1.dat"
 				>
 			</File>
 			<File
