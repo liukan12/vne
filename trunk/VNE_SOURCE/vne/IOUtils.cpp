@@ -24,8 +24,9 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 	{
 		fin>>line;
 		iFaces++;
+		cout<<iFaces;
 	}
-	iFaces--; // last line of file is blank
+	//iFaces--; // last line of file is blank
 	fin.close();
 	
 	(*TriVerts) = new CMatrix(3, 3*iFaces);
@@ -67,7 +68,7 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 		vin>>line;
 		iVerts++;
 	}
-	iVerts--; // last line is blank
+	//iVerts--; // last line is blank
 	vin.close();
 	ifstream vin2( fileNameVerts.c_str() );
 	double* tempverts = new double[3*iVerts];
@@ -92,6 +93,7 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 		tempverts[ 3*k + 2 ] = val;
 		k++;
 	}
+	vin2.close();
 
 	for( int i = 0; i < iFaces*3; i++ )
 	{
@@ -112,8 +114,8 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 	(*TriVerts)->PrintSelf();
 
 	// Huh??? why does doing this trash the heap???
-	//delete [] tempverts;
-	//delete [] tempidx;
-
+	delete [] tempverts;
+	delete [] tempidx;
+	iFaces--;
 	return iFaces;
 }
