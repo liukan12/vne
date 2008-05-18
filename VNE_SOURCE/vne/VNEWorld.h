@@ -15,7 +15,7 @@ class VNEWorld
 
 private:
 	
-	VNEObjList* ObjList;   // later: a linked list of objects
+	
 	double xmin;
 	double xmax;
 	double ymin;
@@ -30,6 +30,7 @@ public:
 	VNEWorld();
 	~VNEWorld();
 	VNEObject* DemoObj; // a single demo object to start with
+	VNEObjList* ObjList;   // later: a linked list of objects
 	int TimeStep();
 	int Redraw();
 

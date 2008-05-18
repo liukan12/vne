@@ -1,4 +1,8 @@
 #include "CMatrix.h"
+#include <stdlib.h>
+#include <iostream>
+
+using namespace std;
 
 #define min(a,b) (a < b) ? a : b
 
@@ -90,6 +94,20 @@ void CMatrix::GetSize( int* rowOut, int* colOut )
 {
 	(*colOut) = this->m_iCols;
 	(*rowOut) = this->m_iRows;
+}
+
+void CMatrix::PrintSelf()
+{
+	int i,j;
+	for( i = 0; i < this->m_iRows; i++ )
+	{
+		for( j = 0; j < this->m_iCols; j++ )
+		{
+			double dTemp = this->GetValueAt(i,j);
+			cout<<dTemp<<" ";
+		}
+		cout<<"\n";
+	}
 }
 
 bool TestMatrixTest()

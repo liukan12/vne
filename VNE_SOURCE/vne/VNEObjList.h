@@ -28,6 +28,7 @@ public:
 	int ClearAll();
 	int DrawAll();
 	int TimeStepAll();
+	void PrintAll();
 	int DeleteObj( string objName );
 	int AddObj( VNEObject* newObj );
 

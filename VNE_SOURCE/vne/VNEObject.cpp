@@ -10,6 +10,7 @@
 #include "CVector.h"
 #include "CMatrix.h"
 #include "RotationMatrix.h"
+#include "IOUtils.h"
 
 
 int VNEObject::DrawSelf()
@@ -38,6 +39,7 @@ int VNEObject::DrawSelf()
 		glEnd();
 	}
 	glPopMatrix();
+	glFinish();
 	delete [] verts;
 
 	return iRet;
@@ -125,8 +127,8 @@ int VNEObject::TiltAxisBy( CVector* myVec, double dalpha )
 {
 int iRet = 0;
 
-	RotationMatrix mtrx( myVec, dalpha );
-	this->Moment->MultByMatrix( &mtrx );
+	//RotationMatrix mtrx( myVec, dalpha );
+	//this->Moment->MultByMatrix( &mtrx );
 
 	return iRet;
 }
@@ -274,47 +276,16 @@ VNEObject::VNEObject()
 
 	this->angularVelocity = 10.0;
 	this->speedFactor = 1.0;
-	this->numFaces = 4;
 
 	// 0  1 0 | 0 1 0 | 0 0 0 | 1 0 0
  	// 0  0 1 | 0 0 0 | 0 1 0 | 0 1 0
 	// 0  0 0 | 0 0 1 | 0 0 1 | 0 0 1
+	string faces = "..\\vne_data\\faces1.dat";
+	string verts = "..\\vne_data\\verts1.dat";
+	numFaces = ReadMeshData( &CurTriVert, faces, verts );
+	ReadMeshData( &RefTriVert, faces, verts );
 
-	RefTriVert = new CMatrix(3, 12); // each 3x3 block will define one triangle face
-	RefTriVert->SetValueAt(0,0,0.0); RefTriVert->SetValueAt(1,0,0.0); RefTriVert->SetValueAt(2,0,0.0);
-	RefTriVert->SetValueAt(0,1,1.0); RefTriVert->SetValueAt(1,1,0.0); RefTriVert->SetValueAt(2,1,0.0);
-	RefTriVert->SetValueAt(0,2,0.0); RefTriVert->SetValueAt(1,2,1.0); RefTriVert->SetValueAt(2,2,0.0);
-
-	RefTriVert->SetValueAt(0,3,0.0); RefTriVert->SetValueAt(1,3,0.0); RefTriVert->SetValueAt(2,3,0.0);
-	RefTriVert->SetValueAt(0,4,1.0); RefTriVert->SetValueAt(1,4,0.0); RefTriVert->SetValueAt(2,4,0.0);
-	RefTriVert->SetValueAt(0,5,0.0); RefTriVert->SetValueAt(1,5,0.0); RefTriVert->SetValueAt(2,5,1.0);
-
-	RefTriVert->SetValueAt(0,6,0.0); RefTriVert->SetValueAt(1,6,0.0); RefTriVert->SetValueAt(2,6,0.0);
-	RefTriVert->SetValueAt(0,7,0.0); RefTriVert->SetValueAt(1,7,1.0); RefTriVert->SetValueAt(2,7,0.0);
-	RefTriVert->SetValueAt(0,8,0.0); RefTriVert->SetValueAt(1,8,0.0); RefTriVert->SetValueAt(2,8,1.0);
-
-	RefTriVert->SetValueAt(0,9 ,1.0); RefTriVert->SetValueAt(1,9 ,0.0); RefTriVert->SetValueAt(2,9 ,0.0);
-	RefTriVert->SetValueAt(0,10,0.0); RefTriVert->SetValueAt(1,10,1.0); RefTriVert->SetValueAt(2,10,0.0);
-	RefTriVert->SetValueAt(0,11,0.0); RefTriVert->SetValueAt(1,11,0.0); RefTriVert->SetValueAt(2,11,1.0);
-
-	CurTriVert = new CMatrix( 3, 12 );
-	CurTriVert->SetValueAt(0,0,0.0); CurTriVert->SetValueAt(1,0,0.0); CurTriVert->SetValueAt(2,0,0.0);
-	CurTriVert->SetValueAt(0,1,1.0); CurTriVert->SetValueAt(1,1,0.0); CurTriVert->SetValueAt(2,1,0.0);
-	CurTriVert->SetValueAt(0,2,0.0); CurTriVert->SetValueAt(1,2,1.0); CurTriVert->SetValueAt(2,2,0.0);
-
-	CurTriVert->SetValueAt(0,3,0.0); CurTriVert->SetValueAt(1,3,0.0); CurTriVert->SetValueAt(2,3,0.0);
-	CurTriVert->SetValueAt(0,4,1.0); CurTriVert->SetValueAt(1,4,0.0); CurTriVert->SetValueAt(2,4,0.0);
-	CurTriVert->SetValueAt(0,5,0.0); CurTriVert->SetValueAt(1,5,0.0); CurTriVert->SetValueAt(2,5,1.0);
-
-	CurTriVert->SetValueAt(0,6,0.0); CurTriVert->SetValueAt(1,6,0.0); CurTriVert->SetValueAt(2,6,0.0);
-	CurTriVert->SetValueAt(0,7,0.0); CurTriVert->SetValueAt(1,7,1.0); CurTriVert->SetValueAt(2,7,0.0);
-	CurTriVert->SetValueAt(0,8,0.0); CurTriVert->SetValueAt(1,8,0.0); CurTriVert->SetValueAt(2,8,1.0);
-
-	CurTriVert->SetValueAt(0,9 ,1.0); CurTriVert->SetValueAt(1,9 ,0.0); CurTriVert->SetValueAt(2,9 ,0.0);
-	CurTriVert->SetValueAt(0,10,0.0); CurTriVert->SetValueAt(1,10,1.0); CurTriVert->SetValueAt(2,10,0.0);
-	CurTriVert->SetValueAt(0,11,0.0); CurTriVert->SetValueAt(1,11,0.0); CurTriVert->SetValueAt(2,11,1.0);
-
-	this->TranslateTo( 0.0, 0.0, 0.0);
+	//this->TranslateTo( 0.0, 0.0, 0.0);
 
 	ComputeCentroid();
 	
