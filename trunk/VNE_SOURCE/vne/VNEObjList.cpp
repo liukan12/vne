@@ -8,9 +8,13 @@ using namespace std;
 
 VNEObjList::VNEObjList( VNEObject *firstObj )
 {
-	this->firstNode->curObj = firstObj;
+	this->firstNode = new ObjNode();
 	this->firstNode->bIsFirst = true;
 	this->firstNode->bIsLast = true;
+	this->firstNode->curObj = firstObj;
+	
+	this->lastNode = this->firstNode;
+
 
 }
 
@@ -18,12 +22,12 @@ int VNEObjList::AddObj( VNEObject *newObj )
 {
 int iRet = 0;
 	
-	ObjNode* newNode;
+	ObjNode* newNode = new ObjNode();
 	newNode->curObj = newObj;
 	this->lastNode->nextNode = newNode;
 
 	ObjNode* tempNode = this->lastNode;
-
+	
 	this->lastNode->bIsLast = false;
 	this->lastNode = newNode;
 	this->lastNode->bIsLast = true;
@@ -44,4 +48,20 @@ int VNEObjList::DrawAll( )
 int iRet = 0;
 
 	return iRet;
+}
+
+void VNEObjList::PrintAll()
+{
+	ObjNode* tempNode = this->firstNode;
+	bool bContinue = true;
+	
+	while( bContinue )
+	{
+		tempNode->curObj->PrintSelf();
+		if( tempNode->bIsLast )
+			bContinue = false;
+		else
+			tempNode = tempNode->nextNode;
+	}
+
 }

@@ -14,6 +14,17 @@ using std::cout;
 VNEWorld::VNEWorld()
 {
 	DemoObj = new VNEObject();
+	
+	VNEObject* Obj1 = new VNEObject( "object 1" );
+	this->ObjList = new VNEObjList( Obj1 );
+	
+	this->ObjList->PrintAll();
+
+	VNEObject* Obj2 = new VNEObject( "object 2" );
+	this->ObjList->AddObj( Obj2 );
+
+	this->ObjList->PrintAll();
+
 	xmin = -5;
 	xmax = 5;
 	ymin = -5;
@@ -40,7 +51,7 @@ int VNEWorld::TimeStep()
 	DemoObj->IncrementTime(); // use constant time flow, otherwise user interaction
 	// causes errors (too much delay)
 
-	result = this->ObjList->TimeStepAll();
+	//result = this->ObjList->TimeStepAll();
 
 	return result;
 }
@@ -54,6 +65,8 @@ int VNEWorld::Redraw()
 	// this can be done uniformly during initialization
 
 	result = this->ObjList->DrawAll();
+
+	glFlush();
 
 	return result;
 }
