@@ -13,14 +13,14 @@ using std::cout;
 
 VNEWorld::VNEWorld()
 {
-	DemoObj = new VNEObject();
+	//DemoObj = new VNEObject();
 	
-	VNEObject* Obj1 = new VNEObject( "object 1" );
+	VNEObject* Obj1 = new VNEObject( "object 1", "..\\vne_data\\faces1.dat","..\\vne_data\\verts1.dat");
 	this->ObjList = new VNEObjList( Obj1 );
 	
 	this->ObjList->PrintAll();
 
-	VNEObject* Obj2 = new VNEObject( "object 2" );
+	VNEObject* Obj2 = new VNEObject( "object 2","..\\vne_data\\faces3.dat","..\\vne_data\\verts3.dat" );
 	this->ObjList->AddObj( Obj2 );
 
 	this->ObjList->PrintAll();

@@ -240,9 +240,58 @@ int VNEObject::SetVelocityProfile(double xval, double yval, double zval, int iCo
 	return 0;
 }
 
-VNEObject::VNEObject( string objName )
+VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts )
 {
 	this->objName = objName;
+
+	unitDrift1 = 45.0;
+	unitDrift2 = 0.0;
+	elapsedTime = 0.0;
+
+	GlobalCentCoord = new CVector(3);
+	GlobalCentCoord->SetValueAt(0,0.0);
+	GlobalCentCoord->SetValueAt(1,0.0);
+	GlobalCentCoord->SetValueAt(2,0.0);
+	
+	Velocity = new CVector(3);
+	Velocity->SetValueAt(0,0.0);
+	Velocity->SetValueAt(1,0.0);
+	Velocity->SetValueAt(2,0.0);
+
+	Centroid = new CVector(3);
+	Centroid->SetValueAt(0,0.0);
+	Centroid->SetValueAt(1,0.0);
+	Centroid->SetValueAt(2,0.0);
+
+	Moment = new CVector(3);
+	Moment->SetValueAt(0,0.0);
+	Moment->SetValueAt(1,1.0);
+	Moment->SetValueAt(2,0.0);
+
+	this->angularVelocity = 10.0;
+	this->speedFactor = 1.0;
+	
+	numFaces = ReadMeshData( &CurTriVert, fileNameFaces, fileNameVerts );
+	ReadMeshData( &RefTriVert, fileNameFaces, fileNameVerts );
+
+	ComputeCentroid();
+	double dVal, cVal;
+	for( int i = 0; i < this->numFaces * 3; i++ )
+	{
+		dVal = CurTriVert->GetValueAt(0,i);
+		this->Centroid->GetValueAt(0, &cVal);
+		CurTriVert->SetValueAt(0,i, dVal - cVal);
+		RefTriVert->SetValueAt(0,i, dVal - cVal);
+		dVal = CurTriVert->GetValueAt(1,i);
+		this->Centroid->GetValueAt(1, &cVal);
+		CurTriVert->SetValueAt(1,i, dVal - cVal);
+		RefTriVert->SetValueAt(1,i, dVal - cVal);
+		dVal = CurTriVert->GetValueAt(2,i);
+		this->Centroid->GetValueAt(2, &cVal);
+		CurTriVert->SetValueAt(2,i, dVal - cVal);
+		RefTriVert->SetValueAt(2,i, dVal - cVal);
+	}
+	ComputeCentroid();
 	
 
 }

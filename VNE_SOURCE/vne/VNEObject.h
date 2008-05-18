@@ -29,7 +29,7 @@ private:
 	int ComputeCentroid();
 
 public:
-	VNEObject( string dataFileName, string objName ); // construct from a file with vertex coords
+	VNEObject( string objName, string fileNameFaces, string fileNameVerts ); // construct from a file with vertex coords
 	VNEObject( string objName );
 	VNEObject( ); // default constructor (equi-sided tetrahedron ? )
 	~VNEObject( ); // destructor 
