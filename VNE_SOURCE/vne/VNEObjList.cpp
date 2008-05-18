@@ -40,12 +40,39 @@ int VNEObjList::TimeStepAll( )
 {
 int iRet = 0;
 
+	bool bContinue = true;
+	ObjNode* tempNode = this->firstNode;
+
+	while( bContinue )
+	{
+		tempNode->curObj->IncrementTime();
+			
+		if( tempNode->bIsLast )
+			bContinue = false;
+		else
+			tempNode = tempNode->nextNode;
+	}
+
 	return iRet;
 }
 
 int VNEObjList::DrawAll( )
 {
 int iRet = 0;
+
+	ObjNode* tempNode = this->firstNode;
+	bool bContinue = true;
+	
+	while( bContinue )
+	{
+		iRet = tempNode->curObj->DrawSelf();
+		if( iRet != 0 )
+			return iRet;
+		if( tempNode->bIsLast )
+			bContinue = false;
+		else
+			tempNode = tempNode->nextNode;
+	}
 
 	return iRet;
 }

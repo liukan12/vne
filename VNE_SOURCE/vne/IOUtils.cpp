@@ -102,20 +102,16 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 		double yy = tempverts[(idx-1)*3+1];
 		double zz = tempverts[(idx-1)*3+2];
 
-		if( (abs(xx) > 10) || (abs(yy) > 10) || (abs(zz) > 10) )
-			int huh = 1;
-
 		(*TriVerts)->SetValueAt(0,i,xx);
 		(*TriVerts)->SetValueAt(1,i,yy);
 		(*TriVerts)->SetValueAt(2,i,zz);
 
 	}
 	
-	(*TriVerts)->PrintSelf();
+	//(*TriVerts)->PrintSelf();
 
-	// Huh??? why does doing this trash the heap???
 	delete [] tempverts;
 	delete [] tempidx;
-	iFaces--;
+	iFaces--;  // this is a non-optimal way of handling end of line...
 	return iFaces;
 }
