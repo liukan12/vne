@@ -27,7 +27,7 @@ int VNEObject::DrawSelf()
 		verts[i+2] = this->CurTriVert->GetValueAt(2,i/3);
 	}
 
-	glPushMatrix();
+	//glPushMatrix();
 
 	for( i = 0; i < numFaces; i++ )
 	{
@@ -38,7 +38,7 @@ int VNEObject::DrawSelf()
 			glVertex3d(verts[i*9+6+0], verts[i*9+6+1], verts[i*9+6+2]); 
 		glEnd();
 	}
-	glPopMatrix();
+	//glPopMatrix();
 	glFinish();
 	delete [] verts;
 
@@ -280,6 +280,8 @@ VNEObject::VNEObject()
 	// 0  1 0 | 0 1 0 | 0 0 0 | 1 0 0
  	// 0  0 1 | 0 0 0 | 0 1 0 | 0 1 0
 	// 0  0 0 | 0 0 1 | 0 0 1 | 0 0 1
+	//string faces = "faces1.dat";
+	//string verts = "verts1.dat";
 	string faces = "..\\vne_data\\faces1.dat";
 	string verts = "..\\vne_data\\verts1.dat";
 	numFaces = ReadMeshData( &CurTriVert, faces, verts );
