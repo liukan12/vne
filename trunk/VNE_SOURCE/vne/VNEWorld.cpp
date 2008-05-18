@@ -20,10 +20,15 @@ VNEWorld::VNEWorld()
 	
 	this->ObjList->PrintAll();
 
-	VNEObject* Obj2 = new VNEObject( "object 2","..\\vne_data\\faces3.dat","..\\vne_data\\verts3.dat" );
+	VNEObject* Obj2 = new VNEObject( "object 2","..\\vne_data\\faces3A.dat","..\\vne_data\\verts3A.dat" );
 	this->ObjList->AddObj( Obj2 );
 
+	VNEObject* Obj3 = new VNEObject( "object 3","..\\vne_data\\faces2A.dat","..\\vne_data\\verts2A.dat" );
+	this->ObjList->AddObj( Obj3 );
+
 	this->ObjList->PrintAll();
+
+	cout<<"WARNING: KEY COMMANDS ARE CURRENTLY *S$#$(*% \n";
 
 	xmin = -5;
 	xmax = 5;
@@ -48,10 +53,10 @@ int VNEWorld::TimeStep()
 	elapsedTime += dt;
 	clock1 = clock();
 
-	DemoObj->IncrementTime(); // use constant time flow, otherwise user interaction
+	//DemoObj->IncrementTime(); // use constant time flow, otherwise user interaction
 	// causes errors (too much delay)
 
-	//result = this->ObjList->TimeStepAll();
+	result = this->ObjList->TimeStepAll();
 
 	return result;
 }
@@ -60,7 +65,7 @@ int VNEWorld::Redraw()
 {
 	int result = 0;
 	
-	this->DemoObj->DrawSelf();
+	//this->DemoObj->DrawSelf();
 	// one: we need the know what the vertices of the world coord system are
 	// this can be done uniformly during initialization
 

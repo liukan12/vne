@@ -58,6 +58,17 @@ void VNEObject::IncrementTime()
 	int iVcode = 1; // velocity code; later this needs to be input from a script somewhere
 	this->SetVelocityProfile( elapsedTime, elapsedTime, 0.0, 1 );
 
+	if( this->objName == "object 2" )
+	{
+		this->SetVelocityProfile( elapsedTime, elapsedTime, elapsedTime, 2 );
+		this->TiltAxisTo( sin(elapsedTime),cos(elapsedTime),0.0 );
+	}
+	if( this->objName == "object 3" )
+	{
+		this->SetVelocityProfile( 2*elapsedTime, -elapsedTime, elapsedTime, 2 );
+		this->TiltAxisTo( cos(elapsedTime),sin(elapsedTime),0.0 );
+	}
+
 	double vx, vy, vz;
 	
 	this->Velocity->GetValueAt(0, &vx);
@@ -232,6 +243,11 @@ int VNEObject::SetVelocityProfile(double xval, double yval, double zval, int iCo
 		this->Velocity->SetValueAt(0,3*cos(5*xval ) );
 		this->Velocity->SetValueAt(1,3*sin(5*yval ) );
 		this->Velocity->SetValueAt(2,zval);
+		break;
+	case 2: // a funky velocity
+		this->Velocity->SetValueAt(0,6*cos(5*xval )*sin(5*xval ) );
+		this->Velocity->SetValueAt(1,6*sin(5*yval )*cos(5*xval) );
+		this->Velocity->SetValueAt(2,2*cos(2*zval));
 		break;
 	default:
 		return -1;

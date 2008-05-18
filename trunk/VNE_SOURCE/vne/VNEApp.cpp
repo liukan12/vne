@@ -27,8 +27,8 @@ void VNEApp::IdleCallback()
 // x = 1, y = 1 is the upper left cornder of the window
 void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 {
-	unsigned char wtf = key;
-	double currSpeed = this->world->DemoObj->GetSpeed( );
+
+	/*double currSpeed = this->world->DemoObj->GetSpeed( );
 	double currSpin = this->world->DemoObj->GetAngVel( );
 	if( key == 'w' )
 		this->world->DemoObj->SetSpeed( currSpeed * 1.1 );
@@ -51,7 +51,7 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 	if( key == 'j' )
 		this->world->DemoObj->TranslateBy(-0.05,0.0,0.0);
 	if( key == 'l' )
-		this->world->DemoObj->TranslateBy(0.05,0.0,0.0);
+		this->world->DemoObj->TranslateBy(0.05,0.0,0.0);*/
 }
 
 void VNEApp::MouseCallback()
@@ -90,24 +90,3 @@ void VNEApp::ResizeCallback(int w, int h)
 }
 
 
-
-
-//#ifndef VNEAPP
-//#define VNEAPP
-//
-//class VNEApp
-//{
-//private:
-//	VNEWorld* world;
-//
-//public:
-//	VNEApp();
-//	~VNEApp();
-//	void KeyboardCallback();
-//	void MouseCallback();
-//	void IdleCallback();
-//	void DisplayCallback();
-//
-//
-//}
-//#endif
