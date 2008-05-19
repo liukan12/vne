@@ -6,7 +6,6 @@
 #include <fstream>
 #include <iomanip>
 #include <vector>
-#include <math.h>
 #include "CMatrix.h"
 
 using namespace std;
@@ -24,7 +23,7 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 	{
 		fin>>line;
 		iFaces++;
-		cout<<iFaces;
+		//cout<<iFaces;
 	}
 	//iFaces--; // last line of file is blank
 	fin.close();
@@ -35,8 +34,9 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 	ifstream fin2( fileNameFaces.c_str() );
 	
 	string csTemp;
-	cout<<"Reading face data...\n";
-	cout<<"Creating object with "<<iFaces<<" triangles\n";
+
+	//cout<<"Reading face data...\n";
+	//cout<<"Creating object with "<<iFaces<<" triangles\n";
 	int k = 0;
 	int idx;
 	while( !fin2.eof() )

@@ -50,13 +50,17 @@ void VNEObject::PrintSelf()
 	cout<<"Hi, I am VNEObject named: "<<this->objName<<" \n ";
 }
 
+void VNEObject::GetCentroid(double *dx, double* dy, double* dz)
+{
+	this->Centroid->GetValueAt(dx,dy,dz);
+}
+
 void VNEObject::IncrementTime()
 {
 	double dt = .01;
 	elapsedTime += dt;
 
-	int iVcode = 1; // velocity code; later this needs to be input from a script somewhere
-	this->SetVelocityProfile( elapsedTime, elapsedTime, 0.0, 1 );
+	
 
 	if( this->objName == "object 2" )
 	{
@@ -86,6 +90,17 @@ void VNEObject::IncrementTime()
 	//CVector spin( sin(elapsedTime), cos(elapsedTime), 0.0 );
 	//this->TiltAxisBy( &spin, dt );
 	
+
+}
+
+int VNEObject::IncrementVelocity( double dx, double dy, double dz )
+{
+	double vx,vy,vz;
+	this->Velocity->GetValueAt( &vx, &vy, &vz );
+	vx = vx + dx;
+	vy = vy + dy;
+	vz = vz + dz;
+	return this->Velocity->SetValues(vx,vy,vz);
 
 }
 
@@ -263,6 +278,7 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	unitDrift1 = 45.0;
 	unitDrift2 = 0.0;
 	elapsedTime = 0.0;
+	mass = 1.0;
 
 	GlobalCentCoord = new CVector(3);
 	GlobalCentCoord->SetValueAt(0,0.0);

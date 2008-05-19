@@ -18,6 +18,7 @@ private:
 	CVector* Moment;   // x,y,z angular velocity
 	CVector* GlobalCentCoord; // where is my local "origin" located in the global coordinate system?
 	CVector* Centroid; // the euclidean center of the object;
+	double mass;
 	int numFaces;
 	string objName;
 	double speedFactor;
@@ -36,11 +37,12 @@ public:
 	int DrawSelf();
 	void PrintSelf();
 	void IncrementTime( );
+	double GetMass( ) { return mass; }
 	double GetSpeed( ) { return speedFactor; }
 	double GetAngVel( ) { return angularVelocity; }
 	double GetElapsedTime() { return elapsedTime; };
 	int GetNumFaces(){ return numFaces; }
-	CVector GetCentroid();
+	void GetCentroid(double *dx, double* dy, double* dz);
 	int SpinAboutCentroid();
 	void SetSpeed( double dSpeed ) { speedFactor = dSpeed; }
 	void SetAngularVelocity( double dAngVel ) { angularVelocity = dAngVel; }
@@ -50,6 +52,7 @@ public:
 	int TranslateTo( double dx, double dy, double dz );
 	int TranslateBy( double dx, double dy, double dz );
 	int RotateLocal( double dangle  );
+	int IncrementVelocity( double dx, double dy, double dz );
 	// rotate locally (in-place about object centroid)
 	int RotateAbout( double xt, double xc, double yt, double yc,
 					 double zt, double zc, double angle );

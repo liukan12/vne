@@ -3,6 +3,7 @@
 
 #include "VNEObject.h"
 #include "VNEObjList.h"
+#include "WorldForce.h"
 #include <time.h>
 
 class VNEWorld
@@ -31,6 +32,7 @@ public:
 	~VNEWorld();
 	VNEObject* DemoObj; // a single demo object to start with
 	VNEObjList* ObjList;   // later: a linked list of objects
+	WorldForce* theForce;
 	int TimeStep();
 	int Redraw();
 

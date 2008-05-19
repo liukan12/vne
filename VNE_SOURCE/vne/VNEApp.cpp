@@ -27,31 +27,31 @@ void VNEApp::IdleCallback()
 // x = 1, y = 1 is the upper left cornder of the window
 void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 {
-
-	/*double currSpeed = this->world->DemoObj->GetSpeed( );
-	double currSpin = this->world->DemoObj->GetAngVel( );
+	VNEObject* DemoObj = this->world->ObjList->firstNode->curObj;
+	double currSpeed = DemoObj->GetSpeed( );
+	double currSpin = DemoObj->GetAngVel( );
 	if( key == 'w' )
-		this->world->DemoObj->SetSpeed( currSpeed * 1.1 );
+		DemoObj->SetSpeed( currSpeed * 1.1 );
 	if( key == 's' )
-		this->world->DemoObj->SetSpeed( currSpeed * 0.9 );
+		DemoObj->SetSpeed( currSpeed * 0.9 );
 	if( key == 'e' )
-		this->world->DemoObj->SetAngularVelocity( currSpin * 1.1 );
+		DemoObj->SetAngularVelocity( currSpin * 1.1 );
 	if( key == 'd' )
-		this->world->DemoObj->SetAngularVelocity( currSpin * 0.9 );
+		DemoObj->SetAngularVelocity( currSpin * 0.9 );
 	if( key == 'x' )
-		this->world->DemoObj->TiltAxisTo(1.0, 0.0, 0.0);
+		DemoObj->TiltAxisTo(1.0, 0.0, 0.0);
 	if( key == 'y' )
-		this->world->DemoObj->TiltAxisTo(0.0, 1.0, 0.0);
+		DemoObj->TiltAxisTo(0.0, 1.0, 0.0);
 	if( key == 'z' )
-		this->world->DemoObj->TiltAxisTo(0.0, 0.0, 1.0);
+		DemoObj->TiltAxisTo(0.0, 0.0, 1.0);
 	if( key == 'i' )
-		this->world->DemoObj->TranslateBy(0.0,0.05,0.0);
+		DemoObj->TranslateBy(0.0,0.05,0.0);
 	if( key == 'k' )
-		this->world->DemoObj->TranslateBy(0.0,-0.05,0.0);
+		DemoObj->TranslateBy(0.0,-0.05,0.0);
 	if( key == 'j' )
-		this->world->DemoObj->TranslateBy(-0.05,0.0,0.0);
+		DemoObj->TranslateBy(-0.05,0.0,0.0);
 	if( key == 'l' )
-		this->world->DemoObj->TranslateBy(0.05,0.0,0.0);*/
+		DemoObj->TranslateBy(0.05,0.0,0.0);
 }
 
 void VNEApp::MouseCallback()

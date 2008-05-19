@@ -8,7 +8,7 @@
 #include "VNEApp.h"
 #include "VNEWorld.h"
 #include <time.h>
-
+#include "WorldForce.h"
 using std::cout;
 
 VNEWorld::VNEWorld()
@@ -16,19 +16,22 @@ VNEWorld::VNEWorld()
 	//DemoObj = new VNEObject();
 	
 	VNEObject* Obj1 = new VNEObject( "object 1", "..\\vne_data\\faces1.dat","..\\vne_data\\verts1.dat");
+	Obj1->SetVelocityProfile( 0.5, 0.5, 0.0, 0 );
 	this->ObjList = new VNEObjList( Obj1 );
 	
 	this->ObjList->PrintAll();
 
 	VNEObject* Obj2 = new VNEObject( "object 2","..\\vne_data\\faces3A.dat","..\\vne_data\\verts3A.dat" );
+	Obj2->SetVelocityProfile( -0.5, 0.5, 0.0, 0 );
 	this->ObjList->AddObj( Obj2 );
 
 	VNEObject* Obj3 = new VNEObject( "object 3","..\\vne_data\\faces2A.dat","..\\vne_data\\verts2A.dat" );
+	Obj3->SetVelocityProfile( 0.5, -0.5, 0.0, 0 );
 	this->ObjList->AddObj( Obj3 );
 
 	this->ObjList->PrintAll();
 
-	cout<<"WARNING: KEY COMMANDS ARE CURRENTLY *S$#$(*% \n";
+	this->theForce = new WorldForce();
 
 	xmin = -5;
 	xmax = 5;
@@ -55,7 +58,7 @@ int VNEWorld::TimeStep()
 
 	//DemoObj->IncrementTime(); // use constant time flow, otherwise user interaction
 	// causes errors (too much delay)
-
+	this->ObjList->AccelAll( this->theForce );
 	result = this->ObjList->TimeStepAll();
 
 	return result;

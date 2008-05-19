@@ -214,6 +214,10 @@
 				RelativePath=".\VNEWorld.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\WorldForce.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
