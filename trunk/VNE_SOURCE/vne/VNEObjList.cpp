@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "VNEObjList.h"
+#include "WorldForce.h"
 
 using namespace std;
 
@@ -34,6 +35,22 @@ int iRet = 0;
 	this->lastNode->prevNode = tempNode;
 
 	return iRet;
+}
+
+void VNEObjList::AccelAll( WorldForce* force )
+{
+	bool bContinue = true;
+	ObjNode* tempNode = this->firstNode;
+
+	while( bContinue )
+	{
+		force->AccelerateObject(tempNode->curObj);
+			
+		if( tempNode->bIsLast )
+			bContinue = false;
+		else
+			tempNode = tempNode->nextNode;
+	}	
 }
 
 int VNEObjList::TimeStepAll( )
