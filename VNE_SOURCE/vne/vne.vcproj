@@ -60,7 +60,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
+				LinkLibraryDependencies="true"
+				AdditionalDependencies="glut32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -136,6 +137,7 @@
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
+				AdditionalDependencies="glut32.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				SubSystem="1"

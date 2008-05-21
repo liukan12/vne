@@ -13,13 +13,15 @@ WorldForce::WorldForce( )
 	iMode = 0; // various modes define different forces over the world
 }
 
+
 void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 {
 	double fx, fy, fz;
 	double cx, cy, cz;
+	double sx, sy, sz;
 	obj->GetCentroid(&cx, &cy, &cz);
 	double mass = obj->GetMass();
-
+	double dBdry = 4.0;
 	switch( iMode )
 	{
 	case 0:
@@ -28,25 +30,46 @@ void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 		fy = 0;
 		fz = 0;
 		
-		if( cx > 2 )
-			fx = -1.0;
-		if( cx < -2)
-			fx = 1.0;
-		if( cy > 2 )
-			fy = -1.0;
-		if( cy < -2)
-			fy = 1.0;
-		if( cz > 2 )
-			fz = -1.0;
-		if( cz < -2)
-			fz = 1.0;
+		// force gets bigger as you go outside the bounded region
+		if( cx > dBdry )
+			fx = -1.0*abs(cx)*abs(cx);
+		if( cx < -dBdry)
+			fx = 1.0*abs(cx)*abs(cx);
+		if( cy > dBdry )
+			fy = -1.0*abs(cy)*abs(cy);
+		if( cy < -dBdry)
+			fy = 1.0*abs(cy)*abs(cy);
+		if( cz > dBdry )
+			fz = -1.0*abs(cz)*abs(cz);
+		if( cz < -dBdry)
+			fz = 1.0*abs(cz)*abs(cz);
 		fx = fx * dScale;
 		fy = fy * dScale;
 		fz = fz * dScale;
 		obj->IncrementVelocity( fx*dTimeStep/mass, fy*dTimeStep/mass, fz*dTimeStep/mass );
+		//break;
+	case 1: // matrix with complex eigenvalues, negative real part -> spiral stable point at origin
+		//(x') =  [-.01    -1] [x]
+		//(y') =  [ 1    -.01] [y]
+		// lambda = -.01 +/- sqrt(-1)
+		if( bVortexOn )
+		{
+			if( obj->GetSpeed() > 15.0 )
+				obj->SetSpeed( 15.0 );
+			obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
+			fx = (-.1*cx-1*cy);
+			fy = (1*cx-.1*cy);
+			sx = fx - sx;//*dTimeStep/mass;
+			sy = fy - sy;//*dTimeStep/mass;
+			obj->IncrementVelocity( sx, sy, 0.0);	
+		}
+		
 		break;
 	default:
 		cout<<"Invalid Mode in WorldForce object acceleration\n";
 	}
+
+
 	
 }
+

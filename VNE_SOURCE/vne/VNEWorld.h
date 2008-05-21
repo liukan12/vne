@@ -35,6 +35,9 @@ public:
 	WorldForce* theForce;
 	int TimeStep();
 	int Redraw();
+	void EnableForce( int iNum );
+	void DisableForce( int iNum );
+	void PrintWorldState();
 
 	double Getxmin();
 	double Getymin();
