@@ -15,33 +15,74 @@ VNEWorld::VNEWorld()
 {
 	//DemoObj = new VNEObject();
 	
-	VNEObject* Obj1 = new VNEObject( "object 1", "..\\vne_data\\faces1.dat","..\\vne_data\\verts1.dat");
+	string faces, faces2, faces3;
+	string verts, verts2, verts3;
+#ifdef _DEBUG // debug looks in relative path (vne data files)
+	faces = "..\\vne_data\\faces1.dat";
+	verts = "..\\vne_data\\verts1.dat";
+	faces2 = "..\\vne_data\\faces2A.dat";
+	verts2 = "..\\vne_data\\verts2A.dat";
+	faces3 = "..\\vne_data\\faces3A.dat";
+	verts3 = "..\\vne_data\\verts3A.dat";
+#else // release build looks in the same directory as .exe for data files
+	faces = "faces1.dat";
+	verts = "verts1.dat";
+	faces2= "faces2A.dat";
+	verts2= "verts2A.dat";
+	faces3= "faces3A.dat";
+	verts3= "verts3A.dat";
+#endif
+
+
+	VNEObject* Obj1 = new VNEObject( "object 1", faces, verts);
+	VNEObject* Obj2 = new VNEObject( "object 2", faces2, verts2);
+	VNEObject* Obj3 = new VNEObject( "object 3", faces3, verts3);
 	Obj1->SetVelocityProfile( 0.5, 0.5, 0.0, 0 );
-	this->ObjList = new VNEObjList( Obj1 );
+	Obj2->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
+	Obj3->SetVelocityProfile( 0.5, -0.5, -0.5, 0 );
 	
-	this->ObjList->PrintAll();
-
-	VNEObject* Obj2 = new VNEObject( "object 2","..\\vne_data\\faces3A.dat","..\\vne_data\\verts3A.dat" );
-	Obj2->SetVelocityProfile( -0.5, 0.5, 0.0, 0 );
-	this->ObjList->AddObj( Obj2 );
-
-	VNEObject* Obj3 = new VNEObject( "object 3","..\\vne_data\\faces2A.dat","..\\vne_data\\verts2A.dat" );
-	Obj3->SetVelocityProfile( 0.5, -0.5, 0.0, 0 );
-	this->ObjList->AddObj( Obj3 );
+	this->ObjList = new VNEObjList( Obj1 );
+	this->ObjList->AddObj(Obj2);
+	this->ObjList->AddObj(Obj3);
 
 	this->ObjList->PrintAll();
 
 	this->theForce = new WorldForce();
+	theForce->VortexOff();
 
 	xmin = -5;
 	xmax = 5;
 	ymin = -5;
 	ymax = 5;
 	zmin = -5;
-	zmax = 5;
+	zmax = 10;
 	clock1 = clock();
 	elapsedTime = 0.0;
 	glShadeModel( GL_SMOOTH );
+}
+
+void VNEWorld::EnableForce( int iNum )
+{
+	switch( iNum )
+	{
+	case 0:
+		this->theForce->VortexOn();
+		break;
+	default:
+		cout<<"Invalid number in EnableForce()!\n";
+		break;
+	}
+}
+void VNEWorld::DisableForce( int iNum )
+{
+	switch( iNum )
+	{
+	case 0:
+		this->theForce->VortexOff();
+	default:
+		cout<<"Invalid number in DisableForce()!\n";
+		break;
+	}
 }
 
 int VNEWorld::TimeStep()
@@ -77,6 +118,13 @@ int VNEWorld::Redraw()
 	glFlush();
 
 	return result;
+}
+
+void VNEWorld::PrintWorldState()
+{
+	// output in console the state of all objects, forces, lighting, etc
+	cout<<"The state of the world is: \n";
+
 }
 
 double VNEWorld::Getxmax()

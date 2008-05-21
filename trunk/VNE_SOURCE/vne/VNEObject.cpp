@@ -44,10 +44,21 @@ int VNEObject::DrawSelf()
 
 	return iRet;
 }
+void VNEObject::SetSpeed( double dSpeed )
+{ 
+	speedFactor = dSpeed;
+	if( speedFactor > 25.0 )
+	{
+		speedFactor = 25.0;
+		cout<<"Max Speed Reached!\n";
+	}
+}
 
 void VNEObject::PrintSelf()
 {
+#ifdef _DEBUG
 	cout<<"Hi, I am VNEObject named: "<<this->objName<<" \n ";
+#endif
 }
 
 void VNEObject::GetCentroid(double *dx, double* dy, double* dz)
@@ -59,19 +70,6 @@ void VNEObject::IncrementTime()
 {
 	double dt = .01;
 	elapsedTime += dt;
-
-	
-
-	if( this->objName == "object 2" )
-	{
-		this->SetVelocityProfile( elapsedTime, elapsedTime, elapsedTime, 2 );
-		this->TiltAxisTo( sin(elapsedTime),cos(elapsedTime),0.0 );
-	}
-	if( this->objName == "object 3" )
-	{
-		this->SetVelocityProfile( 2*elapsedTime, -elapsedTime, elapsedTime, 2 );
-		this->TiltAxisTo( cos(elapsedTime),sin(elapsedTime),0.0 );
-	}
 
 	double vx, vy, vz;
 	
@@ -207,7 +205,7 @@ int VNEObject::ComputeCentroid()
 }
 
 int VNEObject::TranslateTo(double dx, double dy, double dz)
-{
+{ // warning: this probably breaks now except at object initialization
 	int i = 0;
 	for( i = 0; i < this->numFaces*3; i++ )
 	{

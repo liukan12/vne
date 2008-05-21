@@ -44,7 +44,7 @@ public:
 	int GetNumFaces(){ return numFaces; }
 	void GetCentroid(double *dx, double* dy, double* dz);
 	int SpinAboutCentroid();
-	void SetSpeed( double dSpeed ) { speedFactor = dSpeed; }
+	void SetSpeed( double dSpeed );
 	void SetAngularVelocity( double dAngVel ) { angularVelocity = dAngVel; }
 	int TiltAxisBy( CVector* vec, double dalpha );
 	int TiltAxisTo( CVector* vec );
@@ -52,6 +52,7 @@ public:
 	int TranslateTo( double dx, double dy, double dz );
 	int TranslateBy( double dx, double dy, double dz );
 	int RotateLocal( double dangle  );
+	CVector* GetVelocity() { return Velocity; }
 	int IncrementVelocity( double dx, double dy, double dz );
 	// rotate locally (in-place about object centroid)
 	int RotateAbout( double xt, double xc, double yt, double yc,

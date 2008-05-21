@@ -2,11 +2,13 @@
 #define VNEAPP
 
 #include "VNEWorld.h"
+#include "VNEObject.h"
 
 class VNEApp
 {
 private:
 	VNEWorld* world;
+	VNEObject* DemoObj;
 	int counter;
 
 public:
