@@ -1,25 +1,54 @@
-VNE Version 0.2
+VNE Verion 0.3
 
 Key Commands:
 
-(operate on one object only now; the one with the most faces)
+1	Control Object 1
+2	Control Object 2
+3	Control Object 3
 
-w  :  increase radius of rotation w/ constant period
-s  :  decrease radius of rotation w/ constant period
-e  :  increase spin speed
-d  :  decrease spin speed
-x  :  spin about x-axis
-y  :  spin about y-axis
-z  :  spin about z-axis
+w	Speed up
+s	Slow Down
 
-i  :  move object up
-k  :  move object down
-j  :  move object left
-l  :  move object right
+e	Speed Up Spin
+d	Slow Down Spin
 
-Cool effect: hold down "w" for a bit so the object is moving, you'll see it ricochet
-off the walls nicely.
+x	Spin about x-axis
+y	Spin about y-axis
+z	Spin about z-axis
 
-Then use i/j/k/l to adjust its position so it gets into a cool bouncing path.
+]	Enable Vortex (spiral to origin)
+[	Disable Vortex
 
-Try changing its spin speed with e & d or its axis of rotation with x/y/z
+i	accelerate up
+k	accelerate down
+j	accelerate left
+l	accelerate right
+
+t	move up
+g	move down
+f	move left
+h	move right
+
+v	zoom camera in	(z-axis)
+c	zoom camera out (z-axis)
+
+b,n, ,, . : control x&y position of camera (this control is funky now)
+
+R	reset camera position (z = 5, pointed down at origin)
+
+
+-----------------------------------------------------------------------------------------------
+
+Changes 22 May 2008:
+
+1. Fixed memory leak deallocating spin matrices
+
+2. Added lighting
+
+3. Added Cooler Objects to Demo
+
+4. Added Normal Vectors
+
+5. Added Camera Controller
+
+6. Fixed scaling of velocity increments
