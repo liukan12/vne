@@ -13,33 +13,52 @@ using std::cout;
 
 VNEWorld::VNEWorld()
 {
-	//DemoObj = new VNEObject();
-	
 	string faces, faces2, faces3;
 	string verts, verts2, verts3;
-#ifdef _DEBUG // debug looks in relative path (vne data files)
-	faces = "..\\vne_data\\faces1.dat";
-	verts = "..\\vne_data\\verts1.dat";
-	faces2 = "..\\vne_data\\faces2A.dat";
-	verts2 = "..\\vne_data\\verts2A.dat";
-	faces3 = "..\\vne_data\\faces3A.dat";
-	verts3 = "..\\vne_data\\verts3A.dat";
+	string norms, norms2, norms3;
+#define PROFILE_NO
+#ifdef PROFILE
+	faces =  "faces4.dat";
+	verts =  "verts4.dat";
+	norms =  "norms4.dat";
+	faces2 = "faces5.dat";
+	verts2 = "verts5.dat";
+	norms2 = "norms5.dat";
+	faces3 = "faces6.dat";
+	verts3 = "verts6.dat";
+	norms3 = "norms6.dat";
+#elif _DEBUG // debug looks in relative path (vne data files)
+	faces = "..\\vne_data\\faces4.dat";
+	verts = "..\\vne_data\\verts4.dat";
+	norms = "..\\vne_data\\norms4.dat";
+	faces2 = "..\\vne_data\\faces5.dat";
+	verts2 = "..\\vne_data\\verts5.dat";
+	norms2 = "..\\vne_data\\norms5.dat";
+	faces3 = "..\\vne_data\\faces6.dat";
+	verts3 = "..\\vne_data\\verts6.dat";
+	norms3 = "..\\vne_data\\norms6.dat";
 #else // release build looks in the same directory as .exe for data files
-	faces = "faces1.dat";
-	verts = "verts1.dat";
-	faces2= "faces2A.dat";
-	verts2= "verts2A.dat";
-	faces3= "faces3A.dat";
-	verts3= "verts3A.dat";
+	faces = "faces4.dat";
+	verts = "verts4.dat";
+	norms = "norms4.dat";
+	faces2= "faces5.dat";
+	verts2= "verts5.dat";
+	norms2 = "norms5.dat";
+	faces3= "faces6.dat";
+	verts3= "verts6.dat";
+	norms3= "norms6.dat";
 #endif
 
-
-	VNEObject* Obj1 = new VNEObject( "object 1", faces, verts);
-	VNEObject* Obj2 = new VNEObject( "object 2", faces2, verts2);
-	VNEObject* Obj3 = new VNEObject( "object 3", faces3, verts3);
+	// TODO: we need OBJECT FILES that define all file names and properties
+	VNEObject* Obj1 = new VNEObject( "object 1", faces, verts, norms);
+	VNEObject* Obj2 = new VNEObject( "object 2", faces2, verts2, norms2);
+	VNEObject* Obj3 = new VNEObject( "object 3", faces3, verts3, norms3);
 	Obj1->SetVelocityProfile( 0.5, 0.5, 0.0, 0 );
 	Obj2->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
 	Obj3->SetVelocityProfile( 0.5, -0.5, -0.5, 0 );
+	Obj1->SetColorSeed(0.5,0.0,1.0);
+	Obj2->SetColorSeed(1.0,0.0,0.5);
+	Obj3->SetColorSeed(0.5,0.5,0.0);
 	
 	this->ObjList = new VNEObjList( Obj1 );
 	this->ObjList->AddObj(Obj2);
@@ -59,6 +78,26 @@ VNEWorld::VNEWorld()
 	clock1 = clock();
 	elapsedTime = 0.0;
 	glShadeModel( GL_SMOOTH );
+	GLfloat light_position[] = {0.0,0.0,2.0,0.0};
+	GLfloat light1_specular[] = {1.0,1.0,1.0,0.0};
+	GLfloat light1_ambient[] = {1.0, 0.1, 0.5,0.0};
+	GLfloat light1_diffuse[] = {1.0, 1.0, 1.0,0.0};
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light1_specular);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light1_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light1_diffuse);
+	GLfloat light2_position[] = {3.0,0.0,0.0,0.0};
+	GLfloat light2_specular[] = {1.0,1.0,1.0,0.0};
+	GLfloat light2_ambient[] = {0.5, 0.1, 1.0,0.0};
+	GLfloat light2_diffuse[] = {1.0, 0.0, 1.0,0.0};
+	glLightfv(GL_LIGHT1, GL_POSITION, light2_position);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, light2_position);
+	glLightfv(GL_LIGHT1, GL_AMBIENT, light2_ambient);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, light2_diffuse);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
 }
 
 void VNEWorld::EnableForce( int iNum )

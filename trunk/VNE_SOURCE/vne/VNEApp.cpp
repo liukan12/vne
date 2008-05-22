@@ -9,14 +9,16 @@
 #include "VNEApp.h"
 #include "VNEWorld.h"
 #include "VNEObject.h"
+#include "CameraControl.h"
 
 VNEApp::VNEApp()
 {
+	//cout<<"Making world...\n";
 	world = new VNEWorld();
-	glClearColor(0.0, 0.0 , 0.0, 0.0 );
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_DEPTH_TEST);
+	//cout<<"Making Camera Controller...\n";
+	camera = new CameraControl( 0.0, 0.0, world->Getzmax(), world);
 	counter = 0;
+	//cout<<"Grabbing control of first object...\n";
 	DemoObj = this->world->ObjList->firstNode->curObj;
 }
 
@@ -72,7 +74,23 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 			DemoObj->TranslateBy(-0.05,0.0,0.0);
 		if( key == 'h' )
 			DemoObj->TranslateBy(0.05,0.0,0.0);
-	}	
+	}
+	{	// control:  camera
+		if( key == 'v' )
+			this->camera->TranslateBy(0.0,0.0,0.05);
+		if( key == 'c' )
+			this->camera->TranslateBy(0.0,0.0,-0.05);
+		if( key == 'n' )
+			this->camera->TranslateBy(0.05,0.0,0.0);
+		if( key == 'b' )
+			this->camera->TranslateBy(-0.05,0.0,0.0);
+		if( key == '.' )
+			this->camera->TranslateBy(0.0,0.05,0.0);
+		if( key == ',' )
+			this->camera->TranslateBy(0.0,-0.05,0.0);
+		if( key == 'R' )
+			this->camera->ResetPosition();
+	}
 	if( key == '1' )
 		DemoObj = this->world->ObjList->firstNode->curObj;
 	if( key == '2' )
@@ -108,13 +126,7 @@ void VNEApp::DisplayCallback()
 
 void VNEApp::ResizeCallback(int w, int h)
 {
-	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(60.0, (GLfloat) w / (GLfloat) h, 1.0, 20.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(0.0, 0.0, this->world->Getzmax(), 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	this->camera->ResizeCallbackHandler( w, h );
 }
 
 

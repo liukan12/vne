@@ -16,7 +16,8 @@ CVector::CVector()
 
 CVector::~CVector()
 {
-	m_cdaData->~CDoubleArray();
+	//m_cdaData->~CDoubleArray();
+	delete m_cdaData;
 }
 CVector::CVector( double dx, double dy, double dz )
 {
@@ -29,15 +30,15 @@ CVector::CVector( double dx, double dy, double dz )
 
 void CVector::PrintSelf()
 {
-	cout<<"Printing Vector of length "<<this->Length()<<"\n[ ";
+	//cout<<"Printing Vector of length "<<this->Length()<<"\n[ ";
 
 	for( int i = 0; i < this->Length(); i++ )
 	{
 	double dx;
 	this->GetValueAt(i, &dx );
-		cout<<dx<<"\t";
+		//cout<<dx<<"\t";
 	}
-	cout<<" ]\n";
+	//cout<<" ]\n";
 
 }
 

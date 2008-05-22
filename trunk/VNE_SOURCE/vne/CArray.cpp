@@ -18,7 +18,7 @@ CDoubleArray::CDoubleArray( const CDoubleArray& cda )
 
 CDoubleArray::~CDoubleArray()
 {
-	delete m_data;
+	delete [] m_data;
 }
 
 int CDoubleArray::Length()

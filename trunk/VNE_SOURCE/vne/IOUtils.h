@@ -10,7 +10,7 @@
 
 using namespace std;
 
-int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts );
+int ReadMeshData( CMatrix** TriVerts, CMatrix** Normals, string fileNameFaces, string fileNameVerts, string fileNameNorms );
 
 
 

@@ -18,40 +18,49 @@ int VNEObject::DrawSelf()
 	int coordSize = this->numFaces * 9;
 	int iRet = 0;
 	double* verts = new double[coordSize];
+	double* norms = new double[coordSize];
 
 	int i;
 	for( i = 0; i < coordSize; i+= 3 )
 	{
-		verts[i] = this->CurTriVert->GetValueAt(0,i/3);
+		verts[i]   = this->CurTriVert->GetValueAt(0,i/3);
 		verts[i+1] = this->CurTriVert->GetValueAt(1,i/3);
 		verts[i+2] = this->CurTriVert->GetValueAt(2,i/3);
+		norms[i]   = this->CurTriNorm->GetValueAt(0,i/3);
+		norms[i+1] = this->CurTriNorm->GetValueAt(1,i/3);
+		norms[i+2] = this->CurTriNorm->GetValueAt(2,i/3);
 	}
-
-	//glPushMatrix();
 
 	for( i = 0; i < numFaces; i++ )
 	{
-		glColor3f( ((float)i)/numFaces, 1.0 - ((float)i)/numFaces,((float)i)/numFaces);
+		double offset = this->colorVariance*( i / double(numFaces) - 0.5 );
+		glColor3f( rseed+offset, gseed+offset,bseed+offset);
 		glBegin(GL_TRIANGLES);
+			glNormal3d(norms[i*9+0+0], norms[i*9+0+1], norms[i*9+0+2]);
 			glVertex3d(verts[i*9+0+0], verts[i*9+0+1], verts[i*9+0+2]);
+			glNormal3d(norms[i*9+3+0], norms[i*9+3+1], norms[i*9+3+2]);
 			glVertex3d(verts[i*9+3+0], verts[i*9+3+1], verts[i*9+3+2]);
+			glNormal3d(norms[i*9+6+0], norms[i*9+6+1], norms[i*9+6+2]);
 			glVertex3d(verts[i*9+6+0], verts[i*9+6+1], verts[i*9+6+2]); 
 		glEnd();
 	}
-	//glPopMatrix();
 	glFinish();
 	delete [] verts;
+	delete [] norms;
 
 	return iRet;
 }
 void VNEObject::SetSpeed( double dSpeed )
 { 
-	speedFactor = dSpeed;
-	if( speedFactor > 25.0 )
+	double vx, vy, vz;
+	this->Velocity->GetValueAt( &vx, &vy, &vz );
+	double dnorm = sqrt( vx*vx + vy*vy + vz*vz );
+	if( dSpeed > 50.0 )
 	{
-		speedFactor = 25.0;
+		dSpeed = 50.0;
 		cout<<"Max Speed Reached!\n";
 	}
+	this->Velocity->SetValues( vx/dnorm*dSpeed,vy/dnorm*dSpeed,vz/dnorm*dSpeed );
 }
 
 void VNEObject::PrintSelf()
@@ -77,17 +86,12 @@ void VNEObject::IncrementTime()
 	this->Velocity->GetValueAt(1, &vy);
 	this->Velocity->GetValueAt(2, &vz);
 	
-	vx = vx * this->speedFactor;
+	/*vx = vx * this->speedFactor;
 	vy = vy * this->speedFactor;
-	vz = vz * this->speedFactor;
+	vz = vz * this->speedFactor;*/
 
 	this->TranslateBy( vx*dt, vy*dt, vz*dt );
-	this->RotateLocal( angularVelocity * dt );
-
-	// not sure if this is right, it is pretty hard to verify (complex motion)
-	//CVector spin( sin(elapsedTime), cos(elapsedTime), 0.0 );
-	//this->TiltAxisBy( &spin, dt );
-	
+	this->RotateLocal( angularVelocity * dt );	
 
 }
 
@@ -115,7 +119,7 @@ int VNEObject::RotateLocal( double dangle )
 	// it might be slightly more efficient this way... shouldn't be by much though
 	// TODO: write matrix multiply function to do this (and other) operations
 
-	CVector tempVec(3);
+	// THIS NEEDS TO BE SPED UP!!!
 	int i, iRet;
 	double x1, y1, z1;
 	double cx, cy, cz;
@@ -123,6 +127,8 @@ int VNEObject::RotateLocal( double dangle )
 	this->Centroid->GetValueAt(0, &cx);
 	this->Centroid->GetValueAt(1, &cy);
 	this->Centroid->GetValueAt(2, &cz);
+	
+	CVector tempVec(3);
 
 	for( i = 0; i < this->numFaces*3; i++ )
 	{
@@ -142,6 +148,7 @@ int VNEObject::RotateLocal( double dangle )
 	}
 	
 	iRet = ComputeCentroid();
+
 
 	return iRet;
 
@@ -269,7 +276,14 @@ int VNEObject::SetVelocityProfile(double xval, double yval, double zval, int iCo
 	return 0;
 }
 
-VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts )
+double VNEObject::GetSpeed( )
+{
+	double vx,vy,vz;
+	this->Velocity->GetValueAt( &vx, &vy, &vz );
+	return sqrt(vx*vx + vy*vy + vz*vz );
+}
+
+VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts, string fileNameNorms )
 {
 	this->objName = objName;
 
@@ -298,11 +312,18 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	Moment->SetValueAt(1,1.0);
 	Moment->SetValueAt(2,0.0);
 
+	colorVariance = 0.3; // how much will colors vary from the seed
+	rseed = 1.0;
+	gseed = 1.0;
+	bseed = 1.0;
+
 	this->angularVelocity = 10.0;
 	this->speedFactor = 1.0;
 	
-	numFaces = ReadMeshData( &CurTriVert, fileNameFaces, fileNameVerts );
-	ReadMeshData( &RefTriVert, fileNameFaces, fileNameVerts );
+	numFaces = ReadMeshData( &CurTriVert, &CurTriNorm, fileNameFaces, fileNameVerts, fileNameNorms );
+	
+	//that's rediculous, make a COPY CONSTRUCTOR
+	ReadMeshData( &RefTriVert, &CurTriNorm, fileNameFaces, fileNameVerts, fileNameNorms );
 
 	ComputeCentroid();
 	double dVal, cVal;
@@ -324,6 +345,22 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	ComputeCentroid();
 	
 
+}
+
+void VNEObject::SetColorSeed( double r, double g, double b )
+{
+	//this->ColorSeed->SetValues(r,g,b);
+	rseed = r;
+	gseed = g;
+	bseed = b;
+}
+
+void VNEObject::GetColorSeed( double* r, double* g, double* b)
+{
+	//this->ColorSeed->GetValueAt(r,g,b);
+	*r = rseed;
+	*b = bseed;
+	*g = gseed;
 }
 
 VNEObject::VNEObject()
@@ -363,8 +400,10 @@ VNEObject::VNEObject()
 	//string verts = "verts1.dat";
 	string faces = "..\\vne_data\\faces1.dat";
 	string verts = "..\\vne_data\\verts1.dat";
-	numFaces = ReadMeshData( &CurTriVert, faces, verts );
-	ReadMeshData( &RefTriVert, faces, verts );
+	//cout<<"Default Object Constructor is Deprecated!\n";
+	exit(1);
+	//numFaces = ReadMeshData( &CurTriVert, faces, verts );
+	//ReadMeshData( &RefTriVert, faces, verts );
 
 	//this->TranslateTo( 0.0, 0.0, 0.0);
 

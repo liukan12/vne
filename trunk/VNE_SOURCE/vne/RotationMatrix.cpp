@@ -3,7 +3,7 @@
 
 RotationMatrix::RotationMatrix( CVector *direction, double dAngle ) : CMatrix(3,3)
 {
-	CMatrix(3,3);
+	//CMatrix(3,3);
 	double x,y,z;
 	direction->GetValueAt(0,&x);
 	direction->GetValueAt(1,&y);
@@ -22,5 +22,10 @@ RotationMatrix::RotationMatrix( CVector *direction, double dAngle ) : CMatrix(3,
 	SetValueAt(2,0, x*z*c1-y*dS);
 	SetValueAt(2,1, y*z*c1+x*dS);
 	SetValueAt(2,2, z*z*c1+dC);
+
+}
+
+RotationMatrix::~RotationMatrix()
+{
 
 }

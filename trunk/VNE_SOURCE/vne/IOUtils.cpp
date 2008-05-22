@@ -10,12 +10,11 @@
 
 using namespace std;
 
-int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts )
+int ReadMeshData( CMatrix** TriVerts, CMatrix** Normals, string fileNameFaces, string fileNameVerts, string fileNameNorms )
 {
 	// read a comma separted value file that defines the vertices
 	// and indices into vertices for all faces
 
-	vector<int> idx_array;
 	char line[32];
 	ifstream fin( fileNameFaces.c_str() );
 	int iFaces = 0;
@@ -23,12 +22,13 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 	{
 		fin>>line;
 		iFaces++;
-		//cout<<iFaces;
+		////cout<<iFaces;
 	}
 	//iFaces--; // last line of file is blank
 	fin.close();
 	
 	(*TriVerts) = new CMatrix(3, 3*iFaces);
+	(*Normals)  = new CMatrix(3, 3*iFaces);
 	int* tempidx = new int[3 * iFaces];
 
 	ifstream fin2( fileNameFaces.c_str() );
@@ -43,7 +43,7 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 	{
 		fin2>>line;
 		csTemp = line;
-		//cout<<csTemp.c_str()<<"\n";
+		////cout<<csTemp.c_str()<<"\n";
 		int comma1_idx = csTemp.find_first_of(',');
 		string s1 = csTemp.substr(0,comma1_idx);
 		idx = atoi(s1.c_str());
@@ -61,6 +61,7 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 
 	fin2.close();
 	ifstream vin( fileNameVerts.c_str() );
+	//cout<<"Counting vertices...\n";
 	int iVerts = 0;
 	k = 0;
 	while( !vin.eof() )
@@ -70,15 +71,44 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 	}
 	//iVerts--; // last line is blank
 	vin.close();
+	//cout<<"Done counting vertices \n";
+	double* tempnorms = new double[3*iVerts];
+	ifstream vin3( fileNameNorms.c_str() );
+	//cout<<"Reading normals from file "<<fileNameNorms.c_str()<<"\n";
+	double val;
+	k = 0;
+	while( !vin3.eof() )
+	{
+		vin3>>line;
+		csTemp = line;
+		//cout<<csTemp.c_str()<<"\n";
+		int comma1_idx = csTemp.find_first_of(',');
+		string s1 = csTemp.substr(0,comma1_idx);
+		val = atof(s1.c_str());
+		tempnorms[ 3*k + 0 ] = val;
+		string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
+		int comma2_idx = rest1.find_first_of(',');
+		string s2 = rest1.substr(0,comma2_idx);
+		val = atof(s2.c_str());
+		tempnorms[ 3*k + 1 ] = val;
+		string rest2 = rest1.substr(comma2_idx+1,rest1.length());
+		val = atof(rest2.c_str());
+		tempnorms[ 3*k + 2 ] = val;
+		k++;
+	}
+
+	vin3.close();
+
 	ifstream vin2( fileNameVerts.c_str() );
 	double* tempverts = new double[3*iVerts];
-	double val;
+	cout<<"Making object with "<<3*iVerts<<" vertices and normals...\n";
+	//double val;
 	k = 0;
 	while( !vin2.eof() )
 	{
 		vin2>>line;
 		csTemp = line;
-		//cout<<csTemp.c_str()<<"\n";
+		////cout<<csTemp.c_str()<<"\n";
 		int comma1_idx = csTemp.find_first_of(',');
 		string s1 = csTemp.substr(0,comma1_idx);
 		val = atof(s1.c_str());
@@ -106,12 +136,19 @@ int ReadMeshData( CMatrix** TriVerts, string fileNameFaces, string fileNameVerts
 		(*TriVerts)->SetValueAt(1,i,yy);
 		(*TriVerts)->SetValueAt(2,i,zz);
 
+		xx = tempnorms[(idx-1)*3+0]; // matlab counts starting with 1
+		yy = tempnorms[(idx-1)*3+1];
+		zz = tempnorms[(idx-1)*3+2];
+		(*Normals)->SetValueAt(0,i,xx);
+		(*Normals)->SetValueAt(1,i,yy);
+		(*Normals)->SetValueAt(2,i,zz);
 	}
 	
 	//(*TriVerts)->PrintSelf();
 
 	delete [] tempverts;
 	delete [] tempidx;
+	delete [] tempnorms;
 	iFaces--;  // this is a non-optimal way of handling end of line...
 	return iFaces;
 }

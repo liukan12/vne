@@ -54,16 +54,22 @@ void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 		// lambda = -.01 +/- sqrt(-1)
 		if( bVortexOn )
 		{
-			if( obj->GetSpeed() > 15.0 )
-				obj->SetSpeed( 15.0 );
+			//if( obj->GetSpeed() > 50.0 )
+			
 			obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
 			fx = (-.1*cx-1*cy);
 			fy = (1*cx-.1*cy);
 			sx = fx - sx;//*dTimeStep/mass;
 			sy = fy - sy;//*dTimeStep/mass;
-			obj->IncrementVelocity( sx, sy, 0.0);	
+			obj->IncrementVelocity( sx, sy, 0.0);
+			obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
+			fz = (-.3*cz-1*cy);
+			fy = (1*cz-.3*cy);
+			sz = fz - sz;//*dTimeStep/mass;
+			sy = fy - sy;//*dTimeStep/mass;
+			obj->IncrementVelocity( 0.0, sy, sz);
+			obj->SetSpeed( 10.0*(cx*cx+cy*cy+cz*cz) );
 		}
-		
 		break;
 	default:
 		cout<<"Invalid Mode in WorldForce object acceleration\n";
