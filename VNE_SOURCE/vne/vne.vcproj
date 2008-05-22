@@ -139,7 +139,7 @@
 				UseLibraryDependencyInputs="false"
 				AdditionalDependencies="glut32.lib"
 				LinkIncremental="1"
-				GenerateDebugInformation="false"
+				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -176,6 +176,10 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath=".\CameraControl.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\CArray.cpp"
 				>
@@ -226,6 +230,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\CameraControl.h"
+				>
+			</File>
 			<File
 				RelativePath=".\CArray.h"
 				>

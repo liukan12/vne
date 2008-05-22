@@ -27,6 +27,7 @@ CMatrix::~CMatrix()
 		delete [] m_ppdData[i];
 	delete [] m_ppdData;
 	//delete m_ppdData;
+	//delete m_ppdData;
 }
 
 int CMatrix::Resize( int iRows, int iCols )
@@ -104,9 +105,9 @@ void CMatrix::PrintSelf()
 		for( j = 0; j < this->m_iCols; j++ )
 		{
 			double dTemp = this->GetValueAt(i,j);
-			cout<<dTemp<<" ";
+			//cout<<dTemp<<" ";
 		}
-		cout<<"\n";
+		//cout<<"\n";
 	}
 }
 

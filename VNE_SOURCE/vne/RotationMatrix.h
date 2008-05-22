@@ -8,7 +8,7 @@ class RotationMatrix : public CMatrix
 {
 public:
 	RotationMatrix( CVector* direction, double dAngle );
-
+	~RotationMatrix();
 
 };
 

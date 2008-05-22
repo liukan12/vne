@@ -1,16 +1,41 @@
 VNE Code Refactoring / Improvement TODO list:
 
-0. Make color an object property instead of current "random green" hack in the display function
+0. Make color an object property instead of current "random green" hack in the display function (DONE)
 
-0.5. Implement Vertex Normals (use openGL cross product function?)
+0.5. Implement Vertex Normals (use openGL cross product function?) (read matlab's normals in text file
 
-1. Fix the ReSize() functions in vectors and matrices
+1. Fix the ReSize() functions in vectors and matrices (NO, need to just use pointers for speed)
 
 2. See if there is a more intelligent way to use templates instead of
-current vector format (maybe irrelevant since all vectors used are likely doubles)
+current vector format (maybe irrelevant since all vectors used are likely doubles) (NO, too slow to do this stuff)
 
 3. Make class structure for movement instructions
    Then objects can have scripts attached to them
    
 4. Fix those functions that take (dx, dy, dz) arguements to instead take CVector arguments (maybe).
-   Assuming CVector does not leak memory... d'oh if it does.
+   Assuming CVector does not leak memory... d'oh if it does.  (Mostly Done / Deprecated)
+   
+ 5. Fix memory leak in MultMatrix / RotateLocal  (DONE)
+ 
+6. Get rid of the speed multiplicative variable, replace controller with IncrementVelocity() 
+along current direction
+
+7. Get Rid of CVectors and CMatrices, use pointers. Put them on the heap and let them sit there for
+the duration and operate in-place. This should speed things up...
+
+8. Add Camera Control class (done, its methods are ongoing though)
+
+
+What must be externally loadable relative to the "engine":
+a. control mapping   -> ControlLoader()
+b. objects  -> ObjectLoader()
+c. world params  ->  WorldLoader()
+each of these three need to be in a vne_ext project
+
+the main stuff needs to be in a project vne_core
+This contains the object (potential) behavior, any math routines,
+world definitions, etc.
+
+any demos that require hardcoding of object creation/destruction, etc
+should go into a separate project. the demo is chosen by calling appropriate entry
+routine in that demo from the main driver app.

@@ -63,6 +63,74 @@
 		<Filter
 			Name="Data Files"
 			>
+			<Filter
+				Name="ObjectFiles"
+				>
+				<File
+					RelativePath=".\faces1.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\faces2A.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\faces3A.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\faces4.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\faces5.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\faces6.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\norms4.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\norms5.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\norms6.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\verts1.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\verts2A.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\verts3A.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\verts4.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\verts5.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\verts6.dat"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Documents"
+			>
 			<File
 				RelativePath=".\code_improvement_todo.txt"
 				>
@@ -72,23 +140,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\faces1.dat"
-				>
-			</File>
-			<File
 				RelativePath=".\links.txt"
 				>
 			</File>
 			<File
-				RelativePath=".\model_gen1.m"
+				RelativePath=".\ReadMe.txt"
 				>
 			</File>
 			<File
 				RelativePath=".\rotations.PNG"
-				>
-			</File>
-			<File
-				RelativePath=".\verts1.dat"
 				>
 			</File>
 			<File
@@ -97,6 +157,14 @@
 			</File>
 			<File
 				RelativePath=".\vne_program_flow.png"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="ExternalScripts"
+			>
+			<File
+				RelativePath=".\model_gen1.m"
 				>
 			</File>
 		</Filter>
