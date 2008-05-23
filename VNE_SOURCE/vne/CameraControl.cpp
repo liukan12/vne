@@ -10,7 +10,7 @@
 #include "VNEWorld.h"
 #include "VNEObject.h"
 #include "CameraControl.h"
-
+#include "MathUtils.h"
 
 CameraControl::CameraControl(VNEWorld* aWorld)
 {
@@ -35,22 +35,50 @@ CameraControl::CameraControl(double ex, double ey, double ez, VNEWorld* aWorld)
 	inity = ey;
 	initz = ez;
 	world = aWorld;
+	bIsAttached = false;
 	glClearColor(0.0, 0.0 , 0.0, 0.0 );
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_DEPTH_TEST);
 }
+
+void CameraControl::AttachToObject( VNEObject* obj )
+{
+	this->targetObj = obj;
+	
+	bIsAttached = true;
+	UpdateAttachedCamera();
+}
+
 void CameraControl::ResetPosition( )
 {
 	eyex = this->initx;
 	eyey = this->inity;
 	eyez = this->initz;
-	this->Detach();
+	if( this->bIsAttached )
+		this->Detach();
 	ResizeCallbackHandler( this->iWindowW, this->iWindowH );
 }
 void CameraControl::UpdateAttachedCamera()
 {
 	if( this->bIsAttached )
+	{
+		double vx,vy,vz;
+		this->targetObj->GetVelocity()->GetValueAt(&vx,&vy,&vz);
+		double cx,cy,cz;
+		this->targetObj->GetCentroid(&cx,&cy,&cz);
+		double eyeOffset = 0.5;
+		
+		Normalize( &vx, &vy, &vz );
+		this->eyex = cx + vx * eyeOffset;
+		this->eyey = cy + vz * eyeOffset;
+		this->eyez = cz + vz * eyeOffset;
+
+		this->atx = cx + 2 * vx * eyeOffset;
+		this->aty = cy + 2 * vz * eyeOffset;
+		this->atz = cz + 2 * vz * eyeOffset;
+
 		this->ResizeCallbackHandler(this->iWindowW, this->iWindowH);
+	}
 }
 
 void CameraControl::TranslateTo( double x, double y, double z )

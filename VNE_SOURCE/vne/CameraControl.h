@@ -24,7 +24,7 @@ public:
 	void GetEyeDirs( double* dx, double* ey, double* ez );
 	void RotateLocal( double x, double y, double z, double theta );
 	void AttachToObject( VNEObject* obj );
-	void Detach() { bIsAttached = false; }
+	void Detach() { bIsAttached = false; ResetPosition(); }
 	VNEObject* GetCurrentObject() {return targetObj;}
 	void ResetPosition( );
 	void TranslateBy( double dx, double dy, double dz );

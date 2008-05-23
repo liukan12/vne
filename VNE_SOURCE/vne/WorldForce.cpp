@@ -9,8 +9,14 @@ using namespace std;
 
 WorldForce::WorldForce( )
 {
-	this->dScale = 10.0;
-	iMode = 0; // various modes define different forces over the world
+	this->dScale = .1;
+	this->iMode = 0; // various modes define different forces over the world
+	this->dAtmDensity = 0.0001;
+	this->dWallReflectance = 1.0;
+	this->bAtmosphereOn = true;
+	this->bVortexOn = false;
+	this->bWallsOn = true;
+
 }
 
 
@@ -22,33 +28,27 @@ void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 	obj->GetCentroid(&cx, &cy, &cz);
 	double mass = obj->GetMass();
 	double dBdry = 4.0;
-	switch( iMode )
+	obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
+			
+	if( bWallsOn )
 	{
-	case 0:
-		
-		fx = 0;
-		fy = 0;
-		fz = 0;
-		
 		// force gets bigger as you go outside the bounded region
 		if( cx > dBdry )
-			fx = -1.0*abs(cx)*abs(cx);
+			sx = -dWallReflectance*abs(sx);
 		if( cx < -dBdry)
-			fx = 1.0*abs(cx)*abs(cx);
+			sx = dWallReflectance*abs(sx);
 		if( cy > dBdry )
-			fy = -1.0*abs(cy)*abs(cy);
+			sy = -dWallReflectance*abs(sy);
 		if( cy < -dBdry)
-			fy = 1.0*abs(cy)*abs(cy);
+			sy = dWallReflectance*abs(sy);
 		if( cz > dBdry )
-			fz = -1.0*abs(cz)*abs(cz);
+			sz = -dWallReflectance*abs(sz);
 		if( cz < -dBdry)
-			fz = 1.0*abs(cz)*abs(cz);
-		fx = fx * dScale;
-		fy = fy * dScale;
-		fz = fz * dScale;
-		obj->IncrementVelocity( fx*dTimeStep/mass, fy*dTimeStep/mass, fz*dTimeStep/mass );
-		//break;
-	case 1: // matrix with complex eigenvalues, negative real part -> spiral stable point at origin
+			sz = dWallReflectance*abs(sz);
+		
+		obj->SetVelocityProfile( sx, sy, sz, 0 );
+	}
+		// matrix with complex eigenvalues, negative real part -> spiral stable point at origin
 		//(x') =  [-.01    -1] [x]
 		//(y') =  [ 1    -.01] [y]
 		// lambda = -.01 +/- sqrt(-1)
@@ -70,12 +70,13 @@ void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 			obj->IncrementVelocity( 0.0, sy, sz);
 			obj->SetSpeed( 10.0*(cx*cx+cy*cy+cz*cz) );
 		}
-		break;
-	default:
-		cout<<"Invalid Mode in WorldForce object acceleration\n";
-	}
-
-
+		if( bAtmosphereOn )
+		{
+			obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
+			obj->IncrementVelocity( -sy*dAtmDensity,-sy*dAtmDensity,-sz*dAtmDensity);
+			double domega = obj->GetAngVel();
+			obj->IncrementAngVel( -domega*dAtmDensity );
+		}
 	
 }
 

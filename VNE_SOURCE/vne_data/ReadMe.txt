@@ -1,4 +1,4 @@
-VNE Verion 0.3
+VNE Verion 0.35
 
 Key Commands:
 
@@ -32,10 +32,26 @@ h	move right
 v	zoom camera in	(z-axis)
 c	zoom camera out (z-axis)
 
+6   attach camera to object
+7   detach camera from object
+
 b,n, ,, . : control x&y position of camera (this control is funky now)
 
-R	reset camera position (z = 5, pointed down at origin)
+R	(shift-r) reset camera position (z = 5, pointed down at origin)
 
+
+-----------------------------------------------------------------------------------------------
+Changes 23 May 2008:
+
+1. Massive speedup in rotation computation
+
+2. Added/fixed correct normals
+
+3. Implemented Object Attaching for camera ( its funky now due to lack of background for reference )
+
+4. Verified performance / stability with bunch of objects
+
+5. Initialized handler for collisions
 
 -----------------------------------------------------------------------------------------------
 

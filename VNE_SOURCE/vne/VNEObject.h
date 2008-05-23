@@ -22,6 +22,7 @@ private:
 	CVector* Moment;   // x,y,z angular velocity
 	CVector* GlobalCentCoord; // where is my local "origin" located in the global coordinate system?
 	CVector* Centroid; // the euclidean center of the object;
+
 	double rseed, gseed, bseed; // RGB seeds for coloring the vertices
 	double colorVariance;
 	double mass;
@@ -32,6 +33,7 @@ private:
 	double unitDrift2;
 	double elapsedTime;
 	double angularVelocity;
+	double dCurrAngle;
 
 	int ComputeCentroid();
 
@@ -57,8 +59,12 @@ public:
 	int TiltAxisBy( CVector* vec, double dalpha );
 	int TiltAxisTo( CVector* vec );
 	int TiltAxisTo( double dx, double dy, double dz );
+	void TiltIncrementAxisX( double dVal );
+	void TiltIncrementAxisY( double dVal );
+	void TiltIncrementAxisZ( double dVal );
 	int TranslateTo( double dx, double dy, double dz );
 	int TranslateBy( double dx, double dy, double dz );
+	void IncrementAngVel( double dx );
 	int RotateLocal( double dangle  );
 	CVector* GetVelocity() { return Velocity; }
 	int IncrementVelocity( double dx, double dy, double dz );
