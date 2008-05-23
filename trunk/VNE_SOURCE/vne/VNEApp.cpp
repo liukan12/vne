@@ -20,6 +20,7 @@ VNEApp::VNEApp()
 	counter = 0;
 	//cout<<"Grabbing control of first object...\n";
 	DemoObj = this->world->ObjList->firstNode->curObj;
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 void VNEApp::IdleCallback()
@@ -42,11 +43,11 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 	if( key == 'd' )
 		DemoObj->SetAngularVelocity( currSpin * 0.9 );
 	if( key == 'x' )
-		DemoObj->TiltAxisTo(1.0, 0.0, 0.0);
+		DemoObj->TiltIncrementAxisX(0.05);
 	if( key == 'y' )
-		DemoObj->TiltAxisTo(0.0, 1.0, 0.0);
+		DemoObj->TiltIncrementAxisY(0.05);
 	if( key == 'z' )
-		DemoObj->TiltAxisTo(0.0, 0.0, 1.0);
+		DemoObj->TiltIncrementAxisZ(0.05);
 	{ // control: forces
 		if( key == ']' )
 		{	world->EnableForce(0);
@@ -90,6 +91,10 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 			this->camera->TranslateBy(0.0,-0.05,0.0);
 		if( key == 'R' )
 			this->camera->ResetPosition();
+		if( key == '6' )
+			this->camera->AttachToObject( this->DemoObj );
+		if( key == '7' )
+			this->camera->Detach();
 	}
 	if( key == '1' )
 		DemoObj = this->world->ObjList->firstNode->curObj;
@@ -112,6 +117,7 @@ void VNEApp::DisplayCallback()
 
 	this->world->TimeStep();
 	this->world->Redraw();
+	this->camera->UpdateAttachedCamera();
 
 	glColor3f(1.0, 1.0, 1.0);	
 

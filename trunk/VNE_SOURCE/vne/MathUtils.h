@@ -1,0 +1,1 @@
+void Normalize( double* mx, double* my, double* mz );

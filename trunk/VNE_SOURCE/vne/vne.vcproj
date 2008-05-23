@@ -189,11 +189,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CollisionControl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CVector.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\IOUtils.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MathUtils.cpp"
 				>
 			</File>
 			<File
@@ -243,11 +251,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CollisionControl.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CVector.h"
 				>
 			</File>
 			<File
 				RelativePath=".\IOUtils.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MathUtils.h"
 				>
 			</File>
 			<File

@@ -1,6 +1,8 @@
 #include "RotationMatrix.h"
 #include <math.h>
 
+// THIS IS DEPRECATED DUE TO PERFORMANCE !!!!!!!!!!!!
+
 RotationMatrix::RotationMatrix( CVector *direction, double dAngle ) : CMatrix(3,3)
 {
 	//CMatrix(3,3);

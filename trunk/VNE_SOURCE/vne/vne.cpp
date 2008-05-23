@@ -41,28 +41,31 @@ void keyboard(unsigned char key, int x, int y)
 
 int main( int argc, char* argv[] )
 {
-	//cout<<"Welcome to VNE 0.25! \n";
-	/*//cout<<"Key Commands:\n";
-	//cout<<"w  :  increase rotation speed w/ constant period \n";
-	//cout<<"s  :  increase rotation speed w/ constant period\n";
-	//cout<<"e  :  increase spin speed\n";
-	//cout<<"d  :  decrease spin speed\n";
-	//cout<<"x  :  spin about x-axis\n";
-	//cout<<"y  :  spin about y-axis\n";
-	//cout<<"z  :  spin about z-axis\n";
-	//cout<<"i  :  accelerate object up\n";
-	//cout<<"k  :  accelerate object down\n";
-	//cout<<"j  :  accelerate object left\n";
-	//cout<<"l  :  accelerate object right\n";
-	//cout<<"t  :  move object up\n";
-	//cout<<"g  :  move object down\n";
-	//cout<<"f  :  move object left\n";
-	//cout<<"h  :  move object right\n";
-	//cout<<"1  :  transfer control to Object 1\n";
-	//cout<<"2  :  transfer control to Object 1\n";
-	//cout<<"3  :  transfer control to Object 1\n";
-	//cout<<"]  :  Enable X-Y Black Hole\n";
-	//cout<<"[  :  Disable X-Y Black Hole\n";*/
+	cout<<"Welcome to VNE 0.35! \n";
+	cout<<"Key Commands:\n";
+	cout<<"w  :  increase speed\n";
+	cout<<"s  :  decrease speed\n";
+	cout<<"e  :  increase spin speed\n";
+	cout<<"d  :  decrease spin speed\n";
+	cout<<"x  :  tilt onto x-axis\n";
+	cout<<"y  :  tilt onto y-axis\n";
+	cout<<"z  :  tilt onto z-axis\n";
+	cout<<"i  :  accelerate object up\n";
+	cout<<"k  :  accelerate object down\n";
+	cout<<"j  :  accelerate object left\n";
+	cout<<"l  :  accelerate object right\n";
+	cout<<"t  :  move object up\n";
+	cout<<"g  :  move object down\n";
+	cout<<"f  :  move object left\n";
+	cout<<"h  :  move object right\n";
+	cout<<"1  :  transfer control to Object 1\n";
+	cout<<"2  :  transfer control to Object 1\n";
+	cout<<"3  :  transfer control to Object 1\n";
+	cout<<"]  :  Enable X-Y Black Hole\n";
+	cout<<"[  :  Disable X-Y Black Hole\n";
+	cout<<"6  :  Attach Camera To Current Object\n";
+	cout<<"7  :  Detach Camera From Object\n";
+	cout<<"Shift-r : Reset Camera View\n";
 
 	glutInit( &argc, argv );
 	//cout<<"done glutInit...\n";

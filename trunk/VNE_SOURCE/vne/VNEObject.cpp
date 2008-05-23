@@ -11,6 +11,7 @@
 #include "CMatrix.h"
 #include "RotationMatrix.h"
 #include "IOUtils.h"
+#include "MathUtils.h"
 
 
 int VNEObject::DrawSelf()
@@ -30,7 +31,15 @@ int VNEObject::DrawSelf()
 		norms[i+1] = this->CurTriNorm->GetValueAt(1,i/3);
 		norms[i+2] = this->CurTriNorm->GetValueAt(2,i/3);
 	}
-
+	glPushMatrix();
+	double mx, my, mz;
+	double cx, cy, cz;
+	this->Centroid->GetValueAt( &cx, &cy, &cz );
+	this->Moment->GetValueAt( &mx, &my, &mz );
+	glTranslatef( cx, cy, cz );
+	glRotatef( angularVelocity * 0.1/mass + dCurrAngle, mx, my, mz );
+	dCurrAngle = angularVelocity * 0.1/mass + dCurrAngle;
+	glTranslatef( -cx, -cy, -cz );
 	for( i = 0; i < numFaces; i++ )
 	{
 		double offset = this->colorVariance*( i / double(numFaces) - 0.5 );
@@ -44,6 +53,7 @@ int VNEObject::DrawSelf()
 			glVertex3d(verts[i*9+6+0], verts[i*9+6+1], verts[i*9+6+2]); 
 		glEnd();
 	}
+	glPopMatrix();
 	glFinish();
 	delete [] verts;
 	delete [] norms;
@@ -58,8 +68,10 @@ void VNEObject::SetSpeed( double dSpeed )
 	if( dSpeed > 50.0 )
 	{
 		dSpeed = 50.0;
-		cout<<"Max Speed Reached!\n";
+		//cout<<"Max Speed Reached!\n";
 	}
+	else if( dSpeed < 1e-6 )
+		dSpeed = 1e-6;
 	this->Velocity->SetValues( vx/dnorm*dSpeed,vy/dnorm*dSpeed,vz/dnorm*dSpeed );
 }
 
@@ -79,21 +91,44 @@ void VNEObject::IncrementTime()
 {
 	double dt = .01;
 	elapsedTime += dt;
-
 	double vx, vy, vz;
 	
 	this->Velocity->GetValueAt(0, &vx);
 	this->Velocity->GetValueAt(1, &vy);
 	this->Velocity->GetValueAt(2, &vz);
 	
-	/*vx = vx * this->speedFactor;
-	vy = vy * this->speedFactor;
-	vz = vz * this->speedFactor;*/
 
-	this->TranslateBy( vx*dt, vy*dt, vz*dt );
-	this->RotateLocal( angularVelocity * dt );	
+	this->TranslateBy( vx*dt/mass, vy*dt/mass, vz*dt/mass );
+	// CHANGE on MAY 23: use OpenGL Rotation call instead of this
+	//this->RotateLocal( angularVelocity * dt/mass );	
 
 }
+
+void VNEObject::TiltIncrementAxisX( double dVal )
+{
+	double mx,my,mz;
+	this->Moment->GetValueAt( &mx, &my, &mz );
+	mx += dVal;
+	Normalize(&mx,&my,&mz);
+	this->Moment->SetValues(mx,my,mz);
+}
+void VNEObject::TiltIncrementAxisY( double dVal )
+{
+	double mx,my,mz;
+	this->Moment->GetValueAt( &mx, &my, &mz );
+	my += dVal;
+	Normalize(&mx,&my,&mz);
+	this->Moment->SetValues(mx,my,mz);
+}
+void VNEObject::TiltIncrementAxisZ( double dVal )
+{
+	double mx,my,mz;
+	this->Moment->GetValueAt( &mx, &my, &mz );
+	mz += dVal;
+	Normalize(&mx,&my,&mz);
+	this->Moment->SetValues(mx,my,mz);
+}
+	
 
 int VNEObject::IncrementVelocity( double dx, double dy, double dz )
 {
@@ -103,11 +138,17 @@ int VNEObject::IncrementVelocity( double dx, double dy, double dz )
 	vy = vy + dy;
 	vz = vz + dz;
 	return this->Velocity->SetValues(vx,vy,vz);
-
+}
+void VNEObject::IncrementAngVel( double dx )
+{
+	this->angularVelocity += dx;
+	if( abs(angularVelocity) < 1e-1 )
+		angularVelocity = 1e-1;
 }
 
 int VNEObject::RotateLocal( double dangle )
 {
+	cout<<"WARNING: RotateLocal() IS ONLY FOR OCCASIONAL VERTEX LOCATION CHECKS, NOT GENERAL DRAWING!!!\n";
 	// rotate by <dangle> about the vector from the centroid specified by the angular velocity
 	// (rotating "about x by this, about y by that" does not make sense
 	// because rotation transformations do not commute, except special cases (like 90 degrees) )
@@ -129,22 +170,25 @@ int VNEObject::RotateLocal( double dangle )
 	this->Centroid->GetValueAt(2, &cz);
 	
 	CVector tempVec(3);
+	CVector w_hat(3);
+	double wx, wy, wz;
 
 	for( i = 0; i < this->numFaces*3; i++ )
 	{
+		wx = this->CurTriVert->GetValueAt(0, i);
+		wy = this->CurTriVert->GetValueAt(1, i);
+		wz = this->CurTriVert->GetValueAt(2, i);
 		// step1: read current vertex position into a vector
-		tempVec.SetValueAt(0, this->CurTriVert->GetValueAt(0, i) - cx );
-		tempVec.SetValueAt(1, this->CurTriVert->GetValueAt(1, i) - cy );
-		tempVec.SetValueAt(2, this->CurTriVert->GetValueAt(2, i) - cz );
+		tempVec.SetValues(wx - cx, wy - cy, wz - cz); // move origin to the centroid of object
 
 		tempVec.MultByMatrix( &mtrx );
-		tempVec.GetValueAt(0, &x1);
-		tempVec.GetValueAt(1, &y1);
-		tempVec.GetValueAt(2, &z1);
+		tempVec.GetValueAt(&x1, &y1, &z1);
 
 		this->CurTriVert->SetValueAt(0,i, x1 + cx);
 		this->CurTriVert->SetValueAt(1,i, y1 + cy);
 		this->CurTriVert->SetValueAt(2,i, z1 + cz);
+		
+
 	}
 	
 	iRet = ComputeCentroid();
@@ -291,6 +335,7 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	unitDrift2 = 0.0;
 	elapsedTime = 0.0;
 	mass = 1.0;
+	dCurrAngle = 0.0;
 
 	GlobalCentCoord = new CVector(3);
 	GlobalCentCoord->SetValueAt(0,0.0);
@@ -317,7 +362,7 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	gseed = 1.0;
 	bseed = 1.0;
 
-	this->angularVelocity = 10.0;
+	this->angularVelocity = 0.001;
 	this->speedFactor = 1.0;
 	
 	numFaces = ReadMeshData( &CurTriVert, &CurTriNorm, fileNameFaces, fileNameVerts, fileNameNorms );

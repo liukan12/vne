@@ -101,7 +101,7 @@ int ReadMeshData( CMatrix** TriVerts, CMatrix** Normals, string fileNameFaces, s
 
 	ifstream vin2( fileNameVerts.c_str() );
 	double* tempverts = new double[3*iVerts];
-	cout<<"Making object with "<<3*iVerts<<" vertices and normals...\n";
+	//cout<<"Making object with "<<3*iVerts<<" vertices and normals...\n";
 	//double val;
 	k = 0;
 	while( !vin2.eof() )
