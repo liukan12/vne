@@ -65,6 +65,8 @@ int main( int argc, char* argv[] )
 	cout<<"[  :  Disable X-Y Black Hole\n";
 	cout<<"6  :  Attach Camera To Current Object\n";
 	cout<<"7  :  Detach Camera From Object\n";
+	cout<<"8  :  Enable Light-Mode (disable Colors)\n";
+	cout<<"9  :  Enable Color-Mode (disable Lights)\n";
 	cout<<"Shift-r : Reset Camera View\n";
 
 	glutInit( &argc, argv );
@@ -82,6 +84,7 @@ int main( int argc, char* argv[] )
 	glutKeyboardFunc(keyboard);
 	glutMouseFunc(mouse);
 	glutIdleFunc(idle);
+	//glutFullScreen();
 	glutMainLoop();
 
 	return 0;

@@ -225,6 +225,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\VNETexture.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\VNEWorld.cpp"
 				>
 			</File>
@@ -280,6 +284,10 @@
 			</File>
 			<File
 				RelativePath=".\VNEObjList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VNETexture.h"
 				>
 			</File>
 			<File

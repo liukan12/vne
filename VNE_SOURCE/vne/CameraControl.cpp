@@ -54,6 +54,9 @@ void CameraControl::ResetPosition( )
 	eyex = this->initx;
 	eyey = this->inity;
 	eyez = this->initz;
+	atx = 0.0;
+	aty = 0.0;
+	atz = 0.0;
 	if( this->bIsAttached )
 		this->Detach();
 	ResizeCallbackHandler( this->iWindowW, this->iWindowH );
@@ -70,11 +73,11 @@ void CameraControl::UpdateAttachedCamera()
 		
 		Normalize( &vx, &vy, &vz );
 		this->eyex = cx + vx * eyeOffset;
-		this->eyey = cy + vz * eyeOffset;
+		this->eyey = cy + vy * eyeOffset;
 		this->eyez = cz + vz * eyeOffset;
 
 		this->atx = cx + 2 * vx * eyeOffset;
-		this->aty = cy + 2 * vz * eyeOffset;
+		this->aty = cy + 2 * vy * eyeOffset;
 		this->atz = cz + 2 * vz * eyeOffset;
 
 		this->ResizeCallbackHandler(this->iWindowW, this->iWindowH);

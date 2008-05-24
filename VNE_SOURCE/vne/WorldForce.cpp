@@ -11,8 +11,8 @@ WorldForce::WorldForce( )
 {
 	this->dScale = .1;
 	this->iMode = 0; // various modes define different forces over the world
-	this->dAtmDensity = 0.0001;
-	this->dWallReflectance = 1.0;
+	this->dAtmDensity = 0.001;
+	this->dWallReflectance = 0.999;
 	this->bAtmosphereOn = true;
 	this->bVortexOn = false;
 	this->bWallsOn = true;
@@ -73,7 +73,7 @@ void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 		if( bAtmosphereOn )
 		{
 			obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
-			obj->IncrementVelocity( -sy*dAtmDensity,-sy*dAtmDensity,-sz*dAtmDensity);
+			obj->IncrementVelocity( -sx*dAtmDensity,-sy*dAtmDensity,-sz*dAtmDensity);
 			double domega = obj->GetAngVel();
 			obj->IncrementAngVel( -domega*dAtmDensity );
 		}

@@ -96,12 +96,20 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 		if( key == '7' )
 			this->camera->Detach();
 	}
-	if( key == '1' )
-		DemoObj = this->world->ObjList->firstNode->curObj;
-	if( key == '2' )
-		DemoObj = this->world->ObjList->firstNode->nextNode->curObj;
-	if( key == '3' )
-		DemoObj = this->world->ObjList->firstNode->nextNode->nextNode->curObj;
+	{	// control:	lights
+		if( key == '8' )
+			this->world->LightsOn();
+		if( key == '9' )
+			this->world->LightsOff();
+	}
+	{	// control: object focus
+		if( key == '1' )
+			DemoObj = this->world->ObjList->firstNode->curObj;
+		if( key == '2' )
+			DemoObj = this->world->ObjList->firstNode->nextNode->curObj;
+		if( key == '3' )
+			DemoObj = this->world->ObjList->firstNode->nextNode->nextNode->curObj;
+	}
 
 }
 

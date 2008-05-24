@@ -1,4 +1,4 @@
-VNE Verion 0.35
+VNE Verion 0.36
 
 Key Commands:
 
@@ -39,6 +39,17 @@ b,n, ,, . : control x&y position of camera (this control is funky now)
 
 R	(shift-r) reset camera position (z = 5, pointed down at origin)
 
+8	enable lights (disable colors)
+9	enable colors (disable lights)
+
+-----------------------------------------------------------------------------------------------
+Changes 24 May 2008:
+
+1. Fixed bugs in camera orientation when attached/detaching
+
+2. Added textures for walls
+
+3. Added enable/disable lights ability
 
 -----------------------------------------------------------------------------------------------
 Changes 23 May 2008:
