@@ -24,6 +24,8 @@ private:
 	double zmin;
 	double zmax;
 	double elapsedTime;
+	bool bLightsOn;
+	bool bTexturesOn;
 	clock_t clock1;
 	clock_t clock2;
 
@@ -33,10 +35,17 @@ public:
 	VNEObject* DemoObj; // a single demo object to start with
 	VNEObjList* ObjList;   // later: a linked list of objects
 	WorldForce* theForce;
+	void TexturesOn();
+	void TexturesOff();
+	bool TexturesAreOn() { return bTexturesOn; }
 	int TimeStep();
 	int Redraw();
+	void DrawWalls( );
 	void EnableForce( int iNum );
 	void DisableForce( int iNum );
+	void LightsOn();
+	void LightsOff();
+	bool LightsAreOn() { return bLightsOn; }
 	void PrintWorldState();
 
 	double Getxmin();

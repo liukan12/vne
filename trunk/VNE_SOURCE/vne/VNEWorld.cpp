@@ -9,13 +9,18 @@
 #include "VNEWorld.h"
 #include <time.h>
 #include "WorldForce.h"
+#include "MathUtils.h"
 using std::cout;
+
+#define CheckerTexSize 64
+static GLubyte CheckerTex[CheckerTexSize][CheckerTexSize][4];
+static GLuint texName;
 
 VNEWorld::VNEWorld()
 {
-	string faces, faces2, faces3, faces4, faces5, faces6;
-	string verts, verts2, verts3, verts4, verts5, verts6;
-	string norms, norms2, norms3, norms4, norms5, norms6;
+	string faces, faces2, faces3;
+	string verts, verts2, verts3;
+	string norms, norms2, norms3;
 #define PROFILE_NO
 #ifdef PROFILE
 	faces =  "faces4.dat";
@@ -37,15 +42,6 @@ VNEWorld::VNEWorld()
 	faces3 = "..\\vne_data\\faces6.dat";
 	verts3 = "..\\vne_data\\verts6.dat";
 	norms3 = "..\\vne_data\\norms6.dat";
-	faces4 = "..\\vne_data\\faces7.dat";
-	verts4 = "..\\vne_data\\verts7.dat";
-	norms4 = "..\\vne_data\\norms7.dat";
-	faces5 = "..\\vne_data\\faces8.dat";
-	verts5 = "..\\vne_data\\verts8.dat";
-	norms5 = "..\\vne_data\\norms8.dat";
-	faces6 = "..\\vne_data\\faces9.dat";
-	verts6 = "..\\vne_data\\verts9.dat";
-	norms6 = "..\\vne_data\\norms9.dat";
 #else // release build looks in the same directory as .exe for data files
 	faces = "faces4.dat";
 	verts = "verts4.dat";
@@ -56,50 +52,24 @@ VNEWorld::VNEWorld()
 	faces3= "faces6.dat";
 	verts3= "verts6.dat";
 	norms3= "norms6.dat";
-	faces4 = "faces7.dat";
-	verts4 = "verts7.dat";
-	norms4 = "norms7.dat";
-	faces5 = "faces8.dat";
-	verts5 = "verts8.dat";
-	norms5 = "norms8.dat";
-	faces6 = "faces9.dat";
-	verts6 = "verts9.dat";
-	norms6 = "norms9.dat";
 #endif
 
 	// TODO: we need OBJECT FILES that define all file names and properties
 	VNEObject* Obj1 = new VNEObject( "object 1", faces, verts, norms);
 	VNEObject* Obj2 = new VNEObject( "object 2", faces2, verts2, norms2);
 	VNEObject* Obj3 = new VNEObject( "object 3", faces3, verts3, norms3);
-	VNEObject* Obj4 = new VNEObject( "object 4", faces4, verts4, norms4);
-	VNEObject* Obj5 = new VNEObject( "object 5", faces5, verts5, norms5);
-	VNEObject* Obj6 = new VNEObject( "object 6", faces6, verts6, norms6);
-	VNEObject* Obj7 = new VNEObject( "object 7", faces4, verts4, norms4);
-	VNEObject* Obj8 = new VNEObject( "object 8", faces5, verts5, norms5);
-	VNEObject* Obj9 = new VNEObject( "object 9", faces6, verts6, norms6);
+	
 	Obj1->SetVelocityProfile( 0.5, 0.5, 0.0, 0 );
 	Obj2->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
 	Obj3->SetVelocityProfile( 0.5, -0.5, -0.5, 0 );
+	
 	Obj1->SetColorSeed(0.5,0.0,1.0);
 	Obj2->SetColorSeed(1.0,0.0,0.5);
 	Obj3->SetColorSeed(0.5,0.5,0.0);
 
-	Obj4->TranslateTo( -5.0, -5.0, 2.0 );
-	Obj5->TranslateTo( 5.0, -5.0, 0.0 );
-	Obj6->TranslateTo( 5.0, 5.0, -3.0 );
-	Obj7->TranslateTo( 0.0, -5.0, 2.0 );
-	Obj8->TranslateTo( 0.0, 5.0, 0.0 );
-	Obj9->TranslateTo( 5.0, 0.0, 0.0 );
-
 	this->ObjList = new VNEObjList( Obj1 );
 	this->ObjList->AddObj(Obj2);
 	this->ObjList->AddObj(Obj3);
-	this->ObjList->AddObj(Obj4);
-	this->ObjList->AddObj(Obj5);
-	this->ObjList->AddObj(Obj6);
-	this->ObjList->AddObj(Obj7);
-	this->ObjList->AddObj(Obj8);
-	this->ObjList->AddObj(Obj9);
 
 	this->ObjList->PrintAll();
 
@@ -115,6 +85,37 @@ VNEWorld::VNEWorld()
 	clock1 = clock();
 	elapsedTime = 0.0;
 	glShadeModel( GL_SMOOTH );
+	LightsOff();
+
+	TexturesOn();
+}
+
+void VNEWorld::TexturesOn()
+{
+	int i,j,c;
+	for( i = 0; i < CheckerTexSize; i++ ) {
+		for( j = 0; j < CheckerTexSize; j++) {
+			c = ((((i&0x8)==0)^((j&0x8))==0))*255;
+				CheckerTex[i][j][0] = (GLubyte) c/255*2*i;
+				CheckerTex[i][j][1] = (GLubyte) c/255*4*j;
+				CheckerTex[i][j][2] = (GLubyte) c/255*4*i;
+				CheckerTex[i][j][3] = (GLubyte) 255;
+		}
+	}
+
+	glEnable( GL_TEXTURE_2D );
+	glGenTextures(1, &texName);
+	glBindTexture(GL_TEXTURE_2D, texName );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CheckerTexSize, CheckerTexSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, CheckerTex );
+}
+
+void VNEWorld::LightsOn()
+{
+	bLightsOn = true;
 	GLfloat light_position[] = {0.0,0.0,4.0,0.0};
 	GLfloat light1_specular[] = {1.0,1.0,1.0,0.0};
 	GLfloat light1_ambient[] = {1.0, 0.1, 0.5,0.0};
@@ -131,10 +132,16 @@ VNEWorld::VNEWorld()
 	glLightfv(GL_LIGHT1, GL_SPECULAR, light2_position);
 	glLightfv(GL_LIGHT1, GL_AMBIENT, light2_ambient);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, light2_diffuse);
-
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_LIGHT1);
+}
+void VNEWorld::LightsOff()
+{
+	bLightsOn = false;
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHT1);
+	glDisable(GL_LIGHTING);
 }
 
 void VNEWorld::EnableForce( int iNum )
@@ -181,13 +188,65 @@ int VNEWorld::TimeStep()
 	return result;
 }
 
+void VNEWorld::DrawWalls()
+{
+	for( int i = 0; i < 5; i++ )
+	{
+		glPushMatrix();
+		switch(i)
+		{ // draw five walls, leave one open area for the camera's default position
+		case 0: 
+			glRotatef(90.0,0.0,1.0,0.0);
+			break;
+		case 1:
+			glRotatef(-90,0.0,1.0,0.0);
+			break;
+		case 2:
+			break;
+		case 3:
+			glRotatef(90,1.0,0.0,0.0);
+			break;
+		case 4:
+			glRotatef(-90,1.0,0.0,0.0);
+			break;
+		}
+		glEnable(GL_TEXTURE_2D);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
+		glBindTexture(GL_TEXTURE_2D, texName );
+
+		glBegin(GL_QUADS);
+			// back wall
+			glTexCoord2f(0.0, 0.0);
+			glVertex3f(xmin, ymin, zmin+1e-3 );
+			glTexCoord2f(0.0, 1.0);
+			glVertex3f(xmin,ymax,zmin+1e-3);
+			glTexCoord2f(1.0,1.0);
+			glVertex3f(xmax,ymax,zmin+1e-3);
+			glTexCoord2f(1.0,0.0);
+			glVertex3f(xmax, ymin, zmin+1e-3 );
+
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
+	}
+	glFlush();   // doesn't seem necessary
+}
+
 int VNEWorld::Redraw()
 {
 	int result = 0;
 
+	if( this->theForce->WallsAreOn() )
+		DrawWalls();
+	
+	
+
+
 	result = this->ObjList->DrawAll();
 
-	//glFlush();   // doesn't seem necessary
+	
+
+	
 
 	return result;
 }
