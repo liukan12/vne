@@ -15,10 +15,6 @@
 
 using std::cout;
 
-#define CheckerTexSize 64
-static GLubyte CheckerTex[CheckerTexSize][CheckerTexSize][4];
-static GLuint texName;
-
 VNEWorld::VNEWorld()
 {
 	string faces, faces2, faces3;
@@ -79,6 +75,9 @@ VNEWorld::VNEWorld()
 	Obj2->SetColorSeed(1.0,0.0,0.5);
 	Obj3->SetColorSeed(0.5,0.5,0.0);
 
+	Obj1->TranslateTo(2.0,2.0,2.0);
+	Obj2->TranslateTo(-2.0,-2.0,-2.0);
+	Obj3->TranslateTo(10.0,10.0,10.0);
 	this->ObjList = new VNEObjList( Obj1 );
 	this->ObjList->AddObj(Obj2);
 	this->ObjList->AddObj(Obj3);
@@ -162,6 +161,29 @@ void VNEWorld::DisableForce( int iNum )
 		break;
 	}
 }
+void VNEWorld::Collide(VNEObject* obj1, VNEObject* obj2)
+{
+}
+
+void VNEWorld::CheckCollisions()
+{
+	int i,n;
+	VNEObject* obj1;
+	VNEObject* obj2;
+	for(i=0; i < this->ObjList->Length(); i++)
+	{
+		obj1 = this->ObjList->GetObjectAt(i);
+		for(n=i+1; n < this->ObjList->Length(); n++)
+		{
+			obj2 = this->ObjList->GetObjectAt(n);
+			double thresh = obj1->GetRadSquared() + obj2->GetRadSquared();
+			if(thresh > VecNorm(obj1->GetCentroid(), obj2->GetCentroid()))
+			{
+				this->Collide( obj1, obj2);
+			}
+		}
+	}
+}
 
 int VNEWorld::TimeStep()
 {
@@ -179,7 +201,7 @@ int VNEWorld::TimeStep()
 	// causes errors (too much delay)
 	this->ObjList->AccelAll( this->theForce );
 	result = this->ObjList->TimeStepAll();
-
+	this->CheckCollisions();
 	return result;
 }
 

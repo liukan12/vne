@@ -115,6 +115,10 @@ void VNEObject::GetCentroid(double *dx, double* dy, double* dz)
 	this->Centroid->GetValueAt(dx,dy,dz);
 }
 
+CVector* VNEObject::GetCentroid(){
+	return this->Centroid;
+}
+
 void VNEObject::IncrementTime()
 {
 	double dt = .01;
@@ -397,22 +401,31 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 
 	ComputeCentroid();
 	double dVal, cVal;
+	
+	radSquared=0.0;
 	for( int i = 0; i < this->numFaces * 3; i++ )
 	{
 		dVal = CurTriVert->GetValueAt(0,i);
 		this->Centroid->GetValueAt(0, &cVal);
 		CurTriVert->SetValueAt(0,i, dVal - cVal);
 		RefTriVert->SetValueAt(0,i, dVal - cVal);
+		radSquared += (dVal - cVal)*(dVal - cVal); // add this vertex's x^2
 		dVal = CurTriVert->GetValueAt(1,i);
 		this->Centroid->GetValueAt(1, &cVal);
 		CurTriVert->SetValueAt(1,i, dVal - cVal);
 		RefTriVert->SetValueAt(1,i, dVal - cVal);
+		radSquared += (dVal - cVal)*(dVal - cVal); // add this vertex's y^2
 		dVal = CurTriVert->GetValueAt(2,i);
 		this->Centroid->GetValueAt(2, &cVal);
 		CurTriVert->SetValueAt(2,i, dVal - cVal);
 		RefTriVert->SetValueAt(2,i, dVal - cVal);
+		radSquared += (dVal - cVal)*(dVal - cVal); // add this vertex's z^2
+
 	}
+	radSquared /= (this->numFaces * 3); // divide by number of vertices ( three times the number of faces, if it is all triangle faces )
 	ComputeCentroid();
+	
+	
 	
 	this->bHasTexture=false;
 }

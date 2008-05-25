@@ -30,6 +30,8 @@ private:
 	clock_t clock1;
 	clock_t clock2;
 
+	void Collide(VNEObject* obj1, VNEObject* obj2);
+
 public:
 	VNEWorld();
 	~VNEWorld();
@@ -48,7 +50,7 @@ public:
 	void LightsOff();
 	bool LightsAreOn() { return bLightsOn; }
 	void PrintWorldState();
-
+	void CheckCollisions();
 	double Getxmin();
 	double Getymin();
 	double Getzmin();
