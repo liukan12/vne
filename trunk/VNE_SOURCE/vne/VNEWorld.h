@@ -5,6 +5,7 @@
 #include "VNEObjList.h"
 #include "WorldForce.h"
 #include <time.h>
+#include "VNETexture.h"
 
 class VNEWorld
 {
@@ -16,7 +17,7 @@ class VNEWorld
 
 private:
 	
-	
+	VNETexture* myTex;
 	double xmin;
 	double xmax;
 	double ymin;

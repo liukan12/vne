@@ -10,6 +10,9 @@
 #include <time.h>
 #include "WorldForce.h"
 #include "MathUtils.h"
+#include "SOIL.h"
+#include "VNETexture.h"
+
 using std::cout;
 
 #define CheckerTexSize 64
@@ -86,31 +89,9 @@ VNEWorld::VNEWorld()
 	elapsedTime = 0.0;
 	glShadeModel( GL_SMOOTH );
 	LightsOff();
+	
+	myTex=new VNETexture("..\\vne_data\\cat.jpg");
 
-	TexturesOn();
-}
-
-void VNEWorld::TexturesOn()
-{
-	int i,j,c;
-	for( i = 0; i < CheckerTexSize; i++ ) {
-		for( j = 0; j < CheckerTexSize; j++) {
-			c = ((((i&0x8)==0)^((j&0x8))==0))*255;
-				CheckerTex[i][j][0] = (GLubyte) c/255*2*i;
-				CheckerTex[i][j][1] = (GLubyte) c/255*4*j;
-				CheckerTex[i][j][2] = (GLubyte) c/255*4*i;
-				CheckerTex[i][j][3] = (GLubyte) 255;
-		}
-	}
-
-	glEnable( GL_TEXTURE_2D );
-	glGenTextures(1, &texName);
-	glBindTexture(GL_TEXTURE_2D, texName );
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CheckerTexSize, CheckerTexSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, CheckerTex );
 }
 
 void VNEWorld::LightsOn()
@@ -210,9 +191,12 @@ void VNEWorld::DrawWalls()
 			glRotatef(-90,1.0,0.0,0.0);
 			break;
 		}
-		glEnable(GL_TEXTURE_2D);
+		
+		/*glEnable(GL_TEXTURE_2D);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
-		glBindTexture(GL_TEXTURE_2D, texName );
+		glBindTexture(GL_TEXTURE_2D, texName );*/
+		myTex->bindTexture();
+		
 
 		glBegin(GL_QUADS);
 			// back wall
