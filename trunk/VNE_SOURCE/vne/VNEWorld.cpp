@@ -46,21 +46,30 @@ VNEWorld::VNEWorld()
 	verts3 = "..\\vne_data\\verts6.dat";
 	norms3 = "..\\vne_data\\norms6.dat";
 #else // release build looks in the same directory as .exe for data files
-	faces = "faces4.dat";
-	verts = "verts4.dat";
-	norms = "norms4.dat";
-	faces2= "faces5.dat";
-	verts2= "verts5.dat";
-	norms2 = "norms5.dat";
-	faces3= "faces6.dat";
-	verts3= "verts6.dat";
-	norms3= "norms6.dat";
+	faces = ".\\data\\faces4.dat";
+	verts = ".\\data\\verts4.dat";
+	norms = ".\\data\\norms4.dat";
+	faces2= ".\\data\\faces5.dat";
+	verts2= ".\\data\\verts5.dat";
+	norms2= ".\\data\\norms5.dat";
+	faces3= ".\\data\\faces6.dat";
+	verts3= ".\\data\\verts6.dat";
+	norms3= ".\\data\\norms6.dat";
 #endif
 
 	// TODO: we need OBJECT FILES that define all file names and properties
 	VNEObject* Obj1 = new VNEObject( "object 1", faces, verts, norms);
 	VNEObject* Obj2 = new VNEObject( "object 2", faces2, verts2, norms2);
 	VNEObject* Obj3 = new VNEObject( "object 3", faces3, verts3, norms3);
+#ifdef _DEBUG
+	Obj1->setTexture("..\\vne_data\\obj1.png");
+	Obj2->setTexture("..\\vne_data\\obj2.png");
+	Obj3->setTexture("..\\vne_data\\obj3.png");
+#else
+	Obj1->setTexture(".\\data\\obj1.png");
+	Obj2->setTexture(".\\data\\obj2.png");
+	Obj3->setTexture(".\\data\\obj3.png");
+#endif
 	
 	Obj1->SetVelocityProfile( 0.5, 0.5, 0.0, 0 );
 	Obj2->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
@@ -90,7 +99,11 @@ VNEWorld::VNEWorld()
 	glShadeModel( GL_SMOOTH );
 	LightsOff();
 	
+#ifdef _DEBUG
 	myTex=new VNETexture("..\\vne_data\\cat.jpg");
+#else
+	myTex=new VNETexture(".\\data\\cat.jpg");
+#endif
 
 }
 
@@ -143,6 +156,7 @@ void VNEWorld::DisableForce( int iNum )
 	{
 	case 0:
 		this->theForce->VortexOff();
+		break;
 	default:
 		cout<<"Invalid number in DisableForce()!\n";
 		break;

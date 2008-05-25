@@ -138,7 +138,7 @@
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="true"
 				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="glut32.lib"
+				AdditionalDependencies="glut32.lib libSOIL.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"

@@ -1,4 +1,4 @@
-VNE Verion 0.36
+VNE Verion 0.4
 
 Key Commands:
 
@@ -41,6 +41,21 @@ R	(shift-r) reset camera position (z = 5, pointed down at origin)
 
 8	enable lights (disable colors)
 9	enable colors (disable lights)
+
+Note: you can change the files in the \data directory to be some other images,
+just keep the names the same... later you'll be able to set file names.
+
+-----------------------------------------------------------------------------------------------
+Changes 25 May 2008:
+1. Added image textures
+
+2. Added some image handling code
+
+3. Added texture class
+
+4. Added texturability for objects
+
+5. Started work on (linear) momentun & (kinetic) energy conservation for elastic collisions
 
 -----------------------------------------------------------------------------------------------
 Changes 24 May 2008:
