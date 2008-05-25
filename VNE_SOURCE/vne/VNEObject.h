@@ -24,13 +24,14 @@ private:
 	CVector* GlobalCentCoord; // where is my local "origin" located in the global coordinate system?
 	CVector* Centroid; // the euclidean center of the object;
 	VNETexture* objTexture;
-
+	
 	double rseed, gseed, bseed; // RGB seeds for coloring the vertices
 	double colorVariance;
 	double mass;
 	int numFaces;
 	string objName;
 	
+	double radSquared;
 	double elapsedTime;
 	double angularVelocity;
 	double dCurrAngle;
@@ -53,10 +54,12 @@ public:
 	int DrawSelf();
 	void PrintSelf();
 	void IncrementTime( );
+	CVector* GetCentroid();
 	double GetMass( ) { return mass; }
 	double GetSpeed( );
 	double GetAngVel( ) { return angularVelocity; }
 	double GetElapsedTime() { return elapsedTime; };
+	double GetRadSquared(){return radSquared;}
 	int GetNumFaces(){ return numFaces; }
 	void GetCentroid(double *dx, double* dy, double* dz);
 	int SpinAboutCentroid();

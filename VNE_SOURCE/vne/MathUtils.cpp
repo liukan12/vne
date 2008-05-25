@@ -8,6 +8,7 @@
 #include <GL/glut.h>
 #include <math.h>
 #include "MathUtils.h"
+#include "CVector.h"
 
 using namespace std;
 
@@ -26,17 +27,12 @@ void Normalize( double* mx, double* my, double* mz )
 		cout<<"error, zero length vector being normalized \n";
 }
 
-//void CreateCheckerTex()
-//{
-//	int i,j,c;
-//	for( i = 0; i < CheckerTexSize; i++ ) {
-//		for( j = 0; j < CheckerTexSize; j++) {
-//			c = ((((i&0x8)==0)^((j&0x8))==0))*255;
-//				CheckerTex[i][j][0] = (GLubyte) c;
-//				CheckerTex[i][j][1] = (GLubyte) c;
-//				CheckerTex[i][j][2] = (GLubyte) c;
-//				CheckerTex[i][j][3] = (GLubyte) 255;
-//		}
-//	}
-//}
+double VecNorm(CVector* vec1, CVector* vec2)
+{
+	double x1,y1,z1;
+	double x2,y2,z2;
+	vec1->GetValueAt(&x1,&y1,&z1);
+	vec2->GetValueAt(&x2,&y2,&z2);
+	return ( (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)+(z1-z2)*(z1-z2));
+}
 			
