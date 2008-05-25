@@ -11,6 +11,7 @@ using namespace std; // note for the weary: this is required so that "string" is
 
 struct ObjNode
 {
+	int myIndex;
 	VNEObject* curObj;
 	ObjNode* nextNode;
 	ObjNode* prevNode;
@@ -21,6 +22,7 @@ struct ObjNode
 class VNEObjList
 {
 private:
+	int length;
 	
 public:
 	ObjNode* firstNode;
@@ -34,6 +36,8 @@ public:
 	void AccelAll( WorldForce* force );
 	int DeleteObj( string objName );
 	int AddObj( VNEObject* newObj );
+	int Length() {return length;}
+	VNEObject* GetObjectAt(int index);
 
 };
 
