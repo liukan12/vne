@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+#include "VNETexture.h"
 
 #define COLORSEED 0 // given RGB seed values, randomly perturb around them
 #define COLORREAD 1 // per-vertex designated coloring, read from file or otherwise input
@@ -22,26 +23,33 @@ private:
 	CVector* Moment;   // x,y,z angular velocity
 	CVector* GlobalCentCoord; // where is my local "origin" located in the global coordinate system?
 	CVector* Centroid; // the euclidean center of the object;
+	VNETexture* objTexture;
 
 	double rseed, gseed, bseed; // RGB seeds for coloring the vertices
 	double colorVariance;
 	double mass;
 	int numFaces;
 	string objName;
-	double speedFactor;
-	double unitDrift1; // parameter for applying "brownian motion"
-	double unitDrift2;
+	
 	double elapsedTime;
 	double angularVelocity;
 	double dCurrAngle;
 
 	int ComputeCentroid();
+	bool bHasTexture;
+	bool bIsStatic;//is object affected by global forces
+
+
+
+
 
 public:
 	VNEObject( string objName, string fileNameFaces, string fileNameVerts, string fileNameNorms ); // construct from a file with vertex coords
 	VNEObject( string objName );
 	VNEObject( ); // default constructor (equi-sided tetrahedron ? )
-	~VNEObject( ); // destructor 
+	~VNEObject( ); // destructor
+	void setTexture(string fileName);
+	void setTexture(VNETexture* newTex);
 	int DrawSelf();
 	void PrintSelf();
 	void IncrementTime( );

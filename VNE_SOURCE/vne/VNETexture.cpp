@@ -13,7 +13,7 @@
 
 using namespace std;
 
-//GLuint tex_2d;
+
 
 VNETexture::VNETexture(string fileName)
 {
