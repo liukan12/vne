@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "VNEObjList.h"
 #include "WorldForce.h"
-
+#include <iostream>
 using namespace std;
 
 VNEObjList::VNEObjList( VNEObject *firstObj )
@@ -13,8 +13,11 @@ VNEObjList::VNEObjList( VNEObject *firstObj )
 	this->firstNode->bIsFirst = true;
 	this->firstNode->bIsLast = true;
 	this->firstNode->curObj = firstObj;
+	this->firstNode->myIndex=0;
 	
+	this->length=1;
 	this->lastNode = this->firstNode;
+	this->lastNode->myIndex=0;
 
 
 }
@@ -33,9 +36,41 @@ int iRet = 0;
 	this->lastNode = newNode;
 	this->lastNode->bIsLast = true;
 	this->lastNode->prevNode = tempNode;
+	this->lastNode->myIndex=this->Length();
+	this->length++;
 
 	return iRet;
 }
+VNEObject* VNEObjList::GetObjectAt(int index)
+{
+	
+	if(index<0||index >this->length)
+	{
+		cout<<"you ass, "<<index<<" is an invalid index!\n";
+		return 0;
+
+
+	}
+	
+		
+	ObjNode* tempNode = this->firstNode;
+	int counter=0;
+	while(counter<this->length)
+	{
+		if(tempNode->myIndex==index)
+			return tempNode->curObj;
+
+		
+		counter++;
+		if(!(tempNode->bIsLast))
+		{
+			tempNode = tempNode->nextNode;
+		}
+	}	
+	cout<<"our fault, "<<index<<" is an invalid index!\n";
+		return 0;
+}
+
 
 void VNEObjList::AccelAll( WorldForce* force )
 {

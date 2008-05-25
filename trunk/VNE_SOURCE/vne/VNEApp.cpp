@@ -104,11 +104,11 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 	}
 	{	// control: object focus
 		if( key == '1' )
-			DemoObj = this->world->ObjList->firstNode->curObj;
+			DemoObj = this->world->ObjList->GetObjectAt(0);
 		if( key == '2' )
-			DemoObj = this->world->ObjList->firstNode->nextNode->curObj;
+			DemoObj = this->world->ObjList->GetObjectAt(1);
 		if( key == '3' )
-			DemoObj = this->world->ObjList->firstNode->nextNode->nextNode->curObj;
+			DemoObj = this->world->ObjList->GetObjectAt(2);
 	}
 
 }

@@ -116,7 +116,7 @@ bool TestMatrixTest()
 	int k;
 	int iRet = 0;
 	int i,j;
-	double dVal;
+	
 	for (k = 0; k < 100; k++ )
 	{
 		CMatrix* mtrx = new CMatrix(2048,2048*2);
