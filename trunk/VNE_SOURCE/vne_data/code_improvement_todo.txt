@@ -1,3 +1,20 @@
+Math / Misc To Read for Ethan:
+
+1. Dot product (*)
+
+2. Matrix times Vector operations (*)
+
+3. Momentum & Kinetic Energy
+
+4. Elastic Collisions
+
+5. Derivatives in 3 dimensions ( dx(t)/dx, dy(t)/dt, dz(t)/dt )   (*)
+
+6. Ordinary Differential Equations
+
+7. Cross Products (*)
+
+
 VNE Code Refactoring / Improvement TODO list:
 
 0. Make color an object property instead of current "random green" hack in the display function (DONE)
