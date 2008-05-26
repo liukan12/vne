@@ -14,6 +14,8 @@
 #include "MathUtils.h"
 
 
+
+
 int VNEObject::DrawSelf()
 {
 	int coordSize = this->numFaces * 9;

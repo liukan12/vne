@@ -49,6 +49,16 @@ public:
 	VNEObject( string objName );
 	VNEObject( ); // default constructor (equi-sided tetrahedron ? )
 	~VNEObject( ); // destructor
+	VNEObject(const VNEObject& obj) 
+	{
+		*this=obj;
+	}
+	VNEObject& operator=(const VNEObject& rhs) 
+	{
+		
+		*this=rhs;
+		return *this;
+	}
 	void setTexture(string fileName);
 	void setTexture(VNETexture* newTex);
 	int DrawSelf();

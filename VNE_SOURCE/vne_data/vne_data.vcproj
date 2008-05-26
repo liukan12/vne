@@ -67,18 +67,6 @@
 				Name="ObjectFiles"
 				>
 				<File
-					RelativePath=".\faces1.dat"
-					>
-				</File>
-				<File
-					RelativePath=".\faces2A.dat"
-					>
-				</File>
-				<File
-					RelativePath=".\faces3A.dat"
-					>
-				</File>
-				<File
 					RelativePath=".\faces4.dat"
 					>
 				</File>
@@ -100,18 +88,6 @@
 				</File>
 				<File
 					RelativePath=".\norms6.dat"
-					>
-				</File>
-				<File
-					RelativePath=".\verts1.dat"
-					>
-				</File>
-				<File
-					RelativePath=".\verts2A.dat"
-					>
-				</File>
-				<File
-					RelativePath=".\verts3A.dat"
 					>
 				</File>
 				<File
