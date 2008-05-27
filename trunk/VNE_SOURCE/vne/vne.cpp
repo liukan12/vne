@@ -37,6 +37,8 @@ void mouse(int button, int state, int x, int y)
 void keyboard(unsigned char key, int x, int y)
 {
 	app->KeyboardCallback(key, x, y);
+
+
 }
 
 int main( int argc, char* argv[] )
