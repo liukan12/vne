@@ -32,7 +32,7 @@ CDoubleArray::CDoubleArray(int iLength)
 CDoubleArray::~CDoubleArray()
 {
 	delete [] m_data;
-	delete m_iLength;
+	//delete m_iLength;
 }
 
 int CDoubleArray::Length()

@@ -16,9 +16,12 @@
 
 VNEObject::VNEObject(const VNEObject& obj)
 {
+	CopyObj(obj);
 }
 VNEObject& VNEObject::operator=(const VNEObject& rhs)
 {
+	CopyObj(rhs);
+	return *this;
 }
 void VNEObject::CopyObj(const VNEObject& obj)
 {
@@ -50,31 +53,31 @@ void VNEObject::CopyObj(const VNEObject& obj)
 }
 VNEObject::~VNEObject()
 {
-	delete CurTriVert
-	delete RefTriVert
-	delete CurTriNorm
-	delete Velocity
-	delete Moment
-	delete GlobalCentCoord 
-	delete Centroid
+	delete CurTriVert;
+	delete RefTriVert;
+	delete CurTriNorm;
+	delete Velocity;
+	delete Moment;
+	delete GlobalCentCoord ;
+	delete Centroid;
 	delete objTexture;
 
-	delete rseed;
-	delete gseed; 
-	delete bseed;
-	delete colorVariance;
-	delete mass;
-	delete numFaces;
-	delete objName;
+	//delete rseed;
+//delete gseed; 
+//delete bseed;
+//delete colorVariance;
+//delete mass;
+//delete numFaces;
+//delete objName;
 
-	delete radSquared;
-	delete elapsedTime;
-	delete angularVelocity;
-	delete dCurrAngle;
+//delete radSquared;
+//delete elapsedTime;
+//delete angularVelocity;
+//delete dCurrAngle;
 
 
-	delete bHasTexture;
-	delete bIsStatic;
+//delete bHasTexture;
+//delete bIsStatic;
 }
 int VNEObject::DrawSelf()
 {

@@ -17,7 +17,7 @@ CMatrix& CMatrix::operator=(const CMatrix& rhs)
 	return *this;
 
 }
-void CMatrix::copyObj(const CMatrix& obj)
+void CMatrix::CopyObj(const CMatrix& obj)
 {
 	m_ppdData = obj.m_ppdData;
 	m_iCols = obj.m_iCols; 

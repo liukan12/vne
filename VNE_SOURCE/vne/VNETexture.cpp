@@ -15,7 +15,7 @@ using namespace std;
 
 VNETexture::~VNETexture()
 {
-	delete tex_2d;
+	
 }
 VNETexture::VNETexture(const VNETexture& obj)
 {
