@@ -27,8 +27,9 @@ VNEObjList::VNEObjList( VNEObject *firstObj )
 
 int VNEObjList::AddObj( VNEObject *newObj )
 {
-	this->length=list.size();
+	
 	this->list.push_back(newObj);
+	this->length=list.size();
 	return 0;
 //int iRet = 0;
 //	
@@ -47,6 +48,14 @@ int VNEObjList::AddObj( VNEObject *newObj )
 //
 //	return iRet;
 }
+void VNEObjList::DeleteObjAt(int index)
+{
+	if(!list.empty() && index > 0 && index < list.size())
+	{
+	this->list.erase(list.begin()+index);
+	this->length=list.size();
+	}
+}
 VNEObject* VNEObjList::GetObjectAt(int index)
 {
 
@@ -59,15 +68,15 @@ VNEObject* VNEObjList::GetObjectAt(int index)
 		return 0;
 	}
 
-	
-	/*if(index<0||index >this->length)
+	/*
+	if(index<0||index >this->length)
 	{
 		cout<<"you ass, "<<index<<" is an invalid index!\n";
 		return 0;
 
 
-	}
-	*/
+	}*/
+	
 	//	
 	//ObjNode* tempNode = this->firstNode;
 	//int counter=0;

@@ -30,6 +30,7 @@ private:
 	vector<VNEObject*> list;
 	
 public:
+	void DeleteObjAt(int index);
 	ObjNode* firstNode;
 	ObjNode* lastNode;
 	VNEObjList( );
