@@ -12,6 +12,7 @@ private:
 	VNEObject* DemoObj;
 	CameraControl* camera;
 	int counter;
+	int iControlObjIdx;
 
 public:
 	VNEApp();

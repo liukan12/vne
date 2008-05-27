@@ -19,7 +19,7 @@ VNEApp::VNEApp()
 	camera = new CameraControl( 0.0, 0.0, world->Getzmax(), world);
 	counter = 0;
 	//cout<<"Grabbing control of first object...\n";
-	DemoObj = this->world->ObjList->GetObjectAt(0);
+	iControlObjIdx = 0;
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
@@ -32,6 +32,7 @@ void VNEApp::IdleCallback()
 // x = 1, y = 1 is the upper left cornder of the window
 void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 {	
+	DemoObj = this->world->ObjList->GetObjectAt(iControlObjIdx);
 	double currSpeed = DemoObj->GetSpeed( );
 	double currSpin = DemoObj->GetAngVel( );
 	if( key == 'w' )
@@ -104,15 +105,11 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 	}
 	{	// control: object focus
 		if( key == '1' )
-			//DemoObj = this->world->ObjList->GetObjectAt(0);
-			this->world->ObjList->DeleteObjAt(1);
-			DemoObj = this->world->ObjList->GetObjectAt(0);
+			iControlObjIdx = 0;
 		if( key == '2' )
-			DemoObj = this->world->ObjList->GetObjectAt(1);
-			if(DemoObj=0) DemoObj = this->world->ObjList->GetObjectAt(0);
+			iControlObjIdx = 1;
 		if( key == '3' )
-			DemoObj = this->world->ObjList->GetObjectAt(2);
-			if(DemoObj=0) DemoObj = this->world->ObjList->GetObjectAt(0);
+			iControlObjIdx = 2;
 	}
 
 }
