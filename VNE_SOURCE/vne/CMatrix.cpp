@@ -6,6 +6,23 @@ using namespace std;
 
 #define min(a,b) (a < b) ? a : b
 
+CMatrix::CMatrix(const CMatrix& obj)
+{
+	CopyObj(obj);
+	
+}
+CMatrix& CMatrix::operator=(const CMatrix& rhs)
+{
+	CopyObj(rhs);
+	return *this;
+
+}
+void CMatrix::copyObj(const CMatrix& obj)
+{
+	m_ppdData = obj.m_ppdData;
+	m_iCols = obj.m_iCols; 
+	m_iRows	= obj.m_iCols;
+}
 CMatrix::CMatrix(int iRows, int iCols)
 {
 	m_ppdData = new double*[iRows];

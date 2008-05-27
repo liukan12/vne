@@ -1,6 +1,23 @@
 #include "CArray.h"
 #include "Math.h"
 
+void CDoubleArray::CopyObj(const CDoubleArray& obj)
+{
+	//delete this->m_data;
+	m_iLength=obj.m_iLength;
+	m_data=obj.m_data;
+	
+}
+CDoubleArray::CDoubleArray(const CDoubleArray& obj) 
+{
+	CopyObj(obj);
+}
+CDoubleArray& CDoubleArray::operator=(const CDoubleArray& rhs) 
+{
+	CopyObj(rhs);
+	return *this;
+}
+
 
 CDoubleArray::CDoubleArray(int iLength)
 {
@@ -10,15 +27,12 @@ CDoubleArray::CDoubleArray(int iLength)
 	  for( i = 0; i < iLength; i++ )
 		  m_data[i] = 0.0;
 }
-CDoubleArray::CDoubleArray( const CDoubleArray& cda )
-{
-	delete this->m_data;
-	m_data = cda.m_data;
-}
+
 
 CDoubleArray::~CDoubleArray()
 {
 	delete [] m_data;
+	delete m_iLength;
 }
 
 int CDoubleArray::Length()
