@@ -27,7 +27,7 @@ class VNEObjList
 {
 private:
 	int length;
-	vector<class VNEObject> list;
+	//vector<class VNEObject> list;
 	
 public:
 	ObjNode* firstNode;
