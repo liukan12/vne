@@ -19,6 +19,11 @@ private:
 	GLuint tex_2d;
 
 public:
+	~VNETexture();
+	VNETexture(const VNETexture& obj);
+	VNETexture& operator=(const VNETexture& rhs);
+	void CopyObj(const VNETexture& obj);
+
 	VNETexture(string fileName);
 	void bindTexture();
 	

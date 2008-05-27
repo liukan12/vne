@@ -9,9 +9,13 @@ class CVector
 protected:
 	CDoubleArray* m_cdaData;
 public:
+	CVector(const CVector& obj);
+	CVector& operator=(const CVector& rhs);
+	void CopyObj(const CVector& obj);
+
 	CVector( int iLength );
 	CVector();
-	CVector( const CVector& cv );
+	
 	CVector( double dx, double dy, double dz );
 	~CVector();
 	bool GetValueAt(int iIndex, double* output);

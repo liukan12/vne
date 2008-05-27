@@ -9,6 +9,10 @@ private:
 	int m_iCols;
 	int m_iRows;
 public:
+	CMatrix(const CMatrix& obj);
+	CMatrix& operator=(const CMatrix& rhs);
+	void CopyObj(const CMatrix& obj);
+
 	CMatrix(int iRows, int iCols);
 	CMatrix( CMatrix* other );
 	~CMatrix();

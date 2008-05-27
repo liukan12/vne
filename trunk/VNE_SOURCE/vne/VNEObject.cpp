@@ -14,8 +14,68 @@
 #include "MathUtils.h"
 
 
+VNEObject::VNEObject(const VNEObject& obj)
+{
+}
+VNEObject& VNEObject::operator=(const VNEObject& rhs)
+{
+}
+void VNEObject::CopyObj(const VNEObject& obj)
+{
+	CurTriVert = obj.CurTriVert;
+	RefTriVert = obj.RefTriVert;
+	CurTriNorm = obj.CurTriNorm;
+	Velocity = obj.Velocity;
+	Moment = obj.Moment;
+	GlobalCentCoord = obj.GlobalCentCoord;
+	Centroid = obj.Centroid;
+	objTexture = obj.objTexture;
+
+	rseed = obj.rseed;
+	gseed = obj.gseed; 
+	bseed = obj.bseed;
+	colorVariance = obj.colorVariance;
+	mass =obj.colorVariance;
+	numFaces = obj.numFaces;
+	objName =obj.objName;
+
+	radSquared = obj.radSquared;
+	elapsedTime = obj.elapsedTime;
+	angularVelocity = obj.angularVelocity;
+	dCurrAngle = obj.dCurrAngle;
 
 
+	bHasTexture = obj.bHasTexture;
+	bIsStatic = obj.bIsStatic;
+}
+VNEObject::~VNEObject()
+{
+	delete CurTriVert
+	delete RefTriVert
+	delete CurTriNorm
+	delete Velocity
+	delete Moment
+	delete GlobalCentCoord 
+	delete Centroid
+	delete objTexture;
+
+	delete rseed;
+	delete gseed; 
+	delete bseed;
+	delete colorVariance;
+	delete mass;
+	delete numFaces;
+	delete objName;
+
+	delete radSquared;
+	delete elapsedTime;
+	delete angularVelocity;
+	delete dCurrAngle;
+
+
+	delete bHasTexture;
+	delete bIsStatic;
+}
 int VNEObject::DrawSelf()
 {
 	int coordSize = this->numFaces * 9;

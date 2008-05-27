@@ -5,6 +5,19 @@
 #include <stdlib.h>
 using std::cout;
 
+CVector::CVector(const CVector& obj)
+{
+	CopyObj(obj);
+}
+CVector& CVector::operator=(const CVector& rhs)
+{
+	CopyObj(rhs);
+	return *this;
+}
+void CVector::CopyObj(const CVector& obj)
+{
+	m_cdaData = obj.m_cdaData;
+}
 CVector::CVector(int iLength)
 {
 	m_cdaData = new CDoubleArray(iLength);

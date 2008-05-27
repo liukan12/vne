@@ -13,8 +13,23 @@
 
 using namespace std;
 
-
-
+VNETexture::~VNETexture()
+{
+	delete tex_2d;
+}
+VNETexture::VNETexture(const VNETexture& obj)
+{
+	CopyObj(obj);
+}
+VNETexture& VNETexture::operator=(const VNETexture& rhs)
+{
+	CopyObj(rhs);
+	return *this;
+}
+void VNETexture::CopyObj(const VNETexture& obj)
+{
+	tex_2d = obj.tex_2d;
+}
 VNETexture::VNETexture(string fileName)
 {
 	tex_2d = SOIL_load_OGL_texture
