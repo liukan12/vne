@@ -10,10 +10,9 @@ using namespace std;
 
 VNEObjList::VNEObjList( VNEObject *firstObj )
 {
-	
-	
-	//this->list.AddAdd(firstObj);
-	 this->firstNode = new ObjNode();
+	this->list.push_back(firstObj);
+	this->length=list.size();
+	 /*this->firstNode = new ObjNode();
 	this->firstNode->bIsFirst = true;
 	this->firstNode->bIsLast = true;
 	this->firstNode->curObj = firstObj;
@@ -21,81 +20,81 @@ VNEObjList::VNEObjList( VNEObject *firstObj )
 	
 	this->length=1;
 	this->lastNode = this->firstNode;
-	this->lastNode->myIndex=0;
+	this->lastNode->myIndex=0;*/
 
 
 }
 
 int VNEObjList::AddObj( VNEObject *newObj )
 {
-
-	//this->list.Add(newObj);
-	//return 0;
-int iRet = 0;
-	
-	ObjNode* newNode = new ObjNode();
-	newNode->curObj = newObj;
-	this->lastNode->nextNode = newNode;
-
-	ObjNode* tempNode = this->lastNode;
-	
-	this->lastNode->bIsLast = false;
-	this->lastNode = newNode;
-	this->lastNode->bIsLast = true;
-	this->lastNode->prevNode = tempNode;
-	this->lastNode->myIndex=this->Length();
-	this->length++;
-
-	return iRet;
+	this->length=list.size();
+	this->list.push_back(newObj);
+	return 0;
+//int iRet = 0;
+//	
+//	ObjNode* newNode = new ObjNode();
+//	newNode->curObj = newObj;
+//	this->lastNode->nextNode = newNode;
+//
+//	ObjNode* tempNode = this->lastNode;
+//	
+//	this->lastNode->bIsLast = false;
+//	this->lastNode = newNode;
+//	this->lastNode->bIsLast = true;
+//	this->lastNode->prevNode = tempNode;
+//	this->lastNode->myIndex=this->Length();
+//	this->length++;
+//
+//	return iRet;
 }
 VNEObject* VNEObjList::GetObjectAt(int index)
 {
 
-	/*if(index < this->list.size() ){
-		return &this->list[index];
+	if(index < this->list.size() ){
+		return this->list[index];
 	}
 	else
 	{
 		cout<<"you ass, "<<index<<" is an invalid index!\n";
 		return 0;
-	}*/
+	}
 
 	
-	if(index<0||index >this->length)
+	/*if(index<0||index >this->length)
 	{
 		cout<<"you ass, "<<index<<" is an invalid index!\n";
 		return 0;
 
 
 	}
-	
-		
-	ObjNode* tempNode = this->firstNode;
-	int counter=0;
-	while(counter<this->length)
-	{
-		if(tempNode->myIndex==index)
-			return tempNode->curObj;
+	*/
+	//	
+	//ObjNode* tempNode = this->firstNode;
+	//int counter=0;
+	//while(counter<this->length)
+	//{
+	//	if(tempNode->myIndex==index)
+	//		return tempNode->curObj;
 
-		
-		counter++;
-		if(!(tempNode->bIsLast))
-		{
-			tempNode = tempNode->nextNode;
-		}
-	}	
-	cout<<"our fault, "<<index<<" is an invalid index!\n";
-		return 0;
+	//	
+	//	counter++;
+	//	if(!(tempNode->bIsLast))
+	//	{
+	//		tempNode = tempNode->nextNode;
+	//	}
+	//}	
+	//cout<<"our fault, "<<index<<" is an invalid index!\n";
+	//	return 0;
 }
 
 
 void VNEObjList::AccelAll( WorldForce* force )
 {
-	//for(unsigned int i=0; i<this->list.size();i++)
-	//{
-	//	force->AccelerateObject(this->list[i]);
-	//}
-	bool bContinue = true;
+	for(unsigned int i=0; i<this->list.size();i++)
+	{
+		force->AccelerateObject(this->list[i]);
+	}
+/*	bool bContinue = true;
 	ObjNode* tempNode = this->firstNode;
 
 	while( bContinue )
@@ -106,68 +105,68 @@ void VNEObjList::AccelAll( WorldForce* force )
 			bContinue = false;
 		else
 			tempNode = tempNode->nextNode;
-	}	
+	}*/	
 }
 
 int VNEObjList::TimeStepAll( )
 {
-	/*for(unsigned int i=0; i<this->list.size();i++)
+	for(unsigned int i=0; i<this->list.size();i++)
 	{
-		this->list[i].IncrementTime();
+		this->list[i]->IncrementTime();
 	}
-	return 0;*/
-int iRet = 0;
-
-	bool bContinue = true;
-	ObjNode* tempNode = this->firstNode;
-
-	while( bContinue )
-	{
-		tempNode->curObj->IncrementTime();
-			
-		if( tempNode->bIsLast )
-			bContinue = false;
-		else
-			tempNode = tempNode->nextNode;
-	}
-
-	return iRet;
+	return 0;
+//int iRet = 0;
+//
+//	bool bContinue = true;
+//	ObjNode* tempNode = this->firstNode;
+//
+//	while( bContinue )
+//	{
+//		tempNode->curObj->IncrementTime();
+//			
+//		if( tempNode->bIsLast )
+//			bContinue = false;
+//		else
+//			tempNode = tempNode->nextNode;
+//	}
+//
+//	return iRet;
 }
 
 int VNEObjList::DrawAll( )
 {
-	/*for(unsigned int i=0; i < this->list.size();i++)
+	for(unsigned int i=0; i < this->list.size();i++)
 	{
-		this->list[i].DrawSelf();
+		this->list[i]->DrawSelf();
 	}
-	return 0;*/
+	return 0;
 	
-int iRet = 0;
-
-	ObjNode* tempNode = this->firstNode;
-	bool bContinue = true;
-	
-	while( bContinue )
-	{
-		iRet = tempNode->curObj->DrawSelf();
-		if( iRet != 0 )
-			return iRet;
-		if( tempNode->bIsLast )
-			bContinue = false;
-		else
-			tempNode = tempNode->nextNode;
-	}
-
-	return iRet;
+//int iRet = 0;
+//
+//	ObjNode* tempNode = this->firstNode;
+//	bool bContinue = true;
+//	
+//	while( bContinue )
+//	{
+//		iRet = tempNode->curObj->DrawSelf();
+//		if( iRet != 0 )
+//			return iRet;
+//		if( tempNode->bIsLast )
+//			bContinue = false;
+//		else
+//			tempNode = tempNode->nextNode;
+//	}
+//
+//	return iRet;
 }
 
 void VNEObjList::PrintAll()
 {
-	//for(unsigned int i=0; i < this->list.size();i++)
-	//{
-	//	this->list[i].PrintSelf();
-	//}
-	ObjNode* tempNode = this->firstNode;
+	for(unsigned int i=0; i < this->list.size();i++)
+	{
+		this->list[i]->PrintSelf();
+	}
+	/*ObjNode* tempNode = this->firstNode;
 	bool bContinue = true;
 	
 	while( bContinue )
@@ -177,6 +176,6 @@ void VNEObjList::PrintAll()
 			bContinue = false;
 		else
 			tempNode = tempNode->nextNode;
-	}
+	}*/
 
 }

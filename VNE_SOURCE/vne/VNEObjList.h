@@ -1,6 +1,6 @@
 #ifndef VNEOBJLIST_H
 #define VNEOBJLIST_H
-#include <cliext/vector>
+#include <vector>
 
 
 
@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "WorldForce.h"
 
-using namespace cliext;
+//using namespace cliext;
 using namespace std; // note for the weary: this is required so that "string" is recognized from std::string
 
 struct ObjNode
@@ -27,7 +27,7 @@ class VNEObjList
 {
 private:
 	int length;
-	//vector<class VNEObject> list;
+	vector<VNEObject*> list;
 	
 public:
 	ObjNode* firstNode;

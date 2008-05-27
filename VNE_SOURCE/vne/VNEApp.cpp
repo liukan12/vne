@@ -19,7 +19,7 @@ VNEApp::VNEApp()
 	camera = new CameraControl( 0.0, 0.0, world->Getzmax(), world);
 	counter = 0;
 	//cout<<"Grabbing control of first object...\n";
-	DemoObj = this->world->ObjList->firstNode->curObj;
+	//DemoObj = this->world->ObjList->firstNode->curObj;
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
