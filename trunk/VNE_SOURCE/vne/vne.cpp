@@ -10,9 +10,17 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include "VNEApp.h"
+#include "GameDemoApp.h"
 
 //using std:://cout;
+
+#define ETHAN_GAME
+#ifndef ETHAN_GAME
 VNEApp* app;
+#else
+GameDemoApp* app;
+#endif
+
 
 void display(void)
 {
@@ -79,7 +87,7 @@ int main( int argc, char* argv[] )
 	glutCreateWindow(argv[0]);
 
 	//cout<<"creating app...\n";
-	app = new VNEApp();
+	app = new GameDemoApp();
 	////cout<<"app is made...\n";
 	glutDisplayFunc( display );
 	glutReshapeFunc(reshape);
