@@ -27,7 +27,7 @@ void processHits(GLint hits, GLuint buffer[] )
 		ptr++;
 		printf(" z2 is %g\n", (float) *ptr/0x7fffffff);
 		ptr++;
-		printf("	the name is ");
+		printf("	CLICK EVENT AT OBJECT NUMBER: ");
 		for( j = 0; j < names; j++ )
 		{
 			printf("%d ", *ptr);
@@ -149,8 +149,7 @@ void VNEApp::MouseCallback( int button, int state, int x, int y)
 
 	if( button != GLUT_LEFT_BUTTON || state != GLUT_DOWN )
 		return;
-	return;
-	glPopMatrix();
+	
 	glGetIntegerv(GL_VIEWPORT, viewport );
 	glSelectBuffer(BUFSIZE, selectBuf );
 	glRenderMode(GL_SELECT);
@@ -166,12 +165,14 @@ void VNEApp::MouseCallback( int button, int state, int x, int y)
 	this->camera->GetWH( &w, &h );
 	gluPerspective(60.0, (GLfloat) w / (GLfloat) h, 1.0, 20.0);
 	
+	glMatrixMode(GL_MODELVIEW);
 	this->world->ObjList->DoSelection();
 	glPopMatrix();
 	glFlush();
 
 	hits = glRenderMode(GL_RENDER);
 	processHits(hits, selectBuf );
+	this->camera->ResizeCallbackHandler();
 	
 }
 
