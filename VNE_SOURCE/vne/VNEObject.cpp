@@ -423,6 +423,88 @@ double VNEObject::GetSpeed( )
 	this->Velocity->GetValueAt( &vx, &vy, &vz );
 	return sqrt(vx*vx + vy*vy + vz*vz );
 }
+//
+//int VNEObject::SelectQuery(int iListIdx)
+//{
+//	int coordSize = this->numFaces * 9;
+//	int iRet = 0;
+//	double* verts = new double[coordSize];
+//	double* norms = new double[coordSize];
+//
+//	
+//
+//	int i;
+//	for( i = 0; i < coordSize; i+= 3 )
+//	{
+//		verts[i]   = this->CurTriVert->GetValueAt(0,i/3);
+//		verts[i+1] = this->CurTriVert->GetValueAt(1,i/3);
+//		verts[i+2] = this->CurTriVert->GetValueAt(2,i/3);
+//		norms[i]   = this->CurTriNorm->GetValueAt(0,i/3);
+//		norms[i+1] = this->CurTriNorm->GetValueAt(1,i/3);
+//		norms[i+2] = this->CurTriNorm->GetValueAt(2,i/3);
+//	}
+//	glPushMatrix();
+//	double mx, my, mz;
+//	double cx, cy, cz;
+//	this->Centroid->GetValueAt( &cx, &cy, &cz );
+//	this->Moment->GetValueAt( &mx, &my, &mz );
+//	glTranslatef( cx, cy, cz );
+//	glRotatef( angularVelocity * 0.1/mass + dCurrAngle, mx, my, mz );
+//	dCurrAngle = angularVelocity * 0.1/mass + dCurrAngle;
+//	glTranslatef( -cx, -cy, -cz );
+//	if(this->bHasTexture)
+//	{	this->objTexture->bindTexture();
+//		for( i = 0; i < numFaces; i++ )
+//		{
+//	
+//			double offset = this->colorVariance*( i / double(numFaces) - 0.5 );
+//			glColor3f( rseed+offset, gseed+offset,bseed+offset);
+//			glBegin(GL_TRIANGLES);
+//
+//				glLoadName(i+1);
+//
+//				glNormal3d(norms[i*9+0+0], norms[i*9+0+1], norms[i*9+0+2]);
+//				glTexCoord2f(0.0, 0.0);
+//				glVertex3d(verts[i*9+0+0], verts[i*9+0+1], verts[i*9+0+2]);
+//				
+//				glNormal3d(norms[i*9+3+0], norms[i*9+3+1], norms[i*9+3+2]);
+//				glTexCoord2f(1.0, 1.0);
+//				glVertex3d(verts[i*9+3+0], verts[i*9+3+1], verts[i*9+3+2]);
+//				
+//				glNormal3d(norms[i*9+6+0], norms[i*9+6+1], norms[i*9+6+2]);
+//				glTexCoord2f(0.0, 1.0);
+//				glVertex3d(verts[i*9+6+0], verts[i*9+6+1], verts[i*9+6+2]); 
+//			glEnd();
+//		}
+//		glDisable(GL_TEXTURE_2D);
+//
+//	}
+//	else
+//	{
+//		for( i = 0; i < numFaces; i++ )
+//		{
+//			glLoadName(i+1);
+//
+//			double offset = this->colorVariance*( i / double(numFaces) - 0.5 );
+//			glColor3f( rseed+offset, gseed+offset,bseed+offset);
+//			glBegin(GL_TRIANGLES);
+//				glNormal3d(norms[i*9+0+0], norms[i*9+0+1], norms[i*9+0+2]);
+//				glVertex3d(verts[i*9+0+0], verts[i*9+0+1], verts[i*9+0+2]);
+//				glNormal3d(norms[i*9+3+0], norms[i*9+3+1], norms[i*9+3+2]);
+//				glVertex3d(verts[i*9+3+0], verts[i*9+3+1], verts[i*9+3+2]);
+//				glNormal3d(norms[i*9+6+0], norms[i*9+6+1], norms[i*9+6+2]);
+//				glVertex3d(verts[i*9+6+0], verts[i*9+6+1], verts[i*9+6+2]); 
+//			glEnd();
+//		}
+//	}
+//	glPopMatrix();
+//	glFinish();
+//	delete [] verts;
+//	delete [] norms;
+//
+//	return iRet;
+//
+//}
 
 VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts, string fileNameNorms )
 {

@@ -82,6 +82,8 @@ void CameraControl::UpdateAttachedCamera()
 
 		this->ResizeCallbackHandler(this->iWindowW, this->iWindowH);
 	}
+	else;
+		//this->ResizeCallbackHandler(this->iWindowW, this->iWindowH);
 }
 
 void CameraControl::TranslateTo( double x, double y, double z )
@@ -110,6 +112,11 @@ void CameraControl::PointAt( double x, double y, double z )
 
 void CameraControl::ResizeCallbackHandler(int w, int h)
 {
+	if( w == -1 )
+	{
+		w = iWindowW;
+		h = iWindowH;
+	}
 	iWindowW = w;
 	iWindowH = h;
 	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
@@ -119,4 +126,17 @@ void CameraControl::ResizeCallbackHandler(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(eyex, eyey, eyez, atx, aty, atz, 0.0, 1.0, 0.0);
+}
+
+void CameraControl::ModelView()
+{
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(eyex, eyey, eyez, atx, aty, atz, 0.0, 1.0, 0.0);
+}
+
+void CameraControl::GetWH( int* w, int* h )
+{
+	*w = iWindowW;
+	*h = iWindowH;
 }

@@ -11,6 +11,32 @@
 #include "VNEObject.h"
 #include "CameraControl.h"
 
+void processHits(GLint hits, GLuint buffer[] )
+{
+	unsigned int i,j;
+	GLuint names, *ptr;
+
+	printf("hits = %d\n", hits );
+	ptr = (GLuint* ) buffer;
+	for (i = 0; i < hits; i++ )
+	{
+		names = *ptr;
+		printf(" number of names for hit = %d\n", names);
+		ptr++;
+		printf(" z1 is %g;", (float) *ptr/0x7fffffff);
+		ptr++;
+		printf(" z2 is %g\n", (float) *ptr/0x7fffffff);
+		ptr++;
+		printf("	the name is ");
+		for( j = 0; j < names; j++ )
+		{
+			printf("%d ", *ptr);
+			ptr++;
+		}
+		printf("\n");
+	}
+}
+
 VNEApp::VNEApp()
 {
 	//cout<<"Making world...\n";
@@ -114,9 +140,39 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 
 }
 
-void VNEApp::MouseCallback()
+#define BUFSIZE 512
+void VNEApp::MouseCallback( int button, int state, int x, int y)
 {
+	GLuint selectBuf[BUFSIZE];
+	GLint hits;
+	GLint viewport[4];
 
+	if( button != GLUT_LEFT_BUTTON || state != GLUT_DOWN )
+		return;
+	return;
+	glPopMatrix();
+	glGetIntegerv(GL_VIEWPORT, viewport );
+	glSelectBuffer(BUFSIZE, selectBuf );
+	glRenderMode(GL_SELECT);
+	glInitNames();
+	glPushName(0);
+	
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluPickMatrix( (GLdouble) x, (GLdouble) (viewport[3]-y), 5.0, 5.0, viewport );
+
+	int w,h;
+	this->camera->GetWH( &w, &h );
+	gluPerspective(60.0, (GLfloat) w / (GLfloat) h, 1.0, 20.0);
+	
+	this->world->ObjList->DoSelection();
+	glPopMatrix();
+	glFlush();
+
+	hits = glRenderMode(GL_RENDER);
+	processHits(hits, selectBuf );
+	
 }
 
 void VNEApp::DisplayCallback()

@@ -35,6 +35,7 @@ public:
 	ObjNode* lastNode;
 	VNEObjList( );
 	VNEObjList( VNEObject* firstObj );
+	int DoSelection(); // return idx of selected object
 	int ClearAll();
 	int DrawAll();
 	int TimeStepAll();
