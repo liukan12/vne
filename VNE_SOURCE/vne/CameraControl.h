@@ -9,7 +9,7 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include <math.h>
-#include "VNEApp.h"
+//#include "VNEApp.h"
 #include "VNEWorld.h"
 #include "VNEObject.h"
 #include "CameraControl.h"
