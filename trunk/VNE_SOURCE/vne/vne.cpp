@@ -14,7 +14,7 @@
 
 //using std:://cout;
 
-#define ETHAN_GAME
+#define ETHAN_GAME_NO
 #ifndef ETHAN_GAME
 VNEApp* app;
 #else
@@ -39,7 +39,7 @@ void idle(void)
 
 void mouse(int button, int state, int x, int y)
 {
-	app->MouseCallback();
+	app->MouseCallback(button, state, x, y);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -86,8 +86,18 @@ int main( int argc, char* argv[] )
 	glutInitWindowPosition(100,100);
 	glutCreateWindow(argv[0]);
 
+	cout<<"\n Your System Properties: \n";
+	cout<<"OpenGL version: "<<glGetString( GL_VERSION )<<"\n";
+	cout<<"Vendor: "<<glGetString( GL_VENDOR )<<"\n";
+	//cout<<"Extensions: "<<glGetString( GL_EXTENSIONS )<<"\n";
+	cout<<"Renderer: "<<glGetString( GL_RENDERER )<<"\n";
+
 	//cout<<"creating app...\n";
+#ifdef ETHAN_GAME
 	app = new GameDemoApp();
+#else
+	app = new VNEApp();
+#endif
 	////cout<<"app is made...\n";
 	glutDisplayFunc( display );
 	glutReshapeFunc(reshape);

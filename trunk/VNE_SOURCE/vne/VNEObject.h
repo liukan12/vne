@@ -61,6 +61,7 @@ public:
 	int DrawSelf();
 	void PrintSelf();
 	void IncrementTime( );
+	//int SelectQuery(int iListIdx);
 	CVector* GetCentroid();
 	double GetMass( ) { return mass; }
 	double GetSpeed( );

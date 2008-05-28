@@ -25,6 +25,19 @@ VNEObjList::VNEObjList( VNEObject *firstObj )
 
 }
 
+int VNEObjList::DoSelection() // return idx of selected object
+{
+	int iObjIdx = 0; // which obj has most hits?
+
+	for(unsigned int i=0; i < this->list.size();i++)
+	{
+		glLoadName(i+1);
+		this->list[i]->DrawSelf();
+	}
+	return iObjIdx;
+
+}
+
 int VNEObjList::AddObj( VNEObject *newObj )
 {
 	

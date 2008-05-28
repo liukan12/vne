@@ -30,8 +30,10 @@ public:
 	void TranslateBy( double dx, double dy, double dz );
 	void TranslateTo( double x, double y, double z );
 	void PointAt( double x, double y, double z );
-	void ResizeCallbackHandler( int w, int h );
+	void ResizeCallbackHandler( int w = -1, int h = -1 );
 	void UpdateAttachedCamera();
+	void GetWH( int* w, int* h );
+	void ModelView();
 	
 private:
 	VNEObject* targetObj; // object to view from

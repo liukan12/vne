@@ -19,7 +19,7 @@ public:
 	~VNEApp();
 
 	void KeyboardCallback(unsigned char key, int x, int y);
-	void MouseCallback();
+	void MouseCallback(int button, int state, int x, int y);
 	void IdleCallback();
 	void DisplayCallback();
 	void ResizeCallback(int w, int h);
