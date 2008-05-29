@@ -136,6 +136,8 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 			iControlObjIdx = 1;
 		if( key == '3' )
 			iControlObjIdx = 2;
+		if( key == '4' )
+			iControlObjIdx = 3;
 	}
 
 }
