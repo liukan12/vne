@@ -67,6 +67,14 @@
 				Name="ObjectFiles"
 				>
 				<File
+					RelativePath=".\brainfaces.dat"
+					>
+				</File>
+				<File
+					RelativePath=".\brainverts.dat"
+					>
+				</File>
+				<File
 					RelativePath=".\faces4.dat"
 					>
 				</File>
