@@ -5,6 +5,7 @@ Key Commands:
 1	Control Object 1
 2	Control Object 2
 3	Control Object 3
+4	Control Object 4
 
 w	Speed up
 s	Slow Down
@@ -44,6 +45,20 @@ R	(shift-r) reset camera position (z = 5, pointed down at origin)
 
 Note: you can change the files in the \data directory to be some other images,
 just keep the names the same... later you'll be able to set file names.
+
+------------------------------------------------------------------------------------------------
+Changes 28 May 2008:
+0. Collision detection / handling with elastic conservation of momentum and energy
+
+1. Textures are added (now hardcoded to one of the images in the data folder)
+
+2. It detects when an object is clicked, but just prints in console which one was clicked on; no actions yet. Any suggestions for cool actions upon clicks?
+
+3. STL Vectors are now being used instead of hand-made linked lists.
+
+4. Collisions are detected but the user doesn't know at the moment...
+
+5. Added a cool brain object 
 
 -----------------------------------------------------------------------------------------------
 Changes 25 May 2008:
