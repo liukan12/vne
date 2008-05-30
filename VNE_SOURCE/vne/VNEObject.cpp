@@ -13,6 +13,7 @@
 #include "IOUtils.h"
 #include "MathUtils.h"
 
+#define MANUAL_ROTATION // do I use rotation matrix code and keep track of precise vertex locations?
 
 VNEObject::VNEObject(const VNEObject& obj)
 {
@@ -102,8 +103,11 @@ int VNEObject::DrawSelf()
 	this->Centroid->GetValueAt( &cx, &cy, &cz );
 	this->Moment->GetValueAt( &mx, &my, &mz );
 	glTranslatef( cx, cy, cz );
+
+#ifndef MANUAL_ROTATION
 	glRotatef( angularVelocity * 0.1/mass + dCurrAngle, mx, my, mz );
 	dCurrAngle = angularVelocity * 0.1/mass + dCurrAngle;
+#endif
 	glTranslatef( -cx, -cy, -cz );
 	if(this->bHasTexture)
 	{	this->objTexture->bindTexture();
@@ -197,7 +201,11 @@ void VNEObject::IncrementTime()
 
 	this->TranslateBy( vx*dt/mass, vy*dt/mass, vz*dt/mass );
 	// CHANGE on MAY 23: use OpenGL Rotation call instead of this
-	//this->RotateLocal( angularVelocity * dt/mass );	
+#ifdef MANUAL_ROTATION
+	// this still needs to happen potentially if we want highly accurate collision handling
+	// with angular momentum
+	this->RotateLocal( angularVelocity * dt/mass );	
+#endif
 
 }
 
@@ -245,7 +253,7 @@ void VNEObject::IncrementAngVel( double dx )
 
 int VNEObject::RotateLocal( double dangle )
 {
-	cout<<"WARNING: RotateLocal() IS ONLY FOR OCCASIONAL VERTEX LOCATION CHECKS, NOT GENERAL DRAWING!!!\n";
+	//cout<<"WARNING: RotateLocal() IS ONLY FOR OCCASIONAL VERTEX LOCATION CHECKS, NOT GENERAL DRAWING!!!\n";
 	// rotate by <dangle> about the vector from the centroid specified by the angular velocity
 	// (rotating "about x by this, about y by that" does not make sense
 	// because rotation transformations do not commute, except special cases (like 90 degrees) )
