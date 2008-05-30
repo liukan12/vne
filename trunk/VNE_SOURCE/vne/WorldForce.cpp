@@ -47,6 +47,9 @@ void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 			sz = dWallReflectance*abs(sz);
 		
 		obj->SetVelocityProfile( sx, sy, sz, 0 );
+
+		// TODO: how does impact affect the spin of the object??
+
 	}
 		// matrix with complex eigenvalues, negative real part -> spiral stable point at origin
 		//(x') =  [-.01    -1] [x]

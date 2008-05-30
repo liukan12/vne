@@ -63,7 +63,7 @@ VNEWorld::VNEWorld()
 	VNEObject* Obj1 = new VNEObject( "object 1", faces, verts, norms);
 	VNEObject* Obj2 = new VNEObject( "object 2", faces2, verts2, norms2);
 	VNEObject* Obj3 = new VNEObject( "object 3", faces3, verts3, norms3);
-	VNEObject* Obj4 = new VNEObject( "object 4", faces4, verts4, norms4); // no norms for the brain
+	//VNEObject* Obj4 = new VNEObject( "object 4", faces4, verts4, norms4); // no norms for the brain
 #ifdef _DEBUG
 	Obj1->setTexture("..\\vne_data\\obj1.png");
 	Obj2->setTexture("..\\vne_data\\obj2.png");
@@ -77,20 +77,20 @@ VNEWorld::VNEWorld()
 	Obj1->SetVelocityProfile( 0.5, 0.5, 0.0, 0 );
 	Obj2->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
 	Obj3->SetVelocityProfile( 0.5, -0.5, -0.5, 0 );
-	Obj4->SetVelocityProfile( -0.5, -0.5, -0.5, 0 );
+	//Obj4->SetVelocityProfile( -0.5, -0.5, -0.5, 0 );
 	
 	Obj1->SetColorSeed(0.5,0.0,1.0);
 	Obj2->SetColorSeed(1.0,0.0,0.5);
 	Obj3->SetColorSeed(0.5,0.5,0.0);
-	Obj4->SetColorSeed(0.5,0.5,0.5);
+	//Obj4->SetColorSeed(0.5,0.5,0.5);
 
 	Obj1->TranslateTo(2.0,2.0,2.0);
 	Obj2->TranslateTo(-2.0,-2.0,-2.0);
-	Obj3->TranslateTo(10.0,10.0,10.0);
+	Obj3->TranslateTo(1.0,1.0,-2.0);
 	this->ObjList = new VNEObjList( Obj1 );
 	this->ObjList->AddObj(Obj2);
 	this->ObjList->AddObj(Obj3);
-	this->ObjList->AddObj(Obj4);
+	//this->ObjList->AddObj(Obj4);
 
 	this->ObjList->PrintAll();
 
@@ -186,6 +186,11 @@ void VNEWorld::Collide(VNEObject* obj1, VNEObject* obj2)
 	obj2->GetVelocity()->GetValueAt( &vx2, &vy2, &vz2 );
 	obj1->GetCentroid(&cx1, &cy1, &cz1 );
 	obj2->GetCentroid(&cx2, &cy2, &cz2 );
+
+
+	// TODO: how does impact affect the spin of the object??
+
+
 
 	double scale_n1 = vx1 * (cx2-cx1) + vy1 * (cy2-cy1) + vz1 * (cz2-cz1);
 	double normFac = ( (cx2-cx1)*(cx2-cx1) + (cy2-cy1)*(cy2-cy1) + (cz2-cz1)*(cz2-cz1) );
