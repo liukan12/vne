@@ -19,7 +19,8 @@ private:
 	// mesh properties
 	valarray<double> CurTriVert; // current vertices of triangle faces w.r.t. local coordinate system
 	valarray<double> CurTriNorm; // normals at vertices
-	
+	valarray<int>	 CurTriIdx; // indices into CurTriVert and CurTriNorm
+
 	// physics properties
 	valarray<double> Velocity;   // x,y,z instantaneous velocity
 	valarray<double> AngVel;   // x,y,z instantaneous angular velocity
@@ -33,6 +34,7 @@ private:
 	double colorVariance;
 	double mass;
 	int numFaces;
+	int numVerts;
 	string objName;
 	
 	double radSquared;
@@ -60,6 +62,7 @@ public:
 	void IncrementTime( );
 	//int SelectQuery(int iListIdx);
 	
+	int GetNumVerts( ) { return numVerts; }
 	double GetMass( ) { return mass; }
 	double GetSpeed( );
 	double GetAngVelMag( ) { return rotSpeed; }
@@ -67,7 +70,7 @@ public:
 	double GetRadSquared(){return radSquared;}
 	int GetNumFaces(){ return numFaces; }
 	void GetCentroid(double *dx, double* dy, double* dz);
-	valarray<double> GetCentroid();
+	valarray<double>* GetCentroid();
 	int SpinAboutCentroid();
 	void SetColorSeed( double r, double g, double b );
 	void GetColorSeed( double* r, double* g, double* b);
@@ -84,7 +87,7 @@ public:
 	int TranslateBy( double dx, double dy, double dz );
 	void IncrementAngVel( double dx );
 	int RotateLocal( double dangle  );
-	valarray<double> GetVelocity() { return Velocity; }
+	valarray<double>* GetVelocity() { return &Velocity; }
 	int IncrementVelocity( double dx, double dy, double dz );
 	// rotate locally (in-place about object centroid)
 	int RotateAbout( double xt, double xc, double yt, double yc,

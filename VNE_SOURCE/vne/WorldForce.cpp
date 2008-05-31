@@ -32,16 +32,15 @@ void ConvectionForce( valarray<double> &position, valarray<double> &force )
 
 void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 {
-	double fx, fy, fz;
 	double cx, cy, cz;
 	double sx, sy, sz;
 	
-	cx = obj->GetCentroid()[0];
-	cy = obj->GetCentroid()[1];
-	cz = obj->GetCentroid()[2];
-	sx = obj->GetVelocity()[0];
-	sy = obj->GetVelocity()[1];
-	sz = obj->GetVelocity()[2];
+	cx = (*obj->GetCentroid())[0];
+	cy = (*obj->GetCentroid())[1];
+	cz = (*obj->GetCentroid())[2];
+	sx = (*obj->GetVelocity())[0];
+	sy = (*obj->GetVelocity())[1];
+	sz = (*obj->GetVelocity())[2];
 
 	double mass = obj->GetMass();
 	double dBdry = 4.0;
@@ -74,16 +73,16 @@ void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 	}
 	if( bAtmosphereOn )
 	{
-		sx = obj->GetVelocity()[0];
-		sy = obj->GetVelocity()[1];
-		sz = obj->GetVelocity()[2];
+		sx = (*obj->GetVelocity())[0];
+		sy = (*obj->GetVelocity())[1];
+		sz = (*obj->GetVelocity())[2];
 		obj->IncrementVelocity( -sx*dAtmDensity,-sy*dAtmDensity,-sz*dAtmDensity);
 		double domega = obj->GetAngVelMag();
 		obj->IncrementAngVel( -domega*dAtmDensity );
 	}
 	if( bConvectionOn )
 	{
-		ConvectionForce( obj->GetCentroid(), theForce );
+		ConvectionForce( (*obj->GetCentroid()), theForce );
 		obj->IncrementVelocity( theForce[0], theForce[1], theForce[2] );
 	}
 	

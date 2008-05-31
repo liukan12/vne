@@ -66,9 +66,9 @@ void CameraControl::UpdateAttachedCamera()
 	if( this->bIsAttached )
 	{
 		double vx,vy,vz;
-		vx = this->targetObj->GetVelocity()[0];
-		vy = this->targetObj->GetVelocity()[1];
-		vz = this->targetObj->GetVelocity()[2];
+		vx = (*this->targetObj->GetVelocity())[0];
+		vy = (*this->targetObj->GetVelocity())[1];
+		vz = (*this->targetObj->GetVelocity())[2];
 		double cx,cy,cz;
 		this->targetObj->GetCentroid(&cx,&cy,&cz);
 		double eyeOffset = 0.5;
