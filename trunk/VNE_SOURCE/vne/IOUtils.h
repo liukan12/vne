@@ -12,7 +12,7 @@
 
 using namespace std;
 
-int ReadMeshData( valarray<double> *TriVerts, valarray<double> *TriNorms, string fileNameFaces, string fileNameVerts, string fileNameNorms );
+int ReadMeshData( valarray<int> *TriIdx, valarray<double> *TriVerts, valarray<double> *TriNorms, string fileNameFaces, string fileNameVerts, string fileNameNorms );
 
 
 

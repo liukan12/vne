@@ -187,12 +187,12 @@ void VNEWorld::Collide(VNEObject* obj1, VNEObject* obj2)
 
 
 
-	vx1 = obj1->GetVelocity()[0];
-	vy1 = obj1->GetVelocity()[1];
-	vz1 = obj1->GetVelocity()[2];
-	vx2 = obj2->GetVelocity()[0];
-	vy2 = obj2->GetVelocity()[1];
-	vz2 = obj2->GetVelocity()[2];
+	vx1 = (*obj1->GetVelocity())[0];
+	vy1 = (*obj1->GetVelocity())[1];
+	vz1 = (*obj1->GetVelocity())[2];
+	vx2 = (*obj2->GetVelocity())[0];
+	vy2 = (*obj2->GetVelocity())[1];
+	vz2 = (*obj2->GetVelocity())[2];
 	
 	obj1->GetCentroid(&cx1, &cy1, &cz1 );
 	obj2->GetCentroid(&cx2, &cy2, &cz2 );
@@ -284,7 +284,7 @@ void VNEWorld::CheckCollisions()
 		{
 			obj2 = this->ObjList->GetObjectAt(n);
 			double thresh = obj1->GetRadSquared() + obj2->GetRadSquared();
-			valarray<double> diff = obj1->GetCentroid() - obj2->GetCentroid();
+			valarray<double> diff = *obj1->GetCentroid() - *obj2->GetCentroid();
 			diff = diff * diff;
 			if(thresh > diff.sum() ) // TODO: difference of centroids
 			{

@@ -33,6 +33,7 @@ void VNEObject::CopyObj(const VNEObject& obj)
 {
 	CurTriVert = obj.CurTriVert;
 	CurTriNorm = obj.CurTriNorm;
+	CurTriIdx = obj.CurTriIdx;
 	Velocity = obj.Velocity;
 	AngVel = obj.AngVel;
 	Centroid = obj.Centroid;
@@ -81,17 +82,17 @@ int VNEObject::DrawSelf()
 			double offset = this->colorVariance*( i / double(numFaces) - 0.5 );
 			glColor3f( rseed+offset, gseed+offset,bseed+offset);
 			glBegin(GL_TRIANGLES);
-				glNormal3d(CurTriNorm[i*9+0+0], CurTriNorm[i*9+0+1], CurTriNorm[i*9+0+2]);
+				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+0] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+0] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+0] + 2 ]);
 				glTexCoord2f(0.0, 0.0);
-				glVertex3d(CurTriVert[i*9+0+0], CurTriVert[i*9+0+1], CurTriVert[i*9+0+2]);
+				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+0] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+0] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+0] + 2 ]);
 				
-				glNormal3d(CurTriNorm[i*9+3+0], CurTriNorm[i*9+3+1], CurTriNorm[i*9+3+2]);
+				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+1] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+1] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+1] + 2 ]);
 				glTexCoord2f(1.0, 1.0);
-				glVertex3d(CurTriVert[i*9+3+0], CurTriVert[i*9+3+1], CurTriVert[i*9+3+2]);
+				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+1] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+1] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+1] + 2 ]);
 				
-				glNormal3d(CurTriNorm[i*9+6+0], CurTriNorm[i*9+6+1], CurTriNorm[i*9+6+2]);
+				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+2] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+2] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+2] + 2 ]);
 				glTexCoord2f(0.0, 1.0);
-				glVertex3d(CurTriVert[i*9+6+0], CurTriVert[i*9+6+1], CurTriVert[i*9+6+2]); 
+				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+2] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+2] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+2] + 2 ]);
 			glEnd();
 		}
 		glDisable(GL_TEXTURE_2D);
@@ -105,12 +106,12 @@ int VNEObject::DrawSelf()
 			double offset = this->colorVariance*( i / double(numFaces) - 0.5 );
 			glColor3f( rseed+offset, gseed+offset,bseed+offset);
 			glBegin(GL_TRIANGLES);
-				glNormal3d(CurTriNorm[i*9+0+0], CurTriNorm[i*9+0+1], CurTriNorm[i*9+0+2]);
-				glVertex3d(CurTriVert[i*9+0+0], CurTriVert[i*9+0+1], CurTriVert[i*9+0+2]);
-				glNormal3d(CurTriNorm[i*9+3+0], CurTriNorm[i*9+3+1], CurTriNorm[i*9+3+2]);
-				glVertex3d(CurTriVert[i*9+3+0], CurTriVert[i*9+3+1], CurTriVert[i*9+3+2]);
-				glNormal3d(CurTriNorm[i*9+6+0], CurTriNorm[i*9+6+1], CurTriNorm[i*9+6+2]);
-				glVertex3d(CurTriVert[i*9+6+0], CurTriVert[i*9+6+1], CurTriVert[i*9+6+2]); 
+				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+0] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+0] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+0] + 2 ]);
+				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+0] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+0] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+0] + 2 ]);
+				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+1] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+1] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+1] + 2 ]);
+				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+1] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+1] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+1] + 2 ]);
+				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+2] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+2] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+2] + 2 ]);
+				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+2] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+2] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+2] + 2 ]);
 			glEnd();
 		}
 	}
@@ -147,8 +148,8 @@ void VNEObject::GetCentroid(double *dx, double* dy, double* dz)
 	*dz = Centroid[2];
 }
 
-valarray<double> VNEObject::GetCentroid(){
-	return this->Centroid;
+valarray<double>* VNEObject::GetCentroid(){
+	return &Centroid;
 }
 
 void VNEObject::IncrementTime()
@@ -230,7 +231,7 @@ int VNEObject::RotateLocal( double dangle )
 	
 	int i;
 	double vx,vy,vz;
-	for( i = 0; i < this->numFaces*3; i++ )
+	for( i = 0; i < this->numVerts; i++ )
 	{
 		vx = CurTriVert[i*3 + 0] - Centroid[0];
 		vy = CurTriVert[i*3 + 1] - Centroid[1];
@@ -267,15 +268,15 @@ int VNEObject::ComputeCentroid()
 	double cz = 0.0;
 
 	int i;
-	for( i = 0; i < this->numFaces*3; i++ )
+	for( i = 0; i < this->numVerts; i++ )
 	{
 		cx += CurTriVert[i*3+0];
 		cy += CurTriVert[i*3+1];
 		cz += CurTriVert[i*3+2];
 	}
-	cx /= (numFaces*3);
-	cy /= (numFaces*3);
-	cz /= (numFaces*3);
+	cx /= numVerts;
+	cy /= numVerts;
+	cz /= numVerts;
 
 	Centroid[0] = cx;
 	Centroid[1] = cy;
@@ -287,11 +288,11 @@ int VNEObject::ComputeCentroid()
 int VNEObject::TranslateTo(double dx, double dy, double dz)
 { // warning: this probably breaks now except at object initialization
 	int i;
-	for( i = 0; i < this->numFaces*3; i++ )
+	for( i = 0; i < this->numVerts; i++ )
 	{
 		this->CurTriVert[i*3 + 0] = dx - Centroid[0] + CurTriVert[i*3 + 0];
-		this->CurTriVert[i*3 + 1] = dx - Centroid[1] + CurTriVert[i*3 + 1];
-		this->CurTriVert[i*3 + 2] = dx - Centroid[2] + CurTriVert[i*3 + 2];
+		this->CurTriVert[i*3 + 1] = dy - Centroid[1] + CurTriVert[i*3 + 1];
+		this->CurTriVert[i*3 + 2] = dz - Centroid[2] + CurTriVert[i*3 + 2];
 	}
 
 	return ComputeCentroid();
@@ -300,7 +301,7 @@ int VNEObject::TranslateTo(double dx, double dy, double dz)
 int VNEObject::TranslateBy(double dx, double dy, double dz)
 {
 	int i;
-	for( i = 0 ; i < this->numFaces*3 ; i++ )
+	for( i = 0 ; i < this->numVerts ; i++ )
 	{
 		CurTriVert[3*i] += dx;
 		CurTriVert[3*i+1] += dy;
@@ -351,22 +352,22 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	AngVel[2] = 0.0;
 
 	// TODO: USE THE FACES DATA FILE IN OPENGL CALLS! Eliminate redundant vertices !!!!!
-	numFaces = ReadMeshData( &CurTriVert, &CurTriNorm, fileNameFaces, fileNameVerts, fileNameNorms );
-	
+	numFaces = ReadMeshData( &CurTriIdx, &CurTriVert, &CurTriNorm, fileNameFaces, fileNameVerts, fileNameNorms );
+	numVerts = CurTriVert.size()/3;
 	this->InertiaTensor = valarray<double>(9); // I, the 3x3 inertia tensor
-	this->MassDistribution = valarray<double>(numFaces*3); // how much mass at each vertex is there
-	MassDistribution = mass / (numFaces * 3); // "uniform" distribution
+	this->MassDistribution = valarray<double>(numVerts); // how much mass at each vertex is there
+	MassDistribution = mass / (numVerts); // "uniform" distribution
 
 	ComputeCentroid();
 	
 	radSquared=0.0;
 
 	int i;
-	for( i = 0 ; i < numFaces*3; i++ )
+	for( i = 0 ; i < numVerts; i++ )
 	{
 		radSquared += (CurTriVert[i*3+0] - Centroid[0])*(CurTriVert[i*3+0] - Centroid[0]) + (CurTriVert[i*3+1] - Centroid[1])*(CurTriVert[i*3+1] - Centroid[1]) + (CurTriVert[i*3+2] - Centroid[2])*(CurTriVert[i*3+2] - Centroid[2]);
 	}
-	radSquared /= numFaces * 3;	
+	radSquared /= numVerts;	
 	this->bHasTexture=false;
 }
 void VNEObject::setTexture(string fileName)

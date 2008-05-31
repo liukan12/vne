@@ -184,10 +184,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CollisionControl.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\GameDemoApp.cpp"
 				>
 			</File>
@@ -235,10 +231,6 @@
 			>
 			<File
 				RelativePath=".\CameraControl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CollisionControl.h"
 				>
 			</File>
 			<File
