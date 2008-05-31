@@ -7,10 +7,12 @@
 #include <windows.h>
 #include <iostream>
 #include <fstream>
+#include <valarray>
+#include <numeric>
 
 using namespace std;
 
-int ReadMeshData( CMatrix** TriVerts, CMatrix** Normals, string fileNameFaces, string fileNameVerts, string fileNameNorms );
+int ReadMeshData( valarray<double> *TriVerts, valarray<double> *TriNorms, string fileNameFaces, string fileNameVerts, string fileNameNorms );
 
 
 

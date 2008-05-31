@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenCV\cv\include&quot;;&quot;C:\Program Files\OpenCV\cvaux\include&quot;;&quot;C:\Program Files\OpenCV\cxcore\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -184,19 +184,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CMatrix.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CollisionControl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CVector.cpp"
 				>
 			</File>
 			<File
@@ -209,10 +197,6 @@
 			</File>
 			<File
 				RelativePath=".\MathUtils.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\RotationMatrix.cpp"
 				>
 			</File>
 			<File
@@ -254,19 +238,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CArray.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CMatrix.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CollisionControl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CVector.h"
 				>
 			</File>
 			<File
@@ -279,10 +251,6 @@
 			</File>
 			<File
 				RelativePath=".\MathUtils.h"
-				>
-			</File>
-			<File
-				RelativePath=".\RotationMatrix.h"
 				>
 			</File>
 			<File

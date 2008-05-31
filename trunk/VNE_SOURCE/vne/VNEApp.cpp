@@ -60,15 +60,15 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 {	
 	DemoObj = this->world->ObjList->GetObjectAt(iControlObjIdx);
 	double currSpeed = DemoObj->GetSpeed( );
-	double currSpin = DemoObj->GetAngVel( );
+	double currSpin = DemoObj->GetAngVelMag( );
 	if( key == 'w' )
 		DemoObj->SetSpeed( currSpeed * 1.1 );
 	if( key == 's' )
 		DemoObj->SetSpeed( currSpeed * 0.9 );
 	if( key == 'e' )
-		DemoObj->SetAngularVelocity( currSpin * 1.1 );
+		DemoObj->SetRotSpeed( currSpin * 1.1 );
 	if( key == 'd' )
-		DemoObj->SetAngularVelocity( currSpin * 0.9 );
+		DemoObj->SetRotSpeed( currSpin * 0.9 );
 	if( key == 'x' )
 		DemoObj->TiltIncrementAxisX(0.05);
 	if( key == 'y' )

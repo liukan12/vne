@@ -66,15 +66,17 @@ void CameraControl::UpdateAttachedCamera()
 	if( this->bIsAttached )
 	{
 		double vx,vy,vz;
-		this->targetObj->GetVelocity()->GetValueAt(&vx,&vy,&vz);
+		vx = this->targetObj->GetVelocity()[0];
+		vy = this->targetObj->GetVelocity()[1];
+		vz = this->targetObj->GetVelocity()[2];
 		double cx,cy,cz;
 		this->targetObj->GetCentroid(&cx,&cy,&cz);
 		double eyeOffset = 0.5;
 		
-		Normalize( &vx, &vy, &vz );
-		this->eyex = cx + vx * eyeOffset;
-		this->eyey = cy + vy * eyeOffset;
-		this->eyez = cz + vz * eyeOffset;
+		double dScale = sqrt(vx*vx + vy*vy + vz*vz);
+		this->eyex = cx + vx * eyeOffset / dScale;
+		this->eyey = cy + vy * eyeOffset / dScale;
+		this->eyez = cz + vz * eyeOffset / dScale;
 
 		this->atx = cx + 2 * vx * eyeOffset;
 		this->aty = cy + 2 * vy * eyeOffset;

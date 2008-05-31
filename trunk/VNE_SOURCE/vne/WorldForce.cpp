@@ -7,6 +7,8 @@
 
 using namespace std;
 
+static valarray<double> theForce(3);
+
 WorldForce::WorldForce( )
 {
 	this->dScale = .1;
@@ -19,16 +21,31 @@ WorldForce::WorldForce( )
 
 }
 
+void ConvectionForce( valarray<double> &position, valarray<double> &force )
+{
+	// given x,y,z position, what is the convective force there?
+	force[0] = abs(position[0]) > 0.5 ? -0.05*position[0] : 0.0;
+	force[1] = abs(position[1]) > 0.5 ? -0.05*position[1] : 0.0;
+	force[2] = abs(position[2]) > 0.5 ? -0.05*position[2] : 0.0;
+}
+
 
 void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 {
 	double fx, fy, fz;
 	double cx, cy, cz;
 	double sx, sy, sz;
-	obj->GetCentroid(&cx, &cy, &cz);
+	
+	cx = obj->GetCentroid()[0];
+	cy = obj->GetCentroid()[1];
+	cz = obj->GetCentroid()[2];
+	sx = obj->GetVelocity()[0];
+	sy = obj->GetVelocity()[1];
+	sz = obj->GetVelocity()[2];
+
 	double mass = obj->GetMass();
 	double dBdry = 4.0;
-	obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
+	
 			
 	if( bWallsOn )
 	{
@@ -51,35 +68,24 @@ void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 		// TODO: how does impact affect the spin of the object??
 
 	}
-		// matrix with complex eigenvalues, negative real part -> spiral stable point at origin
-		//(x') =  [-.01    -1] [x]
-		//(y') =  [ 1    -.01] [y]
-		// lambda = -.01 +/- sqrt(-1)
-		if( bVortexOn )
-		{
-			//if( obj->GetSpeed() > 50.0 )
-			
-			obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
-			fx = (-.1*cx-1*cy);
-			fy = (1*cx-.1*cy);
-			sx = fx - sx;//*dTimeStep/mass;
-			sy = fy - sy;//*dTimeStep/mass;
-			obj->IncrementVelocity( sx, sy, 0.0);
-			obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
-			fz = (-.3*cz-1*cy);
-			fy = (1*cz-.3*cy);
-			sz = fz - sz;//*dTimeStep/mass;
-			sy = fy - sy;//*dTimeStep/mass;
-			obj->IncrementVelocity( 0.0, sy, sz);
-			obj->SetSpeed( 10.0*(cx*cx+cy*cy+cz*cz) );
-		}
-		if( bAtmosphereOn )
-		{
-			obj->GetVelocity()->GetValueAt(&sx, &sy, &sz );
-			obj->IncrementVelocity( -sx*dAtmDensity,-sy*dAtmDensity,-sz*dAtmDensity);
-			double domega = obj->GetAngVel();
-			obj->IncrementAngVel( -domega*dAtmDensity );
-		}
+	if( bVortexOn )
+	{
+		
+	}
+	if( bAtmosphereOn )
+	{
+		sx = obj->GetVelocity()[0];
+		sy = obj->GetVelocity()[1];
+		sz = obj->GetVelocity()[2];
+		obj->IncrementVelocity( -sx*dAtmDensity,-sy*dAtmDensity,-sz*dAtmDensity);
+		double domega = obj->GetAngVelMag();
+		obj->IncrementAngVel( -domega*dAtmDensity );
+	}
+	if( bConvectionOn )
+	{
+		ConvectionForce( obj->GetCentroid(), theForce );
+		obj->IncrementVelocity( theForce[0], theForce[1], theForce[2] );
+	}
 	
 }
 
