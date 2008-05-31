@@ -12,8 +12,10 @@
 #include "MathUtils.h"
 #include "SOIL.h"
 #include "VNETexture.h"
+#include <numeric>
+#include <valarray>
 
-using std::cout;
+using namespace std;
 
 VNEWorld::VNEWorld()
 {
@@ -63,7 +65,7 @@ VNEWorld::VNEWorld()
 	VNEObject* Obj1 = new VNEObject( "object 1", faces, verts, norms);
 	VNEObject* Obj2 = new VNEObject( "object 2", faces2, verts2, norms2);
 	VNEObject* Obj3 = new VNEObject( "object 3", faces3, verts3, norms3);
-	//VNEObject* Obj4 = new VNEObject( "object 4", faces4, verts4, norms4); // no norms for the brain
+	VNEObject* Obj4 = new VNEObject( "object 4", faces4, verts4, norms4); // no norms for the brain
 #ifdef _DEBUG
 	Obj1->setTexture("..\\vne_data\\obj1.png");
 	Obj2->setTexture("..\\vne_data\\obj2.png");
@@ -77,20 +79,21 @@ VNEWorld::VNEWorld()
 	Obj1->SetVelocityProfile( 0.5, 0.5, 0.0, 0 );
 	Obj2->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
 	Obj3->SetVelocityProfile( 0.5, -0.5, -0.5, 0 );
-	//Obj4->SetVelocityProfile( -0.5, -0.5, -0.5, 0 );
+	Obj4->SetVelocityProfile( -0.5, -0.5, -0.5, 0 );
 	
 	Obj1->SetColorSeed(0.5,0.0,1.0);
 	Obj2->SetColorSeed(1.0,0.0,0.5);
 	Obj3->SetColorSeed(0.5,0.5,0.0);
-	//Obj4->SetColorSeed(0.5,0.5,0.5);
+	Obj4->SetColorSeed(0.5,0.5,0.5);
 
 	Obj1->TranslateTo(2.0,2.0,2.0);
 	Obj2->TranslateTo(-2.0,-2.0,-2.0);
-	Obj3->TranslateTo(1.0,1.0,-2.0);
+	Obj3->TranslateTo(4.0,1.0,-2.0);
+	Obj4->TranslateTo(1.0,-3.0,1.0);
 	this->ObjList = new VNEObjList( Obj1 );
 	this->ObjList->AddObj(Obj2);
 	this->ObjList->AddObj(Obj3);
-	//this->ObjList->AddObj(Obj4);
+	this->ObjList->AddObj(Obj4);
 
 	this->ObjList->PrintAll();
 
@@ -182,8 +185,15 @@ void VNEWorld::Collide(VNEObject* obj1, VNEObject* obj2)
 	double m2 = obj2->GetMass();
 	double totalM = m1+m2;
 
-	obj1->GetVelocity()->GetValueAt( &vx1, &vy1, &vz1 );
-	obj2->GetVelocity()->GetValueAt( &vx2, &vy2, &vz2 );
+
+
+	vx1 = obj1->GetVelocity()[0];
+	vy1 = obj1->GetVelocity()[1];
+	vz1 = obj1->GetVelocity()[2];
+	vx2 = obj2->GetVelocity()[0];
+	vy2 = obj2->GetVelocity()[1];
+	vz2 = obj2->GetVelocity()[2];
+	
 	obj1->GetCentroid(&cx1, &cy1, &cz1 );
 	obj2->GetCentroid(&cx2, &cy2, &cz2 );
 
@@ -274,7 +284,9 @@ void VNEWorld::CheckCollisions()
 		{
 			obj2 = this->ObjList->GetObjectAt(n);
 			double thresh = obj1->GetRadSquared() + obj2->GetRadSquared();
-			if(thresh > VecNorm(obj1->GetCentroid(), obj2->GetCentroid()))
+			valarray<double> diff = obj1->GetCentroid() - obj2->GetCentroid();
+			diff = diff * diff;
+			if(thresh > diff.sum() ) // TODO: difference of centroids
 			{
 				this->Collide( obj1, obj2);
 			}
@@ -286,16 +298,11 @@ int VNEWorld::TimeStep()
 {
 	int result = 0;
 
-	// for now do nothing; later, following a script or physics sim
-	// the objects will update position / rotation
-
 	clock2 = clock();
 	double dt = ( (double) (clock2 - clock1) ) / CLOCKS_PER_SEC ;
 	elapsedTime += dt;
 	clock1 = clock();
 
-	//DemoObj->IncrementTime(); // use constant time flow, otherwise user interaction
-	// causes errors (too much delay)
 	this->ObjList->AccelAll( this->theForce );
 	result = this->ObjList->TimeStepAll();
 	this->CheckCollisions();
@@ -325,9 +332,6 @@ void VNEWorld::DrawWalls()
 			break;
 		}
 		
-		/*glEnable(GL_TEXTURE_2D);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
-		glBindTexture(GL_TEXTURE_2D, texName );*/
 		myTex->bindTexture();
 		
 
@@ -355,15 +359,8 @@ int VNEWorld::Redraw()
 
 	if( this->theForce->WallsAreOn() )
 		DrawWalls();
-	
-	
-
 
 	result = this->ObjList->DrawAll();
-
-	
-
-	
 
 	return result;
 }

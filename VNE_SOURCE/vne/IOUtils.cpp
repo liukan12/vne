@@ -6,11 +6,12 @@
 #include <fstream>
 #include <iomanip>
 #include <vector>
-#include "CMatrix.h"
+#include <valarray>
+#include <numeric>
 
 using namespace std;
 
-int ReadMeshData( CMatrix** TriVerts, CMatrix** Normals, string fileNameFaces, string fileNameVerts, string fileNameNorms )
+int ReadMeshData( valarray<double> *TriVerts, valarray<double> *TriNorms, string fileNameFaces, string fileNameVerts, string fileNameNorms )
 {
 	// read a comma separted value file that defines the vertices
 	// and indices into vertices for all faces
@@ -27,8 +28,9 @@ int ReadMeshData( CMatrix** TriVerts, CMatrix** Normals, string fileNameFaces, s
 	//iFaces--; // last line of file is blank
 	fin.close();
 	
-	(*TriVerts) = new CMatrix(3, 3*iFaces);
-	(*Normals)  = new CMatrix(3, 3*iFaces);
+	*TriVerts = valarray<double>(3*3*(iFaces-1));
+	*TriNorms = valarray<double>(3*3*(iFaces-1));
+	
 	int* tempidx = new int[3 * iFaces];
 
 	ifstream fin2( fileNameFaces.c_str() );
@@ -124,27 +126,20 @@ int ReadMeshData( CMatrix** TriVerts, CMatrix** Normals, string fileNameFaces, s
 		k++;
 	}
 	vin2.close();
-
-	for( int i = 0; i < iFaces*3; i++ )
+	int i;
+	for( i = 0; i < (iFaces-1)*3; i++ )
 	{
 		idx = tempidx[i];
-		double xx = tempverts[(idx-1)*3+0]; // matlab counts starting with 1
-		double yy = tempverts[(idx-1)*3+1];
-		double zz = tempverts[(idx-1)*3+2];
 
-		(*TriVerts)->SetValueAt(0,i,xx);
-		(*TriVerts)->SetValueAt(1,i,yy);
-		(*TriVerts)->SetValueAt(2,i,zz);
+		(*TriVerts)[3*i+0] = tempverts[(idx-1)*3+0];
+		(*TriVerts)[3*i+1] = tempverts[(idx-1)*3+1];
+		(*TriVerts)[3*i+2] = tempverts[(idx-1)*3+2];
 
-		xx = tempnorms[(idx-1)*3+0]; // matlab counts starting with 1
-		yy = tempnorms[(idx-1)*3+1];
-		zz = tempnorms[(idx-1)*3+2];
-		(*Normals)->SetValueAt(0,i,xx);
-		(*Normals)->SetValueAt(1,i,yy);
-		(*Normals)->SetValueAt(2,i,zz);
+		(*TriNorms)[3*i+0] = tempnorms[(idx-1)*3+0];
+		(*TriNorms)[3*i+1] = tempnorms[(idx-1)*3+1];
+		(*TriNorms)[3*i+2] = tempnorms[(idx-1)*3+2];
+
 	}
-	
-	//(*TriVerts)->PrintSelf();
 
 	delete [] tempverts;
 	delete [] tempidx;

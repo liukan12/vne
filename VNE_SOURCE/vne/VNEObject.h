@@ -1,11 +1,11 @@
 #ifndef VNEOBJECT
 #define VNEOBJECT
 
-#include "CMatrix.h"
-#include "CVector.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+#include <valarray>
+#include <numeric>
 #include "VNETexture.h"
 
 #define COLORSEED 0 // given RGB seed values, randomly perturb around them
@@ -16,13 +16,17 @@ using namespace std;
 class VNEObject
 {
 private:
-	CMatrix* CurTriVert; // current vertices of triangle faces w.r.t. local coordinate system
-	CMatrix* RefTriVert; // original / refernce vertex coordinates
-	CMatrix* CurTriNorm; // normals at vertices
-	CVector* Velocity;   // x,y,z velocity
-	CVector* Moment;   // x,y,z angular velocity
-	CVector* GlobalCentCoord; // where is my local "origin" located in the global coordinate system?
-	CVector* Centroid; // the euclidean center of the object;
+	// mesh properties
+	valarray<double> CurTriVert; // current vertices of triangle faces w.r.t. local coordinate system
+	valarray<double> CurTriNorm; // normals at vertices
+	
+	// physics properties
+	valarray<double> Velocity;   // x,y,z instantaneous velocity
+	valarray<double> AngVel;   // x,y,z instantaneous angular velocity
+	valarray<double> Centroid; // the euclidean center of the object;
+	valarray<double> InertiaTensor; // I, the 3x3 inertia tensor
+	valarray<double> MassDistribution; // how much mass at each vertex is there
+
 	VNETexture* objTexture;
 	
 	double rseed, gseed, bseed; // RGB seeds for coloring the vertices
@@ -33,16 +37,11 @@ private:
 	
 	double radSquared;
 	double elapsedTime;
-	double angularVelocity;
-	double dCurrAngle;
+	double rotSpeed;
 
 	int ComputeCentroid();
 	bool bHasTexture;
 	bool bIsStatic;//is object affected by global forces
-
-
-
-
 
 public:
 	VNEObject(const VNEObject& obj);
@@ -54,29 +53,29 @@ public:
 	VNEObject( ); // default constructor (equi-sided tetrahedron ? )
 	~VNEObject( ); // destructor
 	
-
-
 	void setTexture(string fileName);
 	void setTexture(VNETexture* newTex);
 	int DrawSelf();
 	void PrintSelf();
 	void IncrementTime( );
 	//int SelectQuery(int iListIdx);
-	CVector* GetCentroid();
+	
 	double GetMass( ) { return mass; }
 	double GetSpeed( );
-	double GetAngVel( ) { return angularVelocity; }
+	double GetAngVelMag( ) { return rotSpeed; }
 	double GetElapsedTime() { return elapsedTime; };
 	double GetRadSquared(){return radSquared;}
 	int GetNumFaces(){ return numFaces; }
 	void GetCentroid(double *dx, double* dy, double* dz);
+	valarray<double> GetCentroid();
 	int SpinAboutCentroid();
 	void SetColorSeed( double r, double g, double b );
 	void GetColorSeed( double* r, double* g, double* b);
 	void SetSpeed( double dSpeed );
-	void SetAngularVelocity( double dAngVel ) { angularVelocity = dAngVel; }
-	int TiltAxisBy( CVector* vec, double dalpha );
-	int TiltAxisTo( CVector* vec );
+	void SetRotSpeed( double dAngVel ) { rotSpeed = dAngVel; }
+	int TiltAxisBy( valarray<double> &vec, double dalpha );
+	int TiltAxisBy( double dx, double dy, double dz );
+	int TiltAxisTo( valarray<double> &vec );
 	int TiltAxisTo( double dx, double dy, double dz );
 	void TiltIncrementAxisX( double dVal );
 	void TiltIncrementAxisY( double dVal );
@@ -85,7 +84,7 @@ public:
 	int TranslateBy( double dx, double dy, double dz );
 	void IncrementAngVel( double dx );
 	int RotateLocal( double dangle  );
-	CVector* GetVelocity() { return Velocity; }
+	valarray<double> GetVelocity() { return Velocity; }
 	int IncrementVelocity( double dx, double dy, double dz );
 	// rotate locally (in-place about object centroid)
 	int RotateAbout( double xt, double xc, double yt, double yc,
@@ -104,3 +103,4 @@ public:
 
 
 #endif
+
