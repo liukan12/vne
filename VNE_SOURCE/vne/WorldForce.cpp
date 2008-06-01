@@ -13,56 +13,50 @@ WorldForce::WorldForce( )
 {
 	this->dScale = .1;
 	this->iMode = 0; // various modes define different forces over the world
-	this->dAtmDensity = 0.001;
-	this->dWallReflectance = 0.999;
+	this->dAtmDensity = 0.01;
+	this->dWallReflectance = 0.95;
 	this->bAtmosphereOn = true;
 	this->bVortexOn = false;
 	this->bWallsOn = true;
+	this->bConvectionOn = true;
 
 }
 
-void ConvectionForce( valarray<double> &position, valarray<double> &force )
+void ConvectionForce( const valarray<double> &position, valarray<double> &force )
 {
 	// given x,y,z position, what is the convective force there?
-	force[0] = abs(position[0]) > 0.5 ? -0.05*position[0] : 0.0;
-	force[1] = abs(position[1]) > 0.5 ? -0.05*position[1] : 0.0;
-	force[2] = abs(position[2]) > 0.5 ? -0.05*position[2] : 0.0;
+	force[0] = 0*abs(position[0]) > 0.5 ? -0.05*position[0] : 0.0;
+	force[1] = ( position[1] > -4.0 )? -0.1 : 0.0;
+	force[2] = 0.0; //0*abs(position[2]) > 0.5 ? -0.05*position[2] : 0.0;
 }
 
 
 void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 {
-	double cx, cy, cz;
-	double sx, sy, sz;
-	
-	cx = (*obj->GetCentroid())[0];
-	cy = (*obj->GetCentroid())[1];
-	cz = (*obj->GetCentroid())[2];
-	sx = (*obj->GetVelocity())[0];
-	sy = (*obj->GetVelocity())[1];
-	sz = (*obj->GetVelocity())[2];
-
-	double mass = obj->GetMass();
+		
 	double dBdry = 4.0;
 	
+	double minX, maxX, minY, maxY, minZ, maxZ;
+	int minXi, maxXi, minYi, maxYi, minZi, maxZi;
+
+	obj->GetMinMaxVert( &minX, &maxX, &minY, &maxY, &minZ, &maxZ,
+						&minXi, &maxXi, &minYi, &maxYi, &minZi, &maxZi );
 			
 	if( bWallsOn )
 	{
 		// force gets bigger as you go outside the bounded region
-		if( cx > dBdry )
-			sx = -dWallReflectance*abs(sx);
-		if( cx < -dBdry)
-			sx = dWallReflectance*abs(sx);
-		if( cy > dBdry )
-			sy = -dWallReflectance*abs(sy);
-		if( cy < -dBdry)
-			sy = dWallReflectance*abs(sy);
-		if( cz > dBdry )
-			sz = -dWallReflectance*abs(sz);
-		if( cz < -dBdry)
-			sz = dWallReflectance*abs(sz);
-		
-		obj->SetVelocityProfile( sx, sy, sz, 0 );
+		if( obj->Centroid[0] > dBdry )
+			obj->Velocity[0] = -dWallReflectance*abs(obj->Velocity[0]);
+		if( obj->Centroid[0] < -dBdry)
+			obj->Velocity[0] = dWallReflectance*abs(obj->Velocity[0]);
+		if( obj->Centroid[1] > dBdry )
+			obj->Velocity[1] = -dWallReflectance*abs(obj->Velocity[1]);
+		if( obj->Centroid[1] < -dBdry)
+			obj->Velocity[1] = dWallReflectance*abs(obj->Velocity[1]);
+		if( obj->Centroid[2] > dBdry )
+			obj->Velocity[2] = -dWallReflectance*abs(obj->Velocity[2]);
+		if( obj->Centroid[2] < -dBdry)
+			obj->Velocity[2] = dWallReflectance*abs(obj->Velocity[2]);
 
 		// TODO: how does impact affect the spin of the object??
 
@@ -73,17 +67,14 @@ void WorldForce::AccelerateObject( VNEObject* obj, double dTimeStep )
 	}
 	if( bAtmosphereOn )
 	{
-		sx = (*obj->GetVelocity())[0];
-		sy = (*obj->GetVelocity())[1];
-		sz = (*obj->GetVelocity())[2];
-		obj->IncrementVelocity( -sx*dAtmDensity,-sy*dAtmDensity,-sz*dAtmDensity);
+		obj->IncrementVelocity( -dAtmDensity*(obj->Velocity) );
 		double domega = obj->GetAngVelMag();
-		obj->IncrementAngVel( -domega*dAtmDensity );
+		obj->IncrementAngVel( -domega*dAtmDensity*0.1 );
 	}
 	if( bConvectionOn )
 	{
-		ConvectionForce( (*obj->GetCentroid()), theForce );
-		obj->IncrementVelocity( theForce[0], theForce[1], theForce[2] );
+		ConvectionForce( obj->Centroid, theForce );
+		obj->IncrementVelocity( theForce );
 	}
 	
 }

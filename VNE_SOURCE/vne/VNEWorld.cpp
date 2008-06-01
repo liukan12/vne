@@ -9,7 +9,6 @@
 #include "VNEWorld.h"
 #include <time.h>
 #include "WorldForce.h"
-#include "MathUtils.h"
 #include "SOIL.h"
 #include "VNETexture.h"
 #include <numeric>
@@ -17,11 +16,13 @@
 
 using namespace std;
 
+#define PERFORMANCE_TEST_NO
+
 VNEWorld::VNEWorld()
 {
-	string faces, faces2, faces3, faces4;
-	string verts, verts2, verts3, verts4;
-	string norms, norms2, norms3, norms4;
+	string faces, faces2, faces3, faces4, faces5;
+	string verts, verts2, verts3, verts4, verts5;
+	string norms, norms2, norms3, norms4, norms5;
 #define PROFILE_NO
 #ifdef PROFILE
 	faces =  "faces4.dat";
@@ -33,6 +34,9 @@ VNEWorld::VNEWorld()
 	faces3 = "faces6.dat";
 	verts3 = "verts6.dat";
 	norms3 = "norms6.dat";
+	faces4 = "brainfaces.dat";
+	verts4 = "brainverts.dat";
+	norms4 = "brainnorms.dat";
 #elif _DEBUG // debug looks in relative path (vne data files)
 	faces = "..\\vne_data\\faces4.dat";
 	verts = "..\\vne_data\\verts4.dat";
@@ -46,6 +50,9 @@ VNEWorld::VNEWorld()
 	faces4 = "..\\vne_data\\brainfaces.dat";
 	verts4 = "..\\vne_data\\brainverts.dat";
 	norms4 = "..\\vne_data\\brainnorms.dat";
+	faces5 = "..\\vne_data\\faces7.dat";
+	verts5 = "..\\vne_data\\verts7.dat";
+	norms5 = "..\\vne_data\\norms7.dat";
 #else // release build looks in the same directory as .exe for data files
 	faces = ".\\data\\faces4.dat";
 	verts = ".\\data\\verts4.dat";
@@ -65,8 +72,12 @@ VNEWorld::VNEWorld()
 	VNEObject* Obj1 = new VNEObject( "object 1", faces, verts, norms);
 	VNEObject* Obj2 = new VNEObject( "object 2", faces2, verts2, norms2);
 	VNEObject* Obj3 = new VNEObject( "object 3", faces3, verts3, norms3);
-	VNEObject* Obj4 = new VNEObject( "object 4", faces4, verts4, norms4); // no norms for the brain
-#ifdef _DEBUG
+	VNEObject* Obj4 = new VNEObject( "object 4", faces4, verts4, norms4); // no norms for the brain 
+#ifdef PROFILE
+	Obj1->setTexture("obj1.png");
+	Obj2->setTexture("obj2.png");
+	Obj3->setTexture("obj3.png");
+#elif _DEBUG
 	Obj1->setTexture("..\\vne_data\\obj1.png");
 	Obj2->setTexture("..\\vne_data\\obj2.png");
 	Obj3->setTexture("..\\vne_data\\obj3.png");
@@ -90,10 +101,20 @@ VNEWorld::VNEWorld()
 	Obj2->TranslateTo(-2.0,-2.0,-2.0);
 	Obj3->TranslateTo(4.0,1.0,-2.0);
 	Obj4->TranslateTo(1.0,-3.0,1.0);
+
 	this->ObjList = new VNEObjList( Obj1 );
 	this->ObjList->AddObj(Obj2);
 	this->ObjList->AddObj(Obj3);
 	this->ObjList->AddObj(Obj4);
+
+#ifdef PERFORMANCE_TEST
+	VNEObject* Obj5 = new VNEObject( "object 5", faces5, verts5, norms5); // object with 10K vertices
+	Obj5->SetVelocityProfile( 0.0, -0.5, -0.5, 0 );
+	Obj5->TranslateTo(2.0,-3.0,-1.0);
+	Obj5->SetColorSeed(0.25,0.15,1.0);
+	this->ObjList->AddObj(Obj5);
+#endif
+
 
 	this->ObjList->PrintAll();
 
@@ -111,7 +132,9 @@ VNEWorld::VNEWorld()
 	glShadeModel( GL_SMOOTH );
 	LightsOff();
 	
-#ifdef _DEBUG
+#ifdef PROFILE
+	myTex=new VNETexture("cat.jpg");
+#elif _DEBUG
 	myTex=new VNETexture("..\\vne_data\\cat.jpg");
 #else
 	myTex=new VNETexture(".\\data\\cat.jpg");

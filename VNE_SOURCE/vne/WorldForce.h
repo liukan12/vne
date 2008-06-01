@@ -18,7 +18,7 @@ private:
 public:
 	WorldForce( );
 	WorldForce( string fileNameForceDef ); // need a format for defining force fields
-	virtual void AccelerateObject( VNEObject* obj, double dTimeStep = 0.01);
+	virtual void AccelerateObject( VNEObject* obj, double dTimeStep = TIMESTEP);
 	void VortexOn() {bVortexOn = true;}
 	void VortexOff() {bVortexOn = false;}
 	void AtmOn() {bAtmosphereOn = true;}
