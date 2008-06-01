@@ -8,15 +8,18 @@
 #include <GL/glut.h>
 #include "VNEObject.h"
 #include "IOUtils.h"
-#include "MathUtils.h"
 #include <valarray>
 #include <numeric>
 
 #define MANUAL_ROTATION // do I use rotation matrix code and keep track of precise vertex locations?
+// this is crucial for high-accuracy physics, but slower...
 
 using namespace std;
 
 static valarray<double> RotationMatrix(9);
+static valarray<double> temp3(3);
+static valarray<double> temp3B(3);
+
 // heap allocated matrix that is used for multiplication for rotations
 // why here? => Don't create / destroy loads of matrices, just use ONE that hangs around!
 
@@ -31,8 +34,12 @@ VNEObject& VNEObject::operator=(const VNEObject& rhs)
 }
 void VNEObject::CopyObj(const VNEObject& obj)
 {
-	CurTriVert = obj.CurTriVert;
-	CurTriNorm = obj.CurTriNorm;
+	CurTriVertX = obj.CurTriVertX;
+	CurTriVertY = obj.CurTriVertY;
+	CurTriVertZ = obj.CurTriVertZ;
+	CurTriNormX= obj.CurTriNormX;
+	CurTriNormY= obj.CurTriNormY;
+	CurTriNormZ= obj.CurTriNormZ;
 	CurTriIdx = obj.CurTriIdx;
 	Velocity = obj.Velocity;
 	AngVel = obj.AngVel;
@@ -82,17 +89,17 @@ int VNEObject::DrawSelf()
 			double offset = this->colorVariance*( i / double(numFaces) - 0.5 );
 			glColor3f( rseed+offset, gseed+offset,bseed+offset);
 			glBegin(GL_TRIANGLES);
-				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+0] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+0] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+0] + 2 ]);
+				glNormal3d(CurTriNormX[ CurTriIdx[3*i+0] ], CurTriNormY[ CurTriIdx[3*i+0] ], CurTriNormZ[ CurTriIdx[3*i+0] ]);
 				glTexCoord2f(0.0, 0.0);
-				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+0] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+0] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+0] + 2 ]);
+				glVertex3d(CurTriVertX[ CurTriIdx[3*i+0] ], CurTriVertY[ CurTriIdx[3*i+0] ], CurTriVertZ[ CurTriIdx[3*i+0] ]);
 				
-				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+1] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+1] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+1] + 2 ]);
+				glNormal3d(CurTriNormX[ CurTriIdx[3*i+1] ], CurTriNormY[ CurTriIdx[3*i+1] ], CurTriNormZ[ CurTriIdx[3*i+1] ]);
 				glTexCoord2f(1.0, 1.0);
-				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+1] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+1] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+1] + 2 ]);
+				glVertex3d(CurTriVertX[ CurTriIdx[3*i+1] ], CurTriVertY[ CurTriIdx[3*i+1] ], CurTriVertZ[ CurTriIdx[3*i+1] ]);
 				
-				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+2] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+2] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+2] + 2 ]);
+				glNormal3d(CurTriNormX[ CurTriIdx[3*i+2] ], CurTriNormY[ CurTriIdx[3*i+2] ], CurTriNormZ[ CurTriIdx[3*i+2] ]);
 				glTexCoord2f(0.0, 1.0);
-				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+2] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+2] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+2] + 2 ]);
+				glVertex3d(CurTriVertX[ CurTriIdx[3*i+2] ], CurTriVertY[ CurTriIdx[3*i+2] ], CurTriVertZ[ CurTriIdx[3*i+2] ]);
 			glEnd();
 		}
 		glDisable(GL_TEXTURE_2D);
@@ -106,12 +113,12 @@ int VNEObject::DrawSelf()
 			double offset = this->colorVariance*( i / double(numFaces) - 0.5 );
 			glColor3f( rseed+offset, gseed+offset,bseed+offset);
 			glBegin(GL_TRIANGLES);
-				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+0] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+0] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+0] + 2 ]);
-				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+0] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+0] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+0] + 2 ]);
-				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+1] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+1] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+1] + 2 ]);
-				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+1] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+1] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+1] + 2 ]);
-				glNormal3d(CurTriNorm[ 3*CurTriIdx[3*i+2] + 0 ], CurTriNorm[ 3*CurTriIdx[3*i+2] + 1 ], CurTriNorm[ 3*CurTriIdx[3*i+2] + 2 ]);
-				glVertex3d(CurTriVert[ 3*CurTriIdx[3*i+2] + 0 ], CurTriVert[ 3*CurTriIdx[3*i+2] + 1 ], CurTriVert[ 3*CurTriIdx[3*i+2] + 2 ]);
+				glNormal3d(CurTriNormX[ CurTriIdx[3*i+0] ], CurTriNormY[ CurTriIdx[3*i+0] ], CurTriNormZ[ CurTriIdx[3*i+0] ]);
+				glVertex3d(CurTriVertX[ CurTriIdx[3*i+0] ], CurTriVertY[ CurTriIdx[3*i+0] ], CurTriVertZ[ CurTriIdx[3*i+0] ]);
+				glNormal3d(CurTriNormX[ CurTriIdx[3*i+1] ], CurTriNormY[ CurTriIdx[3*i+1] ], CurTriNormZ[ CurTriIdx[3*i+1] ]);
+				glVertex3d(CurTriVertX[ CurTriIdx[3*i+1] ], CurTriVertY[ CurTriIdx[3*i+1] ], CurTriVertZ[ CurTriIdx[3*i+1] ]);
+				glNormal3d(CurTriNormX[ CurTriIdx[3*i+2] ], CurTriNormY[ CurTriIdx[3*i+2] ], CurTriNormZ[ CurTriIdx[3*i+2] ]);
+				glVertex3d(CurTriVertX[ CurTriIdx[3*i+2] ], CurTriVertY[ CurTriIdx[3*i+2] ], CurTriVertZ[ CurTriIdx[3*i+2] ]);
 			glEnd();
 		}
 	}
@@ -134,6 +141,13 @@ void VNEObject::SetSpeed( double dSpeed )
 	Velocity = Velocity / dnorm * dSpeed;
 }
 
+void VNEObject::SetRotSpeed( double dAngVel )
+{
+	temp3 = AngVel * AngVel;
+	AngVel = dAngVel / sqrt(temp3.sum()) * AngVel;
+	rotSpeed = dAngVel;
+}
+
 void VNEObject::PrintSelf()
 {
 #ifdef _DEBUG
@@ -154,15 +168,18 @@ valarray<double>* VNEObject::GetCentroid(){
 
 void VNEObject::IncrementTime()
 {
-	double dt = .01;
+	double dt = TIMESTEP;
 	elapsedTime += dt;
 		
 	this->TranslateBy( Velocity[0]*dt/mass, Velocity[1]*dt/mass, Velocity[2]*dt/mass );
-	// CHANGE on MAY 23: use OpenGL Rotation call instead of this
+
 #ifdef MANUAL_ROTATION
 	// this still needs to happen potentially if we want highly accurate collision handling
 	// with angular momentum
+	temp3 = AngVel * AngVel;
+	rotSpeed = sqrt(temp3.sum());
 	this->RotateLocal( rotSpeed * dt/mass );	
+	this->ComputeInertia();
 #endif
 
 }
@@ -182,24 +199,27 @@ void VNEObject::TiltIncrementAxisZ( double dVal )
 	AngVel[2] += dVal;
 	AngVel = AngVel / sqrt( AngVel[0]*AngVel[0] + AngVel[1]*AngVel[1] + AngVel[2]*AngVel[2] );
 }
-	
 
-int VNEObject::IncrementVelocity( double dx, double dy, double dz )
+void VNEObject::IncrementVelocity( const valarray<double> &plus )
 {
-	valarray<double> plus(3);
-	plus[0] = dx;
-	plus[1] = dy;
-	plus[2] = dz;
-
 	Velocity = Velocity + plus;
-	
-	return 0;
 }
+
+void VNEObject::IncrementVelocity( double dx, double dy, double dz )
+{
+	Velocity[0] += dx;
+	Velocity[1] += dy;
+	Velocity[2] += dz;
+
+}
+
 void VNEObject::IncrementAngVel( double dx )
 {
 	this->rotSpeed += dx;
 	if( abs(rotSpeed) < 1e-1 )
 		rotSpeed = 1e-1;
+	temp3 = AngVel * AngVel;
+	AngVel = rotSpeed * AngVel / sqrt(temp3.sum());
 }
 
 int VNEObject::RotateLocal( double dangle )
@@ -233,13 +253,13 @@ int VNEObject::RotateLocal( double dangle )
 	double vx,vy,vz;
 	for( i = 0; i < this->numVerts; i++ )
 	{
-		vx = CurTriVert[i*3 + 0] - Centroid[0];
-		vy = CurTriVert[i*3 + 1] - Centroid[1];
-		vz = CurTriVert[i*3 + 2] - Centroid[2];
+		vx = CurTriVertX[i] - Centroid[0];
+		vy = CurTriVertY[i] - Centroid[1];
+		vz = CurTriVertZ[i] - Centroid[2];
 		
-		this->CurTriVert[i*3 + 0] = RotationMatrix[0] * vx + RotationMatrix[1] * vy + RotationMatrix[2] * vz + Centroid[0];
-		this->CurTriVert[i*3 + 1] = RotationMatrix[3] * vx + RotationMatrix[4] * vy + RotationMatrix[5] * vz + Centroid[1];
-		this->CurTriVert[i*3 + 2] = RotationMatrix[6] * vx + RotationMatrix[7] * vy + RotationMatrix[8] * vz + Centroid[2];
+		this->CurTriVertX[i] = RotationMatrix[0] * vx + RotationMatrix[1] * vy + RotationMatrix[2] * vz + Centroid[0];
+		this->CurTriVertY[i] = RotationMatrix[3] * vx + RotationMatrix[4] * vy + RotationMatrix[5] * vz + Centroid[1];
+		this->CurTriVertZ[i] = RotationMatrix[6] * vx + RotationMatrix[7] * vy + RotationMatrix[8] * vz + Centroid[2];
 	}
 	
 	ComputeCentroid();
@@ -256,9 +276,37 @@ int VNEObject::TiltAxisTo( double dx, double dy, double dz )
 	AngVel[1] = dy;
 	AngVel[2] = dz;
 
+	temp3 = AngVel*AngVel;
+	this->rotSpeed = sqrt(temp3.sum());
+
 	return iRet;
 
 
+}
+
+void VNEObject::ComputeInertia()
+{
+	this->InertiaTensor = 0.0;
+	
+		// diagonal elements
+		MyTemp = MassDistribution	 * ( LocTriVertY * LocTriVertY + LocTriVertZ * LocTriVertZ );
+		InertiaTensor[0] = MyTemp.sum();
+		MyTemp = MassDistribution	 * ( LocTriVertX * LocTriVertX + LocTriVertZ * LocTriVertZ );
+		InertiaTensor[4] = MyTemp.sum();
+		MyTemp = MassDistribution	 * ( LocTriVertY * LocTriVertY + LocTriVertX * LocTriVertX );
+		InertiaTensor[8] = MyTemp.sum();
+
+		// off-diagonal elements
+		MyTemp = MassDistribution * LocTriVertY * LocTriVertX;
+		InertiaTensor[1] = -MyTemp.sum();
+		InertiaTensor[3] = InertiaTensor[1];
+		MyTemp = MassDistribution * LocTriVertZ * LocTriVertX;
+		InertiaTensor[2] = -MyTemp.sum();
+		InertiaTensor[6] = InertiaTensor[2];
+		MyTemp = MassDistribution * LocTriVertY * LocTriVertZ;
+		InertiaTensor[5] = -MyTemp.sum();
+		InertiaTensor[7] = InertiaTensor[5];
+	
 }
 
 int VNEObject::ComputeCentroid()
@@ -270,9 +318,9 @@ int VNEObject::ComputeCentroid()
 	int i;
 	for( i = 0; i < this->numVerts; i++ )
 	{
-		cx += CurTriVert[i*3+0];
-		cy += CurTriVert[i*3+1];
-		cz += CurTriVert[i*3+2];
+		cx += CurTriVertX[i];
+		cy += CurTriVertY[i];
+		cz += CurTriVertZ[i];
 	}
 	cx /= numVerts;
 	cy /= numVerts;
@@ -282,17 +330,30 @@ int VNEObject::ComputeCentroid()
 	Centroid[1] = cy;
 	Centroid[2] = cz;
 
+	LocTriVertX = CurTriVertX - cx;
+	LocTriVertY = CurTriVertY - cy;
+	LocTriVertZ = CurTriVertZ - cz;
+
 	return 0;
 }
 
+void VNEObject::GetMinMaxVert(	double* minX, double* maxX, double* minY,
+								double*  maxY, double* minZ, double* maxZ,
+								int* minXi, int* maxXi, int* minYi, 
+								int* maxYi, int* minZi, int* maxZi )
+{
+
+
+}
+	
 int VNEObject::TranslateTo(double dx, double dy, double dz)
 { // warning: this probably breaks now except at object initialization
 	int i;
 	for( i = 0; i < this->numVerts; i++ )
 	{
-		this->CurTriVert[i*3 + 0] = dx - Centroid[0] + CurTriVert[i*3 + 0];
-		this->CurTriVert[i*3 + 1] = dy - Centroid[1] + CurTriVert[i*3 + 1];
-		this->CurTriVert[i*3 + 2] = dz - Centroid[2] + CurTriVert[i*3 + 2];
+		this->CurTriVertX[i] = dx - Centroid[0] + CurTriVertX[i];
+		this->CurTriVertY[i] = dy - Centroid[1] + CurTriVertY[i];
+		this->CurTriVertZ[i] = dz - Centroid[2] + CurTriVertZ[i];
 	}
 
 	return ComputeCentroid();
@@ -303,23 +364,67 @@ int VNEObject::TranslateBy(double dx, double dy, double dz)
 	int i;
 	for( i = 0 ; i < this->numVerts ; i++ )
 	{
-		CurTriVert[3*i] += dx;
-		CurTriVert[3*i+1] += dy;
-		CurTriVert[3*i+2] += dz;
+		CurTriVertX[i] += dx;
+		CurTriVertY[i] += dy;
+		CurTriVertZ[i] += dz;
 	}
 
 	return ComputeCentroid();
 	
 }
 
-int VNEObject::SetVelocityProfile(double xval, double yval, double zval, int iCode )
+void VNEObject::ApplyInstTorque( double dx, double dy, double dz )
+{
+	// d/dt Iw = torque
+	// w_new = w_old + time_step * torque
+
+	
+
+}
+
+void VNEObject::ApplyInstTorque( const valarray<double> &Torque )
+{
+	// d/dt Iw = torque
+	// w_new = w_old + time_step * torque
+
+	// deltaW = I \ timestep * Torque
+
+	temp3B = TIMESTEP * Torque;  // RHS
+	temp3 = temp3B;  // initial guess
+
+#define CHECKGS_NO
+	
+	for( int i = 0; i < 5; i++ )
+	{ // cross fingers and hope 5 Gauss-Seidel iterations work :-)
+#ifdef CHECKGS
+		valarray<double> prev(3);
+		prev = temp3;
+#endif
+		temp3[0] = ( temp3B[0] - InertiaTensor[1]*temp3[1] - InertiaTensor[2]*temp3[2] ) / InertiaTensor[0];
+		temp3[1] = ( temp3B[1] - InertiaTensor[3]*temp3[0] - InertiaTensor[5]*temp3[2] ) / InertiaTensor[4];
+		temp3[2] = ( temp3B[2] - InertiaTensor[6]*temp3[0] - InertiaTensor[7]*temp3[1] ) / InertiaTensor[8];
+
+#ifdef CHECKGS
+		valarray<double> acc(3);
+		acc = temp3 - prev;
+		acc = acc * acc;
+		double diff = sqrt(acc.sum());
+		prev = temp3;
+#endif
+	}
+
+	this->AngVel = AngVel + temp3;
+	temp3 = AngVel * AngVel;
+	this->rotSpeed = sqrt(temp3.sum());
+
+}
+
+void VNEObject::SetVelocityProfile(double xval, double yval, double zval, int iCode )
 {
 	
 		this->Velocity[0] = xval;
 		this->Velocity[1] = yval;
 		this->Velocity[2] = zval;
-	
-	return 0;
 }
 
 double VNEObject::GetSpeed( )
@@ -351,12 +456,20 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	AngVel[1] = 1.0;
 	AngVel[2] = 0.0;
 
-	// TODO: USE THE FACES DATA FILE IN OPENGL CALLS! Eliminate redundant vertices !!!!!
-	numFaces = ReadMeshData( &CurTriIdx, &CurTriVert, &CurTriNorm, fileNameFaces, fileNameVerts, fileNameNorms );
-	numVerts = CurTriVert.size()/3;
+	cout<<"Reading mesh data...\n";
+
+	numFaces = ReadMeshData( CurTriIdx, CurTriVertX, CurTriVertY, CurTriVertZ,
+							 CurTriNormX, CurTriNormY, CurTriNormZ, 
+							 fileNameFaces, fileNameVerts, fileNameNorms );
+
+	numVerts = CurTriVertX.size();
 	this->InertiaTensor = valarray<double>(9); // I, the 3x3 inertia tensor
 	this->MassDistribution = valarray<double>(numVerts); // how much mass at each vertex is there
-	MassDistribution = mass / (numVerts); // "uniform" distribution
+	this->MyTemp = valarray<double>(numVerts); // temp var for inertia computations
+	this->LocTriVertX = valarray<double>(numVerts);
+	this->LocTriVertY = valarray<double>(numVerts);
+	this->LocTriVertZ = valarray<double>(numVerts);
+	MassDistribution = mass / (numVerts); // uniform mass distribution
 
 	ComputeCentroid();
 	
@@ -365,7 +478,7 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	int i;
 	for( i = 0 ; i < numVerts; i++ )
 	{
-		radSquared += (CurTriVert[i*3+0] - Centroid[0])*(CurTriVert[i*3+0] - Centroid[0]) + (CurTriVert[i*3+1] - Centroid[1])*(CurTriVert[i*3+1] - Centroid[1]) + (CurTriVert[i*3+2] - Centroid[2])*(CurTriVert[i*3+2] - Centroid[2]);
+		radSquared += (CurTriVertX[i] - Centroid[0])*(CurTriVertX[i] - Centroid[0]) + (CurTriVertY[i] - Centroid[1])*(CurTriVertY[i] - Centroid[1]) + (CurTriVertZ[i] - Centroid[2])*(CurTriVertZ[i] - Centroid[2]);
 	}
 	radSquared /= numVerts;	
 	this->bHasTexture=false;

@@ -192,10 +192,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MathUtils.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\vne.cpp"
 				>
 			</File>
@@ -239,10 +235,6 @@
 			</File>
 			<File
 				RelativePath=".\IOUtils.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MathUtils.h"
 				>
 			</File>
 			<File

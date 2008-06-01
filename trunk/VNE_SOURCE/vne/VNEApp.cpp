@@ -11,6 +11,31 @@
 #include "VNEObject.h"
 #include "CameraControl.h"
 
+using namespace std;
+
+#ifdef _DEBUG
+int frame=0,mytime,timebase=0;
+#endif
+
+const double xf[] = {10.0,0.0,0.0};
+const double xs[] = {-10.0,0.0,0.0};
+const double xyf[] = {10.0,-10.0,0.0};
+const double xys[] = {-10.0,10.0,0.0};
+const double yf[] = {0.0,10.0,0.0};
+const double ys[] = {0.0,-10.0,0.0};
+const double zf[] = {0.0,0.0,10.0};
+const double zs[] = {0.0,0.0,-10.0};
+valarray<double> XFaster(xf,3);
+valarray<double> XSlower(xs,3);
+
+valarray<double> XYFaster(xyf,3);
+valarray<double> XYSlower(xys,3);
+
+valarray<double> YFaster(yf,3);
+valarray<double> YSlower(ys,3);
+valarray<double> ZFaster(zf,3);
+valarray<double> ZSlower(zs,3);
+
 void processHits(GLint hits, GLuint buffer[] )
 {
 	unsigned int i,j;
@@ -39,12 +64,9 @@ void processHits(GLint hits, GLuint buffer[] )
 
 VNEApp::VNEApp()
 {
-	//cout<<"Making world...\n";
 	world = new VNEWorld();
-	//cout<<"Making Camera Controller...\n";
 	camera = new CameraControl( 0.0, 0.0, world->Getzmax(), world);
-	counter = 0;
-	//cout<<"Grabbing control of first object...\n";
+		
 	iControlObjIdx = 0;
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
@@ -61,20 +83,32 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 	DemoObj = this->world->ObjList->GetObjectAt(iControlObjIdx);
 	double currSpeed = DemoObj->GetSpeed( );
 	double currSpin = DemoObj->GetAngVelMag( );
+	if( key == 'r' )
+		DemoObj->SetRotSpeed( -1*currSpin );
 	if( key == 'w' )
 		DemoObj->SetSpeed( currSpeed * 1.1 );
 	if( key == 's' )
 		DemoObj->SetSpeed( currSpeed * 0.9 );
 	if( key == 'e' )
-		DemoObj->SetRotSpeed( currSpin * 1.1 );
+		DemoObj->SetRotSpeed( currSpin * 1.05 );
 	if( key == 'd' )
-		DemoObj->SetRotSpeed( currSpin * 0.9 );
+		DemoObj->SetRotSpeed( currSpin * 0.95 );
 	if( key == 'x' )
-		DemoObj->TiltIncrementAxisX(0.05);
+		DemoObj->ApplyInstTorque( XFaster );
+	if( key == 'X' )
+		DemoObj->ApplyInstTorque( XSlower );
 	if( key == 'y' )
-		DemoObj->TiltIncrementAxisY(0.05);
+		DemoObj->ApplyInstTorque( YFaster );
+	if( key == 'Y' )
+		DemoObj->ApplyInstTorque( YSlower );
 	if( key == 'z' )
-		DemoObj->TiltIncrementAxisZ(0.05);
+		DemoObj->ApplyInstTorque( ZFaster );
+	if( key == 'Z' )
+		DemoObj->ApplyInstTorque( ZSlower );
+	if( key == 'a' )
+		DemoObj->ApplyInstTorque( XYFaster );
+	if( key == 'A' )
+		DemoObj->ApplyInstTorque( XYSlower );
 	{ // control: forces
 		if( key == ']' )
 		{	world->EnableForce(0);
@@ -186,14 +220,18 @@ void VNEApp::DisplayCallback()
 	this->world->TimeStep();
 	this->world->Redraw();
 	this->camera->UpdateAttachedCamera();
-
-	glColor3f(1.0, 1.0, 1.0);	
-
-	counter++;
-	counter = (counter < pow(2.0,31) ) ? counter : 0;
 	
-
+#ifdef _DEBUG
+	frame++;
+	mytime = glutGet(GLUT_ELAPSED_TIME);
 	
+	if (mytime - timebase > 3000) {
+		cout<<"Frames per second: "<<frame*3000.0/(mytime-timebase)/2<<"\n";
+	 	timebase = mytime;		
+		frame = 0;
+	}
+#endif
+	glColor3f(1.0,1.0,1.0); // clear color for background drawing
 	glutSwapBuffers();
 
 }

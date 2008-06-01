@@ -10,7 +10,6 @@
 #include "VNEWorld.h"
 #include "VNEObject.h"
 #include "CameraControl.h"
-#include "MathUtils.h"
 
 CameraControl::CameraControl(VNEWorld* aWorld)
 {

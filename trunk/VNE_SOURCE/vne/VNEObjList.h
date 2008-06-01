@@ -13,16 +13,6 @@
 //using namespace cliext;
 using namespace std; // note for the weary: this is required so that "string" is recognized from std::string
 
-struct ObjNode
-{
-	int myIndex;
-	VNEObject* curObj;
-	ObjNode* nextNode;
-	ObjNode* prevNode;
-	bool bIsFirst;
-	bool bIsLast;
-};
-
 class VNEObjList
 {
 private:
@@ -31,8 +21,6 @@ private:
 	
 public:
 	void DeleteObjAt(int index);
-	ObjNode* firstNode;
-	ObjNode* lastNode;
 	VNEObjList( );
 	VNEObjList( VNEObject* firstObj );
 	int DoSelection(); // return idx of selected object

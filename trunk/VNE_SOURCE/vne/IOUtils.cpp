@@ -11,7 +11,9 @@
 
 using namespace std;
 
-int ReadMeshData( valarray<int> *TriIdx, valarray<double> *TriVerts, valarray<double> *TriNorms, string fileNameFaces, string fileNameVerts, string fileNameNorms )
+int ReadMeshData( valarray<int> &TriIdx, valarray<double> &TriVertsX, valarray<double> &TriVertsY, valarray<double> &TriVertsZ,
+				 valarray<double> &TriNormsX, valarray<double> &TriNormsY, valarray<double> &TriNormsZ, 
+				 string fileNameFaces, string fileNameVerts, string fileNameNorms )
 {
 	// read a comma separted value file that defines the vertices
 	// and indices into vertices for all faces
@@ -19,15 +21,21 @@ int ReadMeshData( valarray<int> *TriIdx, valarray<double> *TriVerts, valarray<do
 	char line[32];
 	ifstream fin( fileNameFaces.c_str() );
 	int iFaces = 0;
+	
+	//cout<<"Start reading faces data..."<<fileNameFaces.c_str()<<"\n";
+	
 	while( !fin.eof() )
 	{
 		fin>>line;
 		iFaces++;
-		////cout<<iFaces;
+		//cout<<iFaces;
+		//cout<<line<<"\n";
 	}
 	fin.close();
 	
-	*TriIdx   = valarray<int>( (iFaces-1)*3 );
+	//cout<<"Done Reading faces data...";
+
+	TriIdx   = valarray<int>( (iFaces-1)*3 );
 	
 
 	ifstream fin2( fileNameFaces.c_str() );
@@ -48,15 +56,15 @@ int ReadMeshData( valarray<int> *TriIdx, valarray<double> *TriVerts, valarray<do
 		int comma1_idx = csTemp.find_first_of(',');
 		string s1 = csTemp.substr(0,comma1_idx);
 		idx = atoi(s1.c_str());
-		(*TriIdx)[ 3*k + 0 ] = idx-1;
+		(TriIdx)[ 3*k + 0 ] = idx-1;
 		string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
 		int comma2_idx = rest1.find_first_of(',');
 		string s2 = rest1.substr(0,comma2_idx);
 		idx = atoi(s2.c_str());
-		(*TriIdx)[ 3*k + 1 ] = idx-1;
+		(TriIdx)[ 3*k + 1 ] = idx-1;
 		string rest2 = rest1.substr(comma2_idx+1,rest1.length());
 		idx = atoi(rest2.c_str());
-		(*TriIdx)[ 3*k + 2 ] = idx-1;
+		(TriIdx)[ 3*k + 2 ] = idx-1;
 		k++;
 	}
 
@@ -74,8 +82,12 @@ int ReadMeshData( valarray<int> *TriIdx, valarray<double> *TriVerts, valarray<do
 	vin.close();
 	//cout<<"Done counting vertices \n";
 	//double* tempnorms = new double[3*iVerts];
-	(*TriVerts) = valarray<double>(3*(iVerts - 1));
-	(*TriNorms) = valarray<double>(3*(iVerts - 1));
+	TriVertsX = valarray<double>(iVerts - 1);
+	TriVertsY = valarray<double>(iVerts - 1);
+	TriVertsZ = valarray<double>(iVerts - 1);
+	TriNormsX = valarray<double>(iVerts - 1);
+	TriNormsY = valarray<double>(iVerts - 1);
+	TriNormsZ = valarray<double>(iVerts - 1);
 	
 	ifstream vin3( fileNameNorms.c_str() );
 	//cout<<"Reading normals from file "<<fileNameNorms.c_str()<<"\n";
@@ -91,15 +103,15 @@ int ReadMeshData( valarray<int> *TriIdx, valarray<double> *TriVerts, valarray<do
 		int comma1_idx = csTemp.find_first_of(',');
 		string s1 = csTemp.substr(0,comma1_idx);
 		val = atof(s1.c_str());
-		(*TriNorms)[ 3*k + 0 ] = val;
+		TriNormsX[ k ] = val;
 		string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
 		int comma2_idx = rest1.find_first_of(',');
 		string s2 = rest1.substr(0,comma2_idx);
 		val = atof(s2.c_str());
-		(*TriNorms)[ 3*k + 1 ] = val;
+		TriNormsY[ k ] = val;
 		string rest2 = rest1.substr(comma2_idx+1,rest1.length());
 		val = atof(rest2.c_str());
-		(*TriNorms)[ 3*k + 2 ] = val;
+		TriNormsZ[ k ] = val;
 		k++;
 	}
 
@@ -120,15 +132,15 @@ int ReadMeshData( valarray<int> *TriIdx, valarray<double> *TriVerts, valarray<do
 		int comma1_idx = csTemp.find_first_of(',');
 		string s1 = csTemp.substr(0,comma1_idx);
 		val = atof(s1.c_str());
-		(*TriVerts)[ 3*k + 0 ] = val;
+		TriVertsX[ k ] = val;
 		string rest1 = csTemp.substr(comma1_idx+1,csTemp.length());
 		int comma2_idx = rest1.find_first_of(',');
 		string s2 = rest1.substr(0,comma2_idx);
 		val = atof(s2.c_str());
-		(*TriVerts)[ 3*k + 1 ] = val;
+		TriVertsY[ k ] = val;
 		string rest2 = rest1.substr(comma2_idx+1,rest1.length());
 		val = atof(rest2.c_str());
-		(*TriVerts)[ 3*k + 2 ] = val;
+		TriVertsZ[ k ] = val;
 		k++;
 	}
 	vin2.close();
