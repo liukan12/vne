@@ -22,6 +22,8 @@ public: // maybe dangerous, but can stop passing around things with function cal
 	valarray<double> CurTriVertY; // current vertices of triangle faces w.r.t. local coordinate system
 	valarray<double> CurTriVertZ; // current vertices of triangle faces w.r.t. local coordinate system
 
+	valarray<int> VertControlPts; // a small number of vertex indices used for fast rotational computations
+
 	valarray<double> CurTriNormX; // normals at vertices
 	valarray<double> CurTriNormY; // normals at vertices
 	valarray<double> CurTriNormZ; // normals at vertices
@@ -74,14 +76,19 @@ public:
 	int DrawSelf();
 	void PrintSelf();
 	void IncrementTime( );
-	//int SelectQuery(int iListIdx);
 	
 	void GetMinMaxVert(	double* minX, double* maxX, double* minY,
 								double*  maxY, double* minZ, double* maxZ,
 								int* minXi, int* maxXi, int* minYi, 
 								int* maxYi, int* minZi, int* maxZi );
 	
+	void GetMinMaxVert(	);
+	
+
 	int GetNumVerts( ) { return numVerts; }
+	void ApplyForceAt( int vertIdx, const valarray<double> &CollideForce );
+	void ApplyForceAllVerts( const valarray<double> &CollideForce );
+	void ForceWAt( int vertIdx, const valarray<double> &CollideForce );
 	double GetMass( ) { return mass; }
 	double GetSpeed( );
 	double GetAngVelMag( ) { return rotSpeed; }

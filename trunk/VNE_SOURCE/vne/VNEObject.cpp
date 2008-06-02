@@ -216,8 +216,8 @@ void VNEObject::IncrementVelocity( double dx, double dy, double dz )
 void VNEObject::IncrementAngVel( double dx )
 {
 	this->rotSpeed += dx;
-	if( abs(rotSpeed) < 1e-1 )
-		rotSpeed = 1e-1;
+	if( abs(rotSpeed) < 1e-9 )
+		rotSpeed = 1e-9;
 	temp3 = AngVel * AngVel;
 	AngVel = rotSpeed * AngVel / sqrt(temp3.sum());
 }
@@ -337,13 +337,137 @@ int VNEObject::ComputeCentroid()
 	return 0;
 }
 
+void VNEObject::ApplyForceAt( int vertIdx, const valarray<double> &CollideForce )
+{
+	// temp3 represents the r vector, from the centroid to the action point of the force
+	temp3[0] = CurTriVertX[vertIdx] - Centroid[0];
+	temp3[1] = CurTriVertY[vertIdx] - Centroid[1];
+	temp3[2] = CurTriVertZ[vertIdx] - Centroid[2];
+
+	// torque = r cross F
+	temp3B[0] = temp3[1]*CollideForce[2] - temp3[2]*CollideForce[1];
+	temp3B[1] = -temp3[0]*CollideForce[2] + temp3[2]*CollideForce[0];
+	temp3B[2] = temp3[0]*CollideForce[1] - temp3[1]*CollideForce[0];
+
+	this->ApplyInstTorque( temp3B );
+	this->IncrementVelocity( CollideForce/MassDistribution[vertIdx]*TIMESTEP );
+}
+
+void VNEObject::ApplyForceAllVerts( const valarray<double> &CollideForce )
+{
+	temp3B = 0.0;
+	for( int i = 0; i < numVerts; i++ )
+	{
+		// temp3 represents the r vector, from the centroid to the action point of the force
+		temp3[0] = CurTriVertX[i] - Centroid[0];
+		temp3[1] = CurTriVertY[i] - Centroid[1];
+		temp3[2] = CurTriVertZ[i] - Centroid[2];
+
+		// torque = r cross F
+		temp3B[0] += temp3[1]*CollideForce[2] - temp3[2]*CollideForce[1];
+		temp3B[1] += -temp3[0]*CollideForce[2] + temp3[2]*CollideForce[0];
+		temp3B[2] += temp3[0]*CollideForce[1] - temp3[1]*CollideForce[0];
+	}
+	this->ApplyInstTorque( temp3B );
+	this->IncrementVelocity( CollideForce / mass * TIMESTEP );
+}
+
+void VNEObject::ForceWAt( int vertIdx, const valarray<double> &CollideForce )
+{
+	// temp3 represents the r vector, from the centroid to the action point of the force
+	temp3[0] = CurTriVertX[vertIdx] - Centroid[0];
+	temp3[1] = CurTriVertY[vertIdx] - Centroid[1];
+	temp3[2] = CurTriVertZ[vertIdx] - Centroid[2];
+
+	temp3B = temp3 * temp3;
+	temp3 = temp3 / sqrt( temp3B.sum() );
+
+	// torque = r cross F
+	temp3B[0] = temp3[1]*CollideForce[2] - temp3[2]*CollideForce[1];
+	temp3B[1] = -temp3[0]*CollideForce[2] + temp3[2]*CollideForce[0];
+	temp3B[2] = temp3[0]*CollideForce[1] - temp3[1]*CollideForce[0];
+
+	temp3 = temp3B * temp3B;
+	
+	AngVel = temp3B / sqrt(temp3.sum()) * rotSpeed;
+	temp3 = AngVel*AngVel;
+	this->rotSpeed = sqrt(temp3.sum());
+}
+
 void VNEObject::GetMinMaxVert(	double* minX, double* maxX, double* minY,
 								double*  maxY, double* minZ, double* maxZ,
 								int* minXi, int* maxXi, int* minYi, 
 								int* maxYi, int* minZi, int* maxZi )
 {
-
-
+	*minX = 1e3;
+	*minY = 1e3;
+	*minZ = 1e3;
+	*maxX = -1e3;
+	*maxY = -1e3;
+	*maxZ = -1e3;
+	for( int i = 0; i < this->numVerts; i++ )
+	{
+		if( CurTriVertX[i] < *minX ) {
+			*minX =  CurTriVertX[i];
+			*minXi = i;
+		}
+		if( CurTriVertY[i] < *minY ) {
+			*minY =  CurTriVertY[i];
+			*minYi = i;
+		}
+		if( CurTriVertZ[i] < *minZ ) {
+			*minZ =  CurTriVertZ[i];
+			*minZi = i;
+		}
+		if( CurTriVertX[i] > *maxX ) {
+			*maxX =  CurTriVertX[i];
+			*maxXi = i;
+		}
+		if( CurTriVertY[i] > *maxY ) {
+			*maxY =  CurTriVertY[i];
+			*maxYi = i;
+		}
+		if( CurTriVertZ[i] > *maxZ ) {
+			*maxZ =  CurTriVertZ[i];
+			*maxZi = i;
+		}
+	}
+}
+void VNEObject::GetMinMaxVert()
+{
+	double minX = 1e3;
+	double minY = 1e3;
+	double minZ = 1e3;
+	double maxX = -1e3;
+	double maxY = -1e3;
+	double maxZ = -1e3;
+	for( int i = 0; i < this->numVerts; i++ )
+	{
+		if( CurTriVertX[i] < minX ) {
+			minX =  CurTriVertX[i];
+			VertControlPts[0] = i;
+		}
+		if( CurTriVertY[i] < minY ) {
+			minY =  CurTriVertY[i];
+			VertControlPts[1] = i;
+		}
+		if( CurTriVertZ[i] < minZ ) {
+			minZ =  CurTriVertZ[i];
+			VertControlPts[2] = i;
+		}
+		if( CurTriVertX[i] > maxX ) {
+			maxX =  CurTriVertX[i];
+			VertControlPts[3] = i;
+		}
+		if( CurTriVertY[i] > maxY ) {
+			maxY =  CurTriVertY[i];
+			VertControlPts[4] = i;
+		}
+		if( CurTriVertZ[i] > maxZ ) {
+			maxZ =  CurTriVertZ[i];
+			VertControlPts[5] = i;
+		}
+	}
 }
 	
 int VNEObject::TranslateTo(double dx, double dy, double dz)
@@ -469,6 +593,10 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	this->LocTriVertX = valarray<double>(numVerts);
 	this->LocTriVertY = valarray<double>(numVerts);
 	this->LocTriVertZ = valarray<double>(numVerts);
+	this->VertControlPts = valarray<int>(6);
+
+	this->GetMinMaxVert();
+
 	MassDistribution = mass / (numVerts); // uniform mass distribution
 
 	ComputeCentroid();
