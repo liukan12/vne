@@ -72,7 +72,7 @@ VNEWorld::VNEWorld()
 	VNEObject* Obj1 = new VNEObject( "object 1", faces, verts, norms);
 	VNEObject* Obj2 = new VNEObject( "object 2", faces2, verts2, norms2);
 	VNEObject* Obj3 = new VNEObject( "object 3", faces3, verts3, norms3);
-	VNEObject* Obj4 = new VNEObject( "object 4", faces4, verts4, norms4); // no norms for the brain 
+	//VNEObject* Obj4 = new VNEObject( "object 4", faces4, verts4, norms4); // no norms for the brain 
 #ifdef PROFILE
 	Obj1->setTexture("obj1.png");
 	Obj2->setTexture("obj2.png");
@@ -89,23 +89,23 @@ VNEWorld::VNEWorld()
 	
 	Obj1->SetVelocityProfile( 0.5, 0.5, 0.0, 0 );
 	Obj2->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
-	Obj3->SetVelocityProfile( 0.5, -0.5, -0.5, 0 );
-	Obj4->SetVelocityProfile( -0.5, -0.5, -0.5, 0 );
+	Obj3->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
+	//Obj4->SetVelocityProfile( -0.5, -0.5, -0.5, 0 );
 	
 	Obj1->SetColorSeed(0.5,0.0,1.0);
 	Obj2->SetColorSeed(1.0,0.0,0.5);
 	Obj3->SetColorSeed(0.5,0.5,0.0);
-	Obj4->SetColorSeed(0.5,0.5,0.5);
+	//Obj4->SetColorSeed(0.5,0.5,0.5);
 
 	Obj1->TranslateTo(2.0,2.0,2.0);
 	Obj2->TranslateTo(-2.0,-2.0,-2.0);
 	Obj3->TranslateTo(4.0,1.0,-2.0);
-	Obj4->TranslateTo(1.0,-3.0,1.0);
+	//Obj4->TranslateTo(1.0,-3.0,1.0);
 
 	this->ObjList = new VNEObjList( Obj1 );
 	this->ObjList->AddObj(Obj2);
 	this->ObjList->AddObj(Obj3);
-	this->ObjList->AddObj(Obj4);
+	//this->ObjList->AddObj(Obj4);
 
 #ifdef PERFORMANCE_TEST
 	VNEObject* Obj5 = new VNEObject( "object 5", faces5, verts5, norms5); // object with 10K vertices
