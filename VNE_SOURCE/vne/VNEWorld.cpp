@@ -41,12 +41,12 @@ VNEWorld::VNEWorld()
 	faces = "..\\vne_data\\faces4.dat";
 	verts = "..\\vne_data\\verts4.dat";
 	norms = "..\\vne_data\\norms4.dat";
-	faces2 = "..\\vne_data\\faces5.dat";
-	verts2 = "..\\vne_data\\verts5.dat";
-	norms2 = "..\\vne_data\\norms5.dat";
-	faces3 = "..\\vne_data\\faces6.dat";
-	verts3 = "..\\vne_data\\verts6.dat";
-	norms3 = "..\\vne_data\\norms6.dat";
+	faces2 = "..\\vne_data\\faces4.dat";
+	verts2 = "..\\vne_data\\verts4.dat";
+	norms2 = "..\\vne_data\\norms4.dat";
+	faces3 = "..\\vne_data\\faces4.dat";
+	verts3 = "..\\vne_data\\verts4.dat";
+	norms3 = "..\\vne_data\\norms4.dat";
 	faces4 = "..\\vne_data\\brainfaces.dat";
 	verts4 = "..\\vne_data\\brainverts.dat";
 	norms4 = "..\\vne_data\\brainnorms.dat";
@@ -121,10 +121,10 @@ VNEWorld::VNEWorld()
 	this->theForce = new WorldForce();
 	theForce->VortexOff();
 
-	xmin = -5;
-	xmax = 5;
-	ymin = -5;
-	ymax = 5;
+	xmin = -50;
+	xmax = 50;
+	ymin = -50;
+	ymax = 50;
 	zmin = -5;
 	zmax = 15;
 	clock1 = clock();
@@ -135,7 +135,8 @@ VNEWorld::VNEWorld()
 #ifdef PROFILE
 	myTex=new VNETexture("cat.jpg");
 #elif _DEBUG
-	myTex=new VNETexture("..\\vne_data\\cat.jpg");
+	myTex1=new VNETexture("..\\vne_data\\stars.jpg");
+	myTex2=new VNETexture("..\\vne_data\\ground.jpg");
 #else
 	myTex=new VNETexture(".\\data\\cat.jpg");
 #endif
@@ -307,7 +308,7 @@ void VNEWorld::CheckCollisions()
 		{
 			obj2 = this->ObjList->GetObjectAt(n);
 			double thresh = obj1->GetRadSquared() + obj2->GetRadSquared();
-			valarray<double> diff = *obj1->GetCentroid() - *obj2->GetCentroid();
+			valarray<double> diff = obj1->Centroid - obj2->Centroid;
 			diff = diff * diff;
 			if(thresh > diff.sum() ) // TODO: difference of centroids
 			{
@@ -328,45 +329,38 @@ int VNEWorld::TimeStep()
 
 	this->ObjList->AccelAll( this->theForce );
 	result = this->ObjList->TimeStepAll();
-	this->CheckCollisions();
+	// this->CheckCollisions();   // THIS NEEDS HUGE OVERHAUL
 	return result;
 }
 
 void VNEWorld::DrawWalls()
 {
-	for( int i = 0; i < 5; i++ )
+	for( int i = 0; i < 2; i++ )
 	{
 		glPushMatrix();
 		switch(i)
 		{ // draw five walls, leave one open area for the camera's default position
 		case 0: 
-			glRotatef(90.0,0.0,1.0,0.0);
+			//glRotatef(90.0,1.0,0.0,0.0);
+			myTex1->bindTexture();
 			break;
 		case 1:
-			glRotatef(-90,0.0,1.0,0.0);
-			break;
-		case 2:
-			break;
-		case 3:
-			glRotatef(90,1.0,0.0,0.0);
-			break;
-		case 4:
 			glRotatef(-90,1.0,0.0,0.0);
+			myTex2->bindTexture();
 			break;
 		}
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 		
-		myTex->bindTexture();
-		
-
 		glBegin(GL_QUADS);
 			// back wall
 			glTexCoord2f(0.0, 0.0);
 			glVertex3f(xmin, ymin, zmin+1e-3 );
-			glTexCoord2f(0.0, 1.0);
+			glTexCoord2f(0.0, 3.0);
 			glVertex3f(xmin,ymax,zmin+1e-3);
-			glTexCoord2f(1.0,1.0);
+			glTexCoord2f(3.0,3.0);
 			glVertex3f(xmax,ymax,zmin+1e-3);
-			glTexCoord2f(1.0,0.0);
+			glTexCoord2f(3.0,0.0);
 			glVertex3f(xmax, ymin, zmin+1e-3 );
 
 		glEnd();

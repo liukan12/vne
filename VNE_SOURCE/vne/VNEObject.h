@@ -22,7 +22,9 @@ public: // maybe dangerous, but can stop passing around things with function cal
 	valarray<double> CurTriVertY; // current vertices of triangle faces w.r.t. local coordinate system
 	valarray<double> CurTriVertZ; // current vertices of triangle faces w.r.t. local coordinate system
 
-	valarray<int> VertControlPts; // a small number of vertex indices used for fast rotational computations
+	valarray<double> RefTriVertX; // current vertices of triangle faces w.r.t. local coordinate system
+	valarray<double> RefTriVertY; // current vertices of triangle faces w.r.t. local coordinate system
+	valarray<double> RefTriVertZ; // current vertices of triangle faces w.r.t. local coordinate system
 
 	valarray<double> CurTriNormX; // normals at vertices
 	valarray<double> CurTriNormY; // normals at vertices
@@ -30,18 +32,31 @@ public: // maybe dangerous, but can stop passing around things with function cal
 	
 	valarray<int>	 CurTriIdx; // indices into CurTriVert and CurTriNorm
 
+	valarray<int>	VertControlPts;
+
 	// coordinates referenced to centroid
 	valarray<double> LocTriVertX; // 
 	valarray<double> LocTriVertY; // 
 	valarray<double> LocTriVertZ; // 
 	
 	// physics properties
-	valarray<double> Velocity;   // x,y,z instantaneous velocity
-	valarray<double> AngVel;   // x,y,z instantaneous angular velocity
-	valarray<double> Centroid; // the euclidean center of the object;
-	valarray<double> InertiaTensor; // I, the 3x3 inertia tensor
-	valarray<double> MassDistribution; // how much mass at each vertex is there
-	valarray<double> MyTemp; // allocate one temporary array for inertia computations
+	valarray<double> Velocity;			// x,y,z instantaneous velocity
+	valarray<double> AngVel;			// x,y,z instantaneous angular velocity
+	valarray<double> NetTorque;			// sum of torques at each vertex
+	valarray<double> NetForce;			// sum of forces at each vertex
+	valarray<double> Quarternion;		// length 4 q-vector for rotation computations
+	valarray<double> RotationMatrix;	// 3x3 rotation matrix relative to initial orientation
+	valarray<double> Centroid;			// the euclidean center of the object;
+	valarray<double> RefCentroid;			// the euclidean center of the object;
+	valarray<double> InertiaTensor;		// I, the 3x3 inertia tensor
+	valarray<double> MassDistribution;	// how much mass at each vertex is there
+	valarray<double> ForceDistributionX; // how much force at each vertex
+	valarray<double> ForceDistributionY; // how much force at each vertex
+	valarray<double> ForceDistributionZ; // how much force at each vertex
+	valarray<double> TorqueDistributionX; // how much torque at each vertex
+	valarray<double> TorqueDistributionY; // how much torque at each vertex
+	valarray<double> TorqueDistributionZ; // how much torque at each vertex
+	valarray<double> MyTemp;			// allocate one temporary array for inertia computations
 
 	VNETexture* objTexture;
 	
@@ -55,9 +70,12 @@ public: // maybe dangerous, but can stop passing around things with function cal
 	double radSquared;
 	double elapsedTime;
 	double rotSpeed;
+	double minX, minY, minZ, maxX, maxY, maxZ;
 
-	int ComputeCentroid();
+	void ComputeCentroid();
 	void ComputeInertia();
+	void ComputeNetForce(); // a = F / m; do the vector-wise division and add up
+	void ComputeNetTorque();
 	bool bHasTexture;
 	bool bIsStatic;//is object affected by global forces
 
@@ -86,46 +104,40 @@ public:
 	
 
 	int GetNumVerts( ) { return numVerts; }
-	void ApplyForceAt( int vertIdx, const valarray<double> &CollideForce );
-	void ApplyForceAllVerts( const valarray<double> &CollideForce );
-	void ForceWAt( int vertIdx, const valarray<double> &CollideForce );
+	
 	double GetMass( ) { return mass; }
 	double GetSpeed( );
-	double GetAngVelMag( ) { return rotSpeed; }
+	double GetAngSpeed( );
 	double GetElapsedTime() { return elapsedTime; };
 	double GetRadSquared(){return radSquared;}
 	int GetNumFaces(){ return numFaces; }
 	void GetCentroid(double *dx, double* dy, double* dz);
-	valarray<double>* GetCentroid();
-	int SpinAboutCentroid();
 	void SetColorSeed( double r, double g, double b );
 	void GetColorSeed( double* r, double* g, double* b);
+	valarray<double>* GetVelocity() { return  &Velocity; }
+	valarray<double>* GetCentroid() { return  &Centroid; }
+
 	void SetSpeed( double dSpeed );
 	void SetRotSpeed( double dAngVel );
+	
+	// note: these shouldn't be used except as a user control
 	void ApplyInstTorque( const valarray<double> &torque );
 	void ApplyInstTorque( double dx, double dy, double dz );
-	int TiltAxisBy( valarray<double> &vec, double dalpha );
-	int TiltAxisBy( double dx, double dy, double dz );
-	int TiltAxisTo( valarray<double> &vec );
-	int TiltAxisTo( double dx, double dy, double dz );
-	void TiltIncrementAxisX( double dVal );
-	void TiltIncrementAxisY( double dVal );
-	void TiltIncrementAxisZ( double dVal );
+	
+	void AddForceAt( int vertIdx, const valarray<double> &CollideForce );
+	void AddForceAllVerts( const valarray<double> &CollideForce );
+	
+	void UpdateVelocity( );
+	void UpdatePosition( );
+	void UpdateRotation( );
+
+	// helper subroutine
+	void RotateLocal( );
+	
+	// BELOW ARE DEPRECATED !!!!
 	int TranslateTo( double dx, double dy, double dz );
 	int TranslateBy( double dx, double dy, double dz );
-	void IncrementAngVel( double dx );
-	int RotateLocal( double dangle  );
-	valarray<double>* GetVelocity() { return  &Velocity; }
-	void IncrementVelocity( const valarray<double> &plus );
-	void IncrementVelocity( double dx, double dy, double dz );
-	// rotate locally (in-place about object centroid)
-	int RotateAbout( double xt, double xc, double yt, double yc,
-					 double zt, double zc, double angle );
 	void SetVelocityProfile(double xval, double yval, double zval, int iCode );
-	// rotate about a line parametrized as z = zt * t + zc, y = yt * t + yc, x = xt * t + xc
-	// where zt, yt, xt are constants; right-handed coordinate system assumed
-	// using direction of increasing t parameter
-
 };
 
 
