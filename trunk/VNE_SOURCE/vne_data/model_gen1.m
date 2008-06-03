@@ -1,15 +1,15 @@
 % generate a shape for import to VNE
 % create it as a levelset f(x,y,z) = 0
 
-[xx,yy,zz] = meshgrid(-5:.125:5,-1:.125:1,-1:.125:1);
+[xx,yy,zz] = meshgrid(-5:.125:5,-2:.125:2,-2:.125:2);
 
-fxyz = 0.05*xx.^2 + 2*yy.^2 + 2*zz.^2 - 1.0;
+fxyz = xx.^20 + yy.^20 + zz.^20 - 1;
 
 % get faces and vertices
 [f,v] = isosurface(xx,yy,zz,fxyz,0.0); 
-[nf,nv] = reducepatch(f,v,20);
+[nf,nv] = reducepatch(f,v,4);
 nv = nv/2;
-n = isonormals(xx,yy,zz,fxyz,nv)
+n = isonormals(xx,yy,zz,fxyz,nv);
 
 trisurf(nf,nv(:,1),nv(:,2),nv(:,3));
 

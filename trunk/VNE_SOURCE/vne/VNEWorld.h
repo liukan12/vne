@@ -17,7 +17,8 @@ class VNEWorld
 
 private:
 	
-	VNETexture* myTex;
+	VNETexture* myTex1;
+	VNETexture* myTex2;
 	double xmin;
 	double xmax;
 	double ymin;

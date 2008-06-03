@@ -17,14 +17,14 @@ using namespace std;
 int frame=0,mytime,timebase=0;
 #endif
 
-const double xf[] = {10.0,0.0,0.0};
-const double xs[] = {-10.0,0.0,0.0};
-const double xyf[] = {10.0,-10.0,0.0};
-const double xys[] = {-10.0,10.0,0.0};
-const double yf[] = {0.0,10.0,0.0};
-const double ys[] = {0.0,-10.0,0.0};
-const double zf[] = {0.0,0.0,10.0};
-const double zs[] = {0.0,0.0,-10.0};
+const double xf[] = {2.0,0.0,0.0};
+const double xs[] = {-2.0,0.0,0.0};
+const double xyf[] = {2.0,-2.0,0.0};
+const double xys[] = {-2.0,2.0,0.0};
+const double yf[] = {0.0,2.0,0.0};
+const double ys[] = {0.0,-2.0,0.0};
+const double zf[] = {0.0,0.0,2.0};
+const double zs[] = {0.0,0.0,-2.0};
 valarray<double> XFaster(xf,3);
 valarray<double> XSlower(xs,3);
 
@@ -82,7 +82,7 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 {	
 	DemoObj = this->world->ObjList->GetObjectAt(iControlObjIdx);
 	double currSpeed = DemoObj->GetSpeed( );
-	double currSpin = DemoObj->GetAngVelMag( );
+	double currSpin = DemoObj->GetAngSpeed( );
 	if( key == 'r' )
 		DemoObj->SetRotSpeed( -1*currSpin );
 	if( key == 'w' )
@@ -119,13 +119,17 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 	}
 	{  // control: acceleration
 		if( key == 'i' )
-			DemoObj->IncrementVelocity(0.0,0.35,0.0);
+			DemoObj->AddForceAllVerts( YFaster );
 		if( key == 'k' )
-			DemoObj->IncrementVelocity(0.0,-0.35,0.0);
+			DemoObj->AddForceAllVerts( YSlower );
 		if( key == 'j' )
-			DemoObj->IncrementVelocity(-0.35,0.0,0.0);
+			DemoObj->AddForceAllVerts( XSlower );
 		if( key == 'l' )
-			DemoObj->IncrementVelocity(0.35,0.0,0.0);
+			DemoObj->AddForceAllVerts( XFaster );
+		if( key == 'o' )
+			DemoObj->AddForceAllVerts( ZSlower );
+		if( key == 'p' )
+			DemoObj->AddForceAllVerts( ZFaster );
 	}
 	{   // control: translation
 		if( key == 't' )

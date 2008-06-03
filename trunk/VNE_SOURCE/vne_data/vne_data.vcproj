@@ -111,6 +111,34 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="images"
+				>
+				<File
+					RelativePath=".\cat.jpg"
+					>
+				</File>
+				<File
+					RelativePath=".\ground.jpg"
+					>
+				</File>
+				<File
+					RelativePath=".\obj1.png"
+					>
+				</File>
+				<File
+					RelativePath=".\obj2.png"
+					>
+				</File>
+				<File
+					RelativePath=".\obj3.png"
+					>
+				</File>
+				<File
+					RelativePath=".\stars.jpg"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Documents"
@@ -125,6 +153,10 @@
 			</File>
 			<File
 				RelativePath=".\links.txt"
+				>
+			</File>
+			<File
+				RelativePath=".\quart_to_matrix.png"
 				>
 			</File>
 			<File
