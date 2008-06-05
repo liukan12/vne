@@ -17,14 +17,21 @@ using namespace std;
 int frame=0,mytime,timebase=0;
 #endif
 
-const double xf[] = {2.0,0.0,0.0};
-const double xs[] = {-2.0,0.0,0.0};
-const double xyf[] = {2.0,-2.0,0.0};
-const double xys[] = {-2.0,2.0,0.0};
-const double yf[] = {0.0,2.0,0.0};
-const double ys[] = {0.0,-2.0,0.0};
-const double zf[] = {0.0,0.0,2.0};
-const double zs[] = {0.0,0.0,-2.0};
+const double vxp[] = {5.0,0.0,0.0};
+const double vxn[] = {-5.0,0.0,0.0};
+const double vyp[] = {0.0,5.0,0.0};
+const double vyn[] = {0.0,-5.0,0.0};
+const double vzp[] = {0.0,0.0,5.0};
+const double vzn[] = {0.0,0.0,-5.0};
+
+const double xf[] = {20.0,0.0,0.0};
+const double xs[] = {-20.0,0.0,0.0};
+const double xyf[] = {20.0,-20.0,0.0};
+const double xys[] = {-20.0,20.0,0.0};
+const double yf[] = {0.0,200.0,0.0};
+const double ys[] = {0.0,-200.0,0.0};
+const double zf[] = {0.0,0.0,20.0};
+const double zs[] = {0.0,0.0,-20.0};
 valarray<double> XFaster(xf,3);
 valarray<double> XSlower(xs,3);
 
@@ -35,6 +42,13 @@ valarray<double> YFaster(yf,3);
 valarray<double> YSlower(ys,3);
 valarray<double> ZFaster(zf,3);
 valarray<double> ZSlower(zs,3);
+
+valarray<double> VXP(vxp,3);
+valarray<double> VXN(vxn,3);
+valarray<double> VYP(vyp,3);
+valarray<double> VYN(vyn,3);
+valarray<double> VZP(vzp,3);
+valarray<double> VZN(vzn,3);
 
 void processHits(GLint hits, GLuint buffer[] )
 {
@@ -119,27 +133,27 @@ void VNEApp::KeyboardCallback(unsigned char key, int x, int y)
 	}
 	{  // control: acceleration
 		if( key == 'i' )
-			DemoObj->AddForceAllVerts( YFaster );
+			DemoObj->AddForceAllVerts( YFaster / double( DemoObj->GetNumVerts() ));
 		if( key == 'k' )
-			DemoObj->AddForceAllVerts( YSlower );
+			DemoObj->AddForceAllVerts( YSlower / double( DemoObj->GetNumVerts() ));
 		if( key == 'j' )
-			DemoObj->AddForceAllVerts( XSlower );
+			DemoObj->AddForceAllVerts( XSlower / double( DemoObj->GetNumVerts() ));
 		if( key == 'l' )
-			DemoObj->AddForceAllVerts( XFaster );
+			DemoObj->AddForceAllVerts( XFaster / double( DemoObj->GetNumVerts() ));
 		if( key == 'o' )
-			DemoObj->AddForceAllVerts( ZSlower );
+			DemoObj->AddForceAllVerts( ZSlower / double( DemoObj->GetNumVerts() ));
 		if( key == 'p' )
-			DemoObj->AddForceAllVerts( ZFaster );
+			DemoObj->AddForceAllVerts( ZFaster / double( DemoObj->GetNumVerts() ));
 	}
 	{   // control: translation
 		if( key == 't' )
-			DemoObj->TranslateBy(0.0,0.05,0.0);
+			DemoObj->SetVelocity( VYP );
 		if( key == 'g' )
-			DemoObj->TranslateBy(0.0,-0.05,0.0);
+			DemoObj->SetVelocity( VYN );
 		if( key == 'f' )
-			DemoObj->TranslateBy(-0.05,0.0,0.0);
+			DemoObj->SetVelocity( VXN );
 		if( key == 'h' )
-			DemoObj->TranslateBy(0.05,0.0,0.0);
+			DemoObj->SetVelocity( VXP );
 	}
 	{	// control:  camera
 		if( key == 'v' )

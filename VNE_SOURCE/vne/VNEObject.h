@@ -7,10 +7,10 @@
 #include <valarray>
 #include <numeric>
 #include "VNETexture.h"
+#include "WorldForce.h"
 
 #define COLORSEED 0 // given RGB seed values, randomly perturb around them
 #define COLORREAD 1 // per-vertex designated coloring, read from file or otherwise input
-#define TIMESTEP 0.01
 
 using namespace std;
 
@@ -21,6 +21,11 @@ public: // maybe dangerous, but can stop passing around things with function cal
 	valarray<double> CurTriVertX; // current vertices of triangle faces w.r.t. local coordinate system
 	valarray<double> CurTriVertY; // current vertices of triangle faces w.r.t. local coordinate system
 	valarray<double> CurTriVertZ; // current vertices of triangle faces w.r.t. local coordinate system
+	int numFaces;
+	int numVerts;
+	string objName;
+
+private:
 
 	valarray<double> RefTriVertX; // current vertices of triangle faces w.r.t. local coordinate system
 	valarray<double> RefTriVertY; // current vertices of triangle faces w.r.t. local coordinate system
@@ -63,14 +68,16 @@ public: // maybe dangerous, but can stop passing around things with function cal
 	double rseed, gseed, bseed; // RGB seeds for coloring the vertices
 	double colorVariance;
 	double mass;
-	int numFaces;
-	int numVerts;
-	string objName;
+
 	
 	double radSquared;
 	double elapsedTime;
 	double rotSpeed;
 	double minX, minY, minZ, maxX, maxY, maxZ;
+	double TIMESTEP;
+	double MaxVelMag;
+
+	WorldForce* theForce;
 
 	void ComputeCentroid();
 	void ComputeInertia();
@@ -119,7 +126,9 @@ public:
 
 	void SetSpeed( double dSpeed );
 	void SetRotSpeed( double dAngVel );
-	
+	void SetVelocity( const valarray<double> &vel );
+	void SetTimeStep( double dt, double vmax );
+
 	// note: these shouldn't be used except as a user control
 	void ApplyInstTorque( const valarray<double> &torque );
 	void ApplyInstTorque( double dx, double dy, double dz );
@@ -127,12 +136,15 @@ public:
 	void AddForceAt( int vertIdx, const valarray<double> &CollideForce );
 	void AddForceAllVerts( const valarray<double> &CollideForce );
 	
-	void UpdateVelocity( );
-	void UpdatePosition( );
+	void UpdateVelocity( double dt );
+	void UpdatePosition( double dt);
 	void UpdateRotation( );
+
+	void Scale( double x, double y, double z );
 
 	// helper subroutine
 	void RotateLocal( );
+	void ComputeTorqueDistribution( );
 	
 	// BELOW ARE DEPRECATED !!!!
 	int TranslateTo( double dx, double dy, double dz );

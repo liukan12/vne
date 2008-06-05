@@ -184,11 +184,27 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GameDemoApp.cpp"
+				RelativePath=".\DrawObject.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\IOUtils.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PhysObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\QuadObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StaticObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TriObject.cpp"
 				>
 			</File>
 			<File
@@ -197,6 +213,10 @@
 			</File>
 			<File
 				RelativePath=".\VNEApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\VNEMortarApp.cpp"
 				>
 			</File>
 			<File
@@ -230,7 +250,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GameDemoApp.h"
+				RelativePath=".\DrawObject.h"
 				>
 			</File>
 			<File
@@ -238,7 +258,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PhysObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\QuadObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StaticObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TriObject.h"
+				>
+			</File>
+			<File
 				RelativePath=".\VNEApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VNEMortarApp.h"
 				>
 			</File>
 			<File

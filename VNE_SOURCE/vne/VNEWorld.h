@@ -28,6 +28,7 @@ private:
 	double elapsedTime;
 	bool bLightsOn;
 	bool bTexturesOn;
+	double spatialResolution;
 	clock_t clock1;
 	clock_t clock2;
 
@@ -38,7 +39,7 @@ public:
 	~VNEWorld();
 	VNEObject* DemoObj; // a single demo object to start with
 	VNEObjList* ObjList;   // later: a linked list of objects
-	WorldForce* theForce;
+	
 	void TexturesOn();
 	void TexturesOff();
 	bool TexturesAreOn() { return bTexturesOn; }

@@ -183,6 +183,10 @@
 				RelativePath=".\model_gen1.m"
 				>
 			</File>
+			<File
+				RelativePath=".\solver.m"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

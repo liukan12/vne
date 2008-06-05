@@ -162,19 +162,22 @@ void VNEObject::GetCentroid(double *dx, double* dy, double* dz)
 	*dz = Centroid[2];
 }
 
-
 void VNEObject::IncrementTime()
 {
+
 	double dt = TIMESTEP;
 	elapsedTime += dt;
-	
-	// USE BETTER TIMESTEP METHOD!!
-
-	this->UpdatePosition( );
-	this->UpdateVelocity( );
+	for( int i = 0; i < 2; i++ ) {
+	this->ComputeTorqueDistribution( );
+	this->UpdateVelocity( dt );
+	this->UpdatePosition( dt );
+	this->GetMinMaxVert( );
+	 
 	this->UpdateRotation( );	
-	this->ComputeInertia( );
-
+	this->GetMinMaxVert( );
+	this->ComputeInertia( ); // this is slow but necessary if we want to allow objects to deform in the future
+	// if the body is not allowed to deform, you can get I directly by I = R * I_initial * R_transpose
+	// where I_initial was computed once at initialization and R is the current rotation matrix
 	ForceDistributionX = 0.0;
 	ForceDistributionY = 0.0;
 	ForceDistributionZ = 0.0;
@@ -182,14 +185,30 @@ void VNEObject::IncrementTime()
 	TorqueDistributionY = 0.0;
 	TorqueDistributionZ = 0.0;
 
+	double overshoot = this->theForce->UpdateForces(CurTriVertX,CurTriVertY,CurTriVertZ,ForceDistributionX,ForceDistributionY,
+	ForceDistributionZ, Velocity, VertControlPts,numVerts,temp3, dt );
+	}
+
+	CurTriVertX += temp3[0];
+	CurTriVertY += temp3[1];
+	CurTriVertZ += temp3[2];
+
+	ComputeCentroid();
+
+	AngVel = AngVel * (1 - this->theForce->GetAtmDen() );
+	temp3 = Velocity * Velocity;
+	if( temp3.sum() > pow(MaxVelMag,2.0) ) // don't let him go so fast that spatial accuracy breaks down
+		Velocity = Velocity / temp3.sum() * pow(MaxVelMag,2.0);
+	
+
 }
 
 // new and improved physics routines!
-void VNEObject::UpdatePosition( )
+void VNEObject::UpdatePosition( double dt)
 {
-	double dx = TIMESTEP * Velocity[0];
-	double dy = TIMESTEP * Velocity[1];
-	double dz = TIMESTEP * Velocity[2];
+	double dx = dt * Velocity[0];
+	double dy = dt * Velocity[1];
+	double dz = dt * Velocity[2];
 
 	this->CurTriVertX += dx;
 	this->CurTriVertY += dy;
@@ -199,12 +218,12 @@ void VNEObject::UpdatePosition( )
 
 }
 
-void VNEObject::UpdateVelocity( )
+void VNEObject::UpdateVelocity( double dt )
 {
 	ComputeNetForce();
-	double dx = TIMESTEP * NetForce[0] / mass;
-	double dy = TIMESTEP * NetForce[1] / mass;
-	double dz = TIMESTEP * NetForce[2] / mass;
+	double dx = dt * NetForce[0] / mass;
+	double dy = dt * NetForce[1] / mass;
+	double dz = dt * NetForce[2] / mass;
 
 	this->Velocity[0] += dx;
 	this->Velocity[1] += dy;
@@ -301,19 +320,21 @@ void VNEObject::ComputeInertia()
 	
 }
 
+void VNEObject::SetVelocity( const valarray<double> &vel )
+{
+	Velocity = vel;
+}
+
 void VNEObject::ComputeCentroid()
 {
 	double cx = 0.0;
 	double cy = 0.0;
 	double cz = 0.0;
 
-	int i;
-	for( i = 0; i < this->numVerts; i++ )
-	{
-		cx += CurTriVertX[i];
-		cy += CurTriVertY[i];
-		cz += CurTriVertZ[i];
-	}
+	cx = CurTriVertX.sum();
+	cy = CurTriVertY.sum();
+	cz = CurTriVertZ.sum();
+
 	cx /= numVerts;
 	cy /= numVerts;
 	cz /= numVerts;
@@ -325,6 +346,23 @@ void VNEObject::ComputeCentroid()
 	LocTriVertX = CurTriVertX - cx;
 	LocTriVertY = CurTriVertY - cy;
 	LocTriVertZ = CurTriVertZ - cz;
+}
+
+void VNEObject::ComputeTorqueDistribution( )
+{
+
+	for( int i = 0; i < numVerts; i++ )
+	{
+		// temp3 represents the r vector, from the centroid to the action point of the force
+		temp3[0] = CurTriVertX[i] - Centroid[0];
+		temp3[1] = CurTriVertY[i] - Centroid[1];
+		temp3[2] = CurTriVertZ[i] - Centroid[2];
+
+		// torque = r cross F
+		this->TorqueDistributionX[i] += temp3[1]*ForceDistributionZ[i] - temp3[2]*ForceDistributionY[i];
+		this->TorqueDistributionY[i] += -temp3[0]*ForceDistributionZ[i] + temp3[2]*ForceDistributionX[i];
+		this->TorqueDistributionZ[i] += temp3[0]*ForceDistributionY[i] - temp3[1]*ForceDistributionX[i];
+	}
 }
 
 void VNEObject::AddForceAt( int vertIdx, const valarray<double> &Force )
@@ -346,19 +384,6 @@ void VNEObject::AddForceAt( int vertIdx, const valarray<double> &Force )
 
 void VNEObject::AddForceAllVerts( const valarray<double> &Force )
 {
-	for( int i = 0; i < numVerts; i++ )
-	{
-		// temp3 represents the r vector, from the centroid to the action point of the force
-		temp3[0] = CurTriVertX[i] - Centroid[0];
-		temp3[1] = CurTriVertY[i] - Centroid[1];
-		temp3[2] = CurTriVertZ[i] - Centroid[2];
-
-		// torque = r cross F
-		this->TorqueDistributionX[i] = temp3[1]*Force[2] - temp3[2]*Force[1];
-		this->TorqueDistributionY[i] = -temp3[0]*Force[2] + temp3[2]*Force[0];
-		this->TorqueDistributionZ[i] = temp3[0]*Force[1] - temp3[1]*Force[0];
-	}
-
 	this->ForceDistributionX += Force[0];
 	this->ForceDistributionY += Force[1]; 
 	this->ForceDistributionZ += Force[2];
@@ -485,38 +510,9 @@ int VNEObject::TranslateBy(double dx, double dy, double dz)
 
 void VNEObject::ApplyInstTorque( const valarray<double> &Torque )
 {
-	// d/dt Iw = torque
-	// w_new = w_old + time_step * torque
-
-	// deltaW = I \ timestep * Torque
-
-	temp3B = TIMESTEP * Torque;  // RHS
-	temp3 = temp3B;  // initial guess
-
-#define CHECKGS_NO
-	
-	for( int i = 0; i < 5; i++ )
-	{ // cross fingers and hope 5 Gauss-Seidel iterations work :-)
-#ifdef CHECKGS
-		valarray<double> prev(3);
-		prev = temp3;
-#endif
-		temp3[0] = ( temp3B[0] - InertiaTensor[1]*temp3[1] - InertiaTensor[2]*temp3[2] ) / InertiaTensor[0];
-		temp3[1] = ( temp3B[1] - InertiaTensor[3]*temp3[0] - InertiaTensor[5]*temp3[2] ) / InertiaTensor[4];
-		temp3[2] = ( temp3B[2] - InertiaTensor[6]*temp3[0] - InertiaTensor[7]*temp3[1] ) / InertiaTensor[8];
-
-#ifdef CHECKGS
-		valarray<double> acc(3);
-		acc = temp3 - prev;
-		acc = acc * acc;
-		double diff = sqrt(acc.sum());
-		prev = temp3;
-#endif
-	}
-
-	this->AngVel = AngVel + temp3;
-	temp3 = AngVel * AngVel;
-	this->rotSpeed = sqrt(temp3.sum());
+	TorqueDistributionX += Torque[0];
+	TorqueDistributionY += Torque[1];
+	TorqueDistributionZ += Torque[2];
 
 }
 
@@ -538,6 +534,18 @@ double VNEObject::GetAngSpeed( )
 {
 	
 	return sqrt( AngVel[0]*AngVel[0] + AngVel[1]*AngVel[1] + AngVel[2]*AngVel[2] );
+}
+
+void VNEObject::Scale( double ratiox, double ratioy, double ratioz )
+{
+	CurTriVertX *= ratiox;
+	CurTriVertY *= ratioy;
+	CurTriVertZ *= ratioz;
+	RefTriVertX *= ratiox;
+	RefTriVertY *= ratioy;
+	RefTriVertZ *= ratioz;
+	ComputeCentroid( );
+	ComputeInertia( );
 }
 
 VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts, string fileNameNorms )
@@ -593,6 +601,7 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 
 	this->VertControlPts = valarray<int>(6);
 	this->GetMinMaxVert();
+	this->theForce = new WorldForce();
 
 	MassDistribution = mass / (numVerts); // uniform mass distribution
 
@@ -611,6 +620,12 @@ void VNEObject::setTexture(string fileName)
 {
 	this->objTexture=new VNETexture(fileName);
 	this->bHasTexture=true;
+}
+
+void VNEObject::SetTimeStep( double dt, double vmax )
+{
+	TIMESTEP = dt;
+	MaxVelMag = vmax;
 }
 
 void VNEObject::SetColorSeed( double r, double g, double b )

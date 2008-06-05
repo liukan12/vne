@@ -18,8 +18,18 @@ using namespace std;
 
 #define PERFORMANCE_TEST_NO
 
+double minTimeStep;
+#define DRAWTIMESTEP 0.01
+
 VNEWorld::VNEWorld()
 {
+
+	spatialResolution = .01;
+	double maxVmag = 5;
+	minTimeStep = 0.9 * spatialResolution / maxVmag;
+	// time step minimum to prevent things from "flying through" eachother during one time step
+	// like "CFL Condition"
+
 	string faces, faces2, faces3, faces4, faces5;
 	string verts, verts2, verts3, verts4, verts5;
 	string norms, norms2, norms3, norms4, norms5;
@@ -40,7 +50,7 @@ VNEWorld::VNEWorld()
 #elif _DEBUG // debug looks in relative path (vne data files)
 	faces = "..\\vne_data\\faces4.dat";
 	verts = "..\\vne_data\\verts4.dat";
-	norms = "..\\vne_data\\norms4.dat";
+	norms = "..\\vne_data\\norms$.dat";
 	faces2 = "..\\vne_data\\faces4.dat";
 	verts2 = "..\\vne_data\\verts4.dat";
 	norms2 = "..\\vne_data\\norms4.dat";
@@ -99,8 +109,15 @@ VNEWorld::VNEWorld()
 
 	Obj1->TranslateTo(2.0,2.0,2.0);
 	Obj2->TranslateTo(-2.0,-2.0,-2.0);
-	Obj3->TranslateTo(4.0,1.0,-2.0);
+	Obj3->TranslateTo(0.0,1.0,0.0);
 	//Obj4->TranslateTo(1.0,-3.0,1.0);
+
+	Obj2->Scale(1.0,2.0,1.0);
+	Obj3->Scale(2.0,1.0,1.0);
+
+	Obj1->SetTimeStep( minTimeStep, maxVmag );
+	Obj2->SetTimeStep( minTimeStep, maxVmag );
+	Obj3->SetTimeStep( minTimeStep, maxVmag );
 
 	this->ObjList = new VNEObjList( Obj1 );
 	this->ObjList->AddObj(Obj2);
@@ -118,8 +135,8 @@ VNEWorld::VNEWorld()
 
 	this->ObjList->PrintAll();
 
-	this->theForce = new WorldForce();
-	theForce->VortexOff();
+	
+	//theForce->VortexOff();
 
 	xmin = -50;
 	xmax = 50;
@@ -127,6 +144,7 @@ VNEWorld::VNEWorld()
 	ymax = 50;
 	zmin = -5;
 	zmax = 15;
+	
 	clock1 = clock();
 	elapsedTime = 0.0;
 	glShadeModel( GL_SMOOTH );
@@ -179,7 +197,7 @@ void VNEWorld::EnableForce( int iNum )
 	switch( iNum )
 	{
 	case 0:
-		this->theForce->VortexOn();
+	//	this->theForce->VortexOn();
 		break;
 	default:
 		cout<<"Invalid number in EnableForce()!\n";
@@ -191,7 +209,7 @@ void VNEWorld::DisableForce( int iNum )
 	switch( iNum )
 	{
 	case 0:
-		this->theForce->VortexOff();
+	//	this->theForce->VortexOff();
 		break;
 	default:
 		cout<<"Invalid number in DisableForce()!\n";
@@ -200,117 +218,43 @@ void VNEWorld::DisableForce( int iNum )
 }
 void VNEWorld::Collide(VNEObject* obj1, VNEObject* obj2)
 {
-	double vx1, vy1, vz1;
-	double vx2, vy2, vz2;
-	double cx1, cy1, cz1;
-	double cx2, cy2, cz2;
-
 	double m1 = obj1->GetMass();
 	double m2 = obj2->GetMass();
 	double totalM = m1+m2;
 
 
 
-	vx1 = (*obj1->GetVelocity())[0];
-	vy1 = (*obj1->GetVelocity())[1];
-	vz1 = (*obj1->GetVelocity())[2];
-	vx2 = (*obj2->GetVelocity())[0];
-	vy2 = (*obj2->GetVelocity())[1];
-	vz2 = (*obj2->GetVelocity())[2];
-	
-	obj1->GetCentroid(&cx1, &cy1, &cz1 );
-	obj2->GetCentroid(&cx2, &cy2, &cz2 );
-
-
-	// TODO: how does impact affect the spin of the object??
-
-
-
-	double scale_n1 = vx1 * (cx2-cx1) + vy1 * (cy2-cy1) + vz1 * (cz2-cz1);
-	double normFac = ( (cx2-cx1)*(cx2-cx1) + (cy2-cy1)*(cy2-cy1) + (cz2-cz1)*(cz2-cz1) );
-	scale_n1 = scale_n1 / normFac;
-	double un1x, un1y, un1z; // normal velocity before collision of object 1
-	un1x = scale_n1 * (cx2-cx1);
-	un1y = scale_n1 * (cy2-cy1);
-	un1z = scale_n1 * (cz2-cz1);
-	double scale_n2 = vx2 * (cx1-cx2) + vy2 * (cy1-cy2) + vz2 * (cz1-cz2);
-	scale_n2 = scale_n2 / normFac;
-	double un2x, un2y, un2z; // normal velocity before collision of object 1
-	un2x = scale_n2 * (cx1-cx2);
-	un2y = scale_n2 * (cy1-cy2);
-	un2z = scale_n2 * (cz1-cz2);
-
-	// tangential components of objs 1 and 2; these do not change with collision
-	double ut1x, ut1y, ut1z;
-	double ut2x, ut2y, ut2z;
-	ut1x = vx1 - un1x;
-	ut1y = vy1 - un1y;
-	ut1z = vz1 - un1z;
-	ut2x = vx2 - un2x;
-	ut2y = vy2 - un2y;
-	ut2z = vz2 - un2z;
-
-#ifdef _DEBUG
-	double normV1 = vx1*vx1 + vy1*vy1 + vz1*vz1;
-	double normV1t = ut1x*ut1x + ut1y*ut1y + ut1z*ut1z;
-	double normV1n = un1x*un1x + un1y*un1y + un1z*un1z;
-	double dRoundErr = normV1 - normV1t - normV1n;
-	if( dRoundErr > 1e-5 )
-		cout<<"Error in accuracy of collision computation... error: "<<dRoundErr<<"\n";
-#endif
-
-	double vn1x, vn1y, vn1z;
-	double vn2x, vn2y, vn2z;
-
-	vn1x = ( un1x*(m1-m2) + 2*m2*un2x ) / totalM;
-	vn1y = ( un1y*(m1-m2) + 2*m2*un2y ) / totalM;
-	vn1z = ( un1z*(m1-m2) + 2*m2*un2z ) / totalM;
-	vn2x = ( un2x*(m2-m1) + 2*m2*un1x ) / totalM;
-	vn2y = ( un2y*(m2-m1) + 2*m2*un1y ) / totalM;
-	vn2z = ( un2z*(m2-m1) + 2*m2*un1z ) / totalM;
-
-	vx1 = vn1x + ut1x;
-	vy1 = vn1y + ut1y;
-	vz1 = vn1z + ut1z;
-	vx2 = vn2x + ut2x;
-	vy2 = vn2y + ut2y;
-	vz2 = vn2z + ut2z;
-	
-	obj1->SetVelocityProfile(vx1,vy1,vz1,0);
-	obj2->SetVelocityProfile(vx2,vy2,vz2,0);
-	
-	double dMinDist = obj1->GetRadSquared() + obj2->GetRadSquared();
-	double dCurrDist = (cx1 - cx2)*(cx1 - cx2) + (cy1 - cy2)*(cy1 - cy2) + (cz1 - cz2)*(cz1 - cz2);
-
-	int max_its = 100;
-	int k = 0;
-	while( dCurrDist < dMinDist && k < max_its )
-	{
-		obj1->TranslateBy( .001*vx1, .001*vy1, .001*vz1 );
-		obj2->TranslateBy( .001*vx2, .001*vy2, .001*vz2 );
-		obj1->GetCentroid(&cx1, &cy1, &cz1 );
-		obj2->GetCentroid(&cx2, &cy2, &cz2 );
-		dCurrDist = (cx1 - cx2)*(cx1 - cx2) + (cy1 - cy2)*(cy1 - cy2) + (cz1 - cz2)*(cz1 - cz2);
-		k++;
-	}
 
 }
+
+valarray<double> diffx;
+valarray<double> diffy;
+valarray<double> diffz;
 
 void VNEWorld::CheckCollisions()
 {
 	int i,n;
 	VNEObject* obj1;
 	VNEObject* obj2;
+	
 	for(i=0; i < this->ObjList->Length(); i++)
 	{
 		obj1 = this->ObjList->GetObjectAt(i);
 		for(n=i+1; n < this->ObjList->Length(); n++)
 		{
 			obj2 = this->ObjList->GetObjectAt(n);
-			double thresh = obj1->GetRadSquared() + obj2->GetRadSquared();
-			valarray<double> diff = obj1->Centroid - obj2->Centroid;
-			diff = diff * diff;
-			if(thresh > diff.sum() ) // TODO: difference of centroids
+			
+			double dist;
+			double minDist = 1e3;
+			for( int i = 0; i < obj1->numVerts; i++ ) {
+				for( int j = 0; j < obj2->numVerts; j++ ) {
+					dist = pow(obj1->CurTriVertX[i]-obj2->CurTriVertX[j],2)+pow(obj1->CurTriVertY[i]-obj2->CurTriVertY[j],2)+pow(obj1->CurTriVertZ[i]-obj2->CurTriVertZ[j],2);
+					if( dist < minDist )
+						minDist = dist;
+				}
+			}
+
+			if( spatialResolution > minDist )
 			{
 				this->Collide( obj1, obj2);
 			}
@@ -320,17 +264,12 @@ void VNEWorld::CheckCollisions()
 
 int VNEWorld::TimeStep()
 {
-	int result = 0;
 
-	clock2 = clock();
-	double dt = ( (double) (clock2 - clock1) ) / CLOCKS_PER_SEC ;
-	elapsedTime += dt;
-	clock1 = clock();
-
-	this->ObjList->AccelAll( this->theForce );
-	result = this->ObjList->TimeStepAll();
-	// this->CheckCollisions();   // THIS NEEDS HUGE OVERHAUL
-	return result;
+	this->CheckCollisions();   // THIS NEEDS HUGE OVERHAUL
+	this->ObjList->TimeStepAll();
+	
+	
+	return 0;
 }
 
 void VNEWorld::DrawWalls()
@@ -374,7 +313,7 @@ int VNEWorld::Redraw()
 {
 	int result = 0;
 
-	if( this->theForce->WallsAreOn() )
+	//if( this->theForce->WallsAreOn() )
 		DrawWalls();
 
 	result = this->ObjList->DrawAll();

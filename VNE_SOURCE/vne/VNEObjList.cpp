@@ -56,14 +56,6 @@ VNEObject* VNEObjList::GetObjectAt(int index)
 }
 
 
-void VNEObjList::AccelAll( WorldForce* force )
-{
-	for(unsigned int i=0; i<this->list.size();i++)
-	{
-		force->AccelerateObject(this->list[i]);
-	}
-}
-
 int VNEObjList::TimeStepAll( )
 {
 	for(unsigned int i=0; i<this->list.size();i++)
