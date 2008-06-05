@@ -35,6 +35,10 @@ private:
 	valarray<double> CurTriNormY; // normals at vertices
 	valarray<double> CurTriNormZ; // normals at vertices
 	
+	valarray<double> RotVelX; // rotational velocity of points
+	valarray<double> RotVelY; // rotational velocity of points
+	valarray<double> RotVelZ; // rotational velocity of points
+
 	valarray<int>	 CurTriIdx; // indices into CurTriVert and CurTriNorm
 
 	valarray<int>	VertControlPts;
@@ -137,14 +141,15 @@ public:
 	void AddForceAllVerts( const valarray<double> &CollideForce );
 	
 	void UpdateVelocity( double dt );
-	void UpdatePosition( double dt);
-	void UpdateRotation( );
+	void UpdatePosition( double dt );
+	void UpdateRotation( double dt );
 
 	void Scale( double x, double y, double z );
 
 	// helper subroutine
 	void RotateLocal( );
 	void ComputeTorqueDistribution( );
+	void ComputeRotationalVelocity( );
 	
 	// BELOW ARE DEPRECATED !!!!
 	int TranslateTo( double dx, double dy, double dz );

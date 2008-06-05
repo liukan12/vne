@@ -10,7 +10,7 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include "VNEApp.h"
-#include "GameDemoApp.h"
+#include "VNEMortarApp.h"
 
 //using std:://cout;
 
@@ -18,7 +18,7 @@
 #ifndef ETHAN_GAME
 VNEApp* app;
 #else
-GameDemoApp* app;
+VNEMortarApp* app;
 #endif
 
 

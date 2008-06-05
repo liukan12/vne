@@ -25,8 +25,8 @@ VNEWorld::VNEWorld()
 {
 
 	spatialResolution = .01;
-	double maxVmag = 5;
-	minTimeStep = 0.9 * spatialResolution / maxVmag;
+	double maxVmag = 30;
+	minTimeStep = 0.5 * spatialResolution / maxVmag;
 	// time step minimum to prevent things from "flying through" eachother during one time step
 	// like "CFL Condition"
 
@@ -48,15 +48,15 @@ VNEWorld::VNEWorld()
 	verts4 = "brainverts.dat";
 	norms4 = "brainnorms.dat";
 #elif _DEBUG // debug looks in relative path (vne data files)
-	faces = "..\\vne_data\\faces4.dat";
-	verts = "..\\vne_data\\verts4.dat";
-	norms = "..\\vne_data\\norms$.dat";
-	faces2 = "..\\vne_data\\faces4.dat";
-	verts2 = "..\\vne_data\\verts4.dat";
-	norms2 = "..\\vne_data\\norms4.dat";
-	faces3 = "..\\vne_data\\faces4.dat";
-	verts3 = "..\\vne_data\\verts4.dat";
-	norms3 = "..\\vne_data\\norms4.dat";
+	faces = "..\\vne_data\\faces7.dat";
+	verts = "..\\vne_data\\verts7.dat";
+	norms = "..\\vne_data\\norms7.dat";
+	faces2 = "..\\vne_data\\faces5.dat";
+	verts2 = "..\\vne_data\\verts5.dat";
+	norms2 = "..\\vne_data\\norms5.dat";
+	faces3 = "..\\vne_data\\faces6.dat";
+	verts3 = "..\\vne_data\\verts6.dat";
+	norms3 = "..\\vne_data\\norms6.dat";
 	faces4 = "..\\vne_data\\brainfaces.dat";
 	verts4 = "..\\vne_data\\brainverts.dat";
 	norms4 = "..\\vne_data\\brainnorms.dat";
@@ -97,23 +97,21 @@ VNEWorld::VNEWorld()
 	Obj3->setTexture(".\\data\\obj3.png");
 #endif
 	
-	Obj1->SetVelocityProfile( 0.5, 0.5, 0.0, 0 );
+	Obj1->SetVelocityProfile( 0.5, 0.0, 0.5, 0 );
 	Obj2->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
 	Obj3->SetVelocityProfile( -0.5, 0.5, 0.5, 0 );
-	//Obj4->SetVelocityProfile( -0.5, -0.5, -0.5, 0 );
-	
-	Obj1->SetColorSeed(0.5,0.0,1.0);
+		
+	Obj1->SetColorSeed(-1.5,-2.0,1.0);
 	Obj2->SetColorSeed(1.0,0.0,0.5);
 	Obj3->SetColorSeed(0.5,0.5,0.0);
-	//Obj4->SetColorSeed(0.5,0.5,0.5);
-
-	Obj1->TranslateTo(2.0,2.0,2.0);
+	
+	Obj1->TranslateTo(0.0,2.0,0.0);
 	Obj2->TranslateTo(-2.0,-2.0,-2.0);
 	Obj3->TranslateTo(0.0,1.0,0.0);
-	//Obj4->TranslateTo(1.0,-3.0,1.0);
-
-	Obj2->Scale(1.0,2.0,1.0);
-	Obj3->Scale(2.0,1.0,1.0);
+	
+	/*Obj1->Scale(2.0,2.0,2.0);
+	Obj2->Scale(2.0,2.0,2.0);
+	Obj3->Scale(4.0,3.0,3.0);*/
 
 	Obj1->SetTimeStep( minTimeStep, maxVmag );
 	Obj2->SetTimeStep( minTimeStep, maxVmag );
@@ -264,10 +262,10 @@ void VNEWorld::CheckCollisions()
 
 int VNEWorld::TimeStep()
 {
-
+	for( int i = 0; i < 20; i++ ) {
 	this->CheckCollisions();   // THIS NEEDS HUGE OVERHAUL
 	this->ObjList->TimeStepAll();
-	
+	}
 	
 	return 0;
 }
