@@ -162,18 +162,27 @@ void VNEObject::GetCentroid(double *dx, double* dy, double* dz)
 	*dz = Centroid[2];
 }
 
+valarray<double> V;
+valarray<double> VeX;
+valarray<double> VeY;
+valarray<double> CZ;
+valarray<double> R;
+valarray<double> Q;
+valarray<double> C;
+
 void VNEObject::IncrementTime()
 {
 
 	double dt = TIMESTEP;
+	double spatialRes = TIMESTEP * MaxVelMag;
 	elapsedTime += dt;
-	for( int i = 0; i < 2; i++ ) {
+	
 	this->ComputeTorqueDistribution( );
 	this->UpdateVelocity( dt );
 	this->UpdatePosition( dt );
 	this->GetMinMaxVert( );
 	 
-	this->UpdateRotation( );	
+	this->UpdateRotation( dt );	
 	this->GetMinMaxVert( );
 	this->ComputeInertia( ); // this is slow but necessary if we want to allow objects to deform in the future
 	// if the body is not allowed to deform, you can get I directly by I = R * I_initial * R_transpose
@@ -186,14 +195,8 @@ void VNEObject::IncrementTime()
 	TorqueDistributionZ = 0.0;
 
 	double overshoot = this->theForce->UpdateForces(CurTriVertX,CurTriVertY,CurTriVertZ,ForceDistributionX,ForceDistributionY,
-	ForceDistributionZ, Velocity, VertControlPts,numVerts,temp3, dt );
-	}
-
-	CurTriVertX += temp3[0];
-	CurTriVertY += temp3[1];
-	CurTriVertZ += temp3[2];
-
-	ComputeCentroid();
+	ForceDistributionZ, Velocity, VertControlPts,numVerts, AngVel, Centroid, dt );
+	
 
 	AngVel = AngVel * (1 - this->theForce->GetAtmDen() );
 	temp3 = Velocity * Velocity;
@@ -203,12 +206,33 @@ void VNEObject::IncrementTime()
 
 }
 
+void VNEObject::ComputeRotationalVelocity( )
+{
+	// v = w x r
+	for( int i = 0; i < numVerts; i++ )
+	{
+		// temp3 represents the r vector, from the centroid to the action point of the force
+		temp3[0] = CurTriVertX[i] - Centroid[0];
+		temp3[1] = CurTriVertY[i] - Centroid[1];
+		temp3[2] = CurTriVertZ[i] - Centroid[2];
+
+		// torque = r cross F
+		RotVelX[i] = AngVel[1]*temp3[2] - AngVel[2]*temp3[1];
+		RotVelY[i] = -AngVel[0]*temp3[2] + AngVel[2]*temp3[0];
+		RotVelZ[i] = AngVel[0]*temp3[1] - AngVel[1]*temp3[0];
+	}
+
+
+}
+
 // new and improved physics routines!
 void VNEObject::UpdatePosition( double dt)
 {
-	double dx = dt * Velocity[0];
-	double dy = dt * Velocity[1];
-	double dz = dt * Velocity[2];
+	//ComputeNetForce(); // redundant???
+	// take two terms of the taylor series
+	double dx = dt * ( Velocity[0] + 0.5 * dt * NetForce[0] / mass );
+	double dy = dt * ( Velocity[1] + 0.5 * dt * NetForce[1] / mass );
+	double dz = dt * ( Velocity[2] + 0.5 * dt * NetForce[2] / mass );
 
 	this->CurTriVertX += dx;
 	this->CurTriVertY += dy;
@@ -220,7 +244,7 @@ void VNEObject::UpdatePosition( double dt)
 
 void VNEObject::UpdateVelocity( double dt )
 {
-	ComputeNetForce();
+	ComputeNetForce(); 
 	double dx = dt * NetForce[0] / mass;
 	double dy = dt * NetForce[1] / mass;
 	double dz = dt * NetForce[2] / mass;
@@ -231,13 +255,13 @@ void VNEObject::UpdateVelocity( double dt )
 
 }
 	
-void VNEObject::UpdateRotation( )
+void VNEObject::UpdateRotation( double dt )
 {
 	// step 1: Get the total applied torque
 	ComputeNetTorque();
 
 	// step 2: dw/dt = I \ NetTorque(t)
-	temp3B = TIMESTEP * NetTorque;  // RHS
+	temp3B = dt * NetTorque;  // RHS
 	temp3 = temp3B;  // initial guess
 	for( int i = 0; i < 5; i++ )
 	{ // cross fingers and hope 5 Gauss-Seidel iterations work :-)
@@ -259,7 +283,7 @@ void VNEObject::UpdateRotation( )
 	tempq[2]	+= 0*Quarternion[2] + Quarternion[0]*AngVel[1];
 	tempq[3]	+= 0*Quarternion[3] + Quarternion[0]*AngVel[2];
 	
-	this->Quarternion = Quarternion + TIMESTEP * 0.5 * tempq;
+	this->Quarternion = Quarternion + dt * 0.5 * tempq;
 	tempq = Quarternion*Quarternion;
 	Quarternion = Quarternion / sqrt(tempq.sum());
 
@@ -292,6 +316,7 @@ void VNEObject::RotateLocal( )
 		this->CurTriVertY[i] = RotationMatrix[3] * RefTriVertX[i] + RotationMatrix[4] * RefTriVertY[i] + RotationMatrix[5] * RefTriVertZ[i] + Centroid[1];
 		this->CurTriVertZ[i] = RotationMatrix[6] * RefTriVertX[i] + RotationMatrix[7] * RefTriVertY[i] + RotationMatrix[8] * RefTriVertZ[i] + Centroid[2];
 	}
+	this->ComputeCentroid();
 	
 }
 
@@ -609,8 +634,8 @@ VNEObject::VNEObject( string objName, string fileNameFaces, string fileNameVerts
 	ComputeInertia();	
 
 	this->RefTriVertX = CurTriVertX - Centroid[0];
-	this->RefTriVertY = CurTriVertZ - Centroid[1];
-	this->RefTriVertZ = CurTriVertY - Centroid[2];
+	this->RefTriVertY = CurTriVertY - Centroid[1];
+	this->RefTriVertZ = CurTriVertZ - Centroid[2];
 
 	RotateLocal();
 

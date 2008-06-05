@@ -27,7 +27,8 @@ public:
 	virtual double UpdateForces( const valarray<double> &vertx, const valarray<double> &verty, const valarray<double> &vertz,
 								valarray<double> &FX, valarray<double> &FY, valarray<double> &FZ,
 								const valarray<double> &Velocity, const valarray<int> &VertControlPts,
-								const int &numVerts, valarray<double> &offset, const double &dt);
+								const int &numVerts, const valarray<double> &AngVel,
+								const valarray<double> &Centroid, const double &dt);
 	double GetAtmDen() { return dAtmDensity; }
 	void VortexOn() {bVortexOn = true;}
 	void VortexOff() {bVortexOn = false;}

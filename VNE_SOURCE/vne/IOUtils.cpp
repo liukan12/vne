@@ -18,7 +18,7 @@ int ReadMeshData( valarray<int> &TriIdx, valarray<double> &TriVertsX, valarray<d
 	// read a comma separted value file that defines the vertices
 	// and indices into vertices for all faces
 
-	char line[32];
+	char line[128];
 	ifstream fin( fileNameFaces.c_str() );
 	int iFaces = 0;
 	

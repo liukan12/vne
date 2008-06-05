@@ -24,14 +24,14 @@ const double vyn[] = {0.0,-5.0,0.0};
 const double vzp[] = {0.0,0.0,5.0};
 const double vzn[] = {0.0,0.0,-5.0};
 
-const double xf[] = {20.0,0.0,0.0};
-const double xs[] = {-20.0,0.0,0.0};
-const double xyf[] = {20.0,-20.0,0.0};
-const double xys[] = {-20.0,20.0,0.0};
-const double yf[] = {0.0,200.0,0.0};
-const double ys[] = {0.0,-200.0,0.0};
-const double zf[] = {0.0,0.0,20.0};
-const double zs[] = {0.0,0.0,-20.0};
+const double xf[] = {2000.0,0.0,0.0};
+const double xs[] = {-2000.0,0.0,0.0};
+const double xyf[] = {2000.0,-2000.0,0.0};
+const double xys[] = {-2000.0,2000.0,0.0};
+const double yf[] = {0.0,2000.0,0.0};
+const double ys[] = {0.0,-2000.0,0.0};
+const double zf[] = {0.0,0.0,2000.0};
+const double zs[] = {0.0,0.0,-2000.0};
 valarray<double> XFaster(xf,3);
 valarray<double> XSlower(xs,3);
 
@@ -234,7 +234,7 @@ void VNEApp::DisplayCallback()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-
+	// MOVE INCREMENTER HERE SO CONTROLS DON'T GET LOST!
 	this->world->TimeStep();
 	this->world->Redraw();
 	this->camera->UpdateAttachedCamera();
