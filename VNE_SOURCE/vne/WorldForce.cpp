@@ -18,7 +18,7 @@ static valarray<double> temp3(3);
 static valarray<double> temp3B(3);
 valarray<double> RotVel(3);
 
-double mu = 20.0;
+double mu = 200.0;
 
 WorldForce::WorldForce( )
 {
@@ -62,7 +62,6 @@ double WorldForce::UpdateForces( const valarray<double> &vertx, const valarray<d
 	double maxZ = vertz[ VertControlPts[5] ];
 	double dOvershoot = 0.0;
 
-	frictionForce	= 0.0;
 	gravForce		= 0.0;
 	wallForce		= 0.0;
 	windForce		= 0.0;
@@ -73,7 +72,7 @@ double WorldForce::UpdateForces( const valarray<double> &vertx, const valarray<d
 	dragForce = -dAtmDensity * Velocity;
 	dragForce /= numVerts;
 
-	frictionForce = -mu * Velocity / double( numVerts );
+	frictionForce = -mu * Velocity;
 
 	if( bConvectionOn )
 	{
@@ -106,6 +105,10 @@ double WorldForce::UpdateForces( const valarray<double> &vertx, const valarray<d
 			wallForce[1] = -(1.0 + dWallReflectance)*(RotVel[1]+Velocity[1])/(dt);
 			compForce[1] = (1.0 + dWallReflectance) * (RotVel[1] / dt );
 			FY[ VertControlPts[1] ] += wallForce[1] - gravForce[1]*numVerts;
+			//FX[ VertControlPts[1] ] += frictionForce[0];
+			//FZ[ VertControlPts[1] ] += frictionForce[2];
+			//FX += -frictionForce[0] / numVerts;
+			//FZ += -frictionForce[2] / numVerts;
 		}
 		if( minZ < -bdry )	{
 			ComputeRotationalVelocity( AngVel, vertx[VertControlPts[2]],verty[VertControlPts[2]],vertz[VertControlPts[2]],Centroid);

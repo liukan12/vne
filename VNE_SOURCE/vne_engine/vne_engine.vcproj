@@ -2,10 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="vne"
-	ProjectGUID="{B8D6C200-9E36-4C13-8209-BBAB6157F3A6}"
-	RootNamespace="vne"
-	Keyword="Win32Proj"
+	Name="vne_engine"
+	ProjectGUID="{0F449D53-F2DF-4D4C-97E5-B9F685CD8DAF}"
+	RootNamespace="vne_engine"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -18,11 +17,10 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			OutputDirectory="..\bin"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="1"
-			ManagedExtensions="1"
+			ConfigurationType="4"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -42,14 +40,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\OpenCV\cv\include&quot;;&quot;C:\Program Files\OpenCV\cvaux\include&quot;;&quot;C:\Program Files\OpenCV\cxcore\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
-				MinimalRebuild="false"
-				BasicRuntimeChecks="0"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -61,20 +56,12 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkLibraryDependencies="true"
-				AdditionalDependencies="glut32.lib libSOIL.lib"
-				LinkIncremental="2"
-				GenerateDebugInformation="true"
-				AssemblyDebug="1"
-				SubSystem="1"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
+				AdditionalDependencies="libSOIL.lib"
+				OutputFile="$(OutDir)\vne_engined.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -86,9 +73,6 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -96,8 +80,8 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="1"
+			ConfigurationType="4"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -119,11 +103,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -137,22 +118,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				LinkLibraryDependencies="true"
-				UseLibraryDependencyInputs="false"
-				AdditionalDependencies="glut32.lib libSOIL.lib"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -162,9 +131,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -184,39 +150,23 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IOUtils.cpp"
+				RelativePath=".\DrawObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\StaticObject.cpp"
+				RelativePath=".\ObjectController.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\vne.cpp"
+				RelativePath=".\PhysObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\VNEApp.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\VNEObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\VNEObjList.cpp"
+				RelativePath=".\TriObject.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\VNETexture.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\VNEWorld.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WorldForce.cpp"
 				>
 			</File>
 		</Filter>
@@ -234,35 +184,35 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IOUtils.h"
+				RelativePath=".\Object.h"
 				>
 			</File>
 			<File
-				RelativePath=".\StaticObject.h"
+				RelativePath=".\ObjectController.h"
 				>
 			</File>
 			<File
-				RelativePath=".\VNEApp.h"
+				RelativePath=".\PhysObject.h"
 				>
 			</File>
 			<File
-				RelativePath=".\VNEObject.h"
+				RelativePath=".\QuadObject.h"
 				>
 			</File>
 			<File
-				RelativePath=".\VNEObjList.h"
+				RelativePath=".\Solver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SurfaceObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TriObject.h"
 				>
 			</File>
 			<File
 				RelativePath=".\VNETexture.h"
-				>
-			</File>
-			<File
-				RelativePath=".\VNEWorld.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WorldForce.h"
 				>
 			</File>
 		</Filter>

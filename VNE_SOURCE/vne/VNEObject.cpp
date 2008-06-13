@@ -169,7 +169,7 @@ valarray<double> CZ;
 valarray<double> R;
 valarray<double> Q;
 valarray<double> C;
-
+valarray<double> offset(3);
 void VNEObject::IncrementTime()
 {
 
@@ -195,8 +195,7 @@ void VNEObject::IncrementTime()
 	TorqueDistributionZ = 0.0;
 
 	double overshoot = this->theForce->UpdateForces(CurTriVertX,CurTriVertY,CurTriVertZ,ForceDistributionX,ForceDistributionY,
-	ForceDistributionZ, Velocity, VertControlPts,numVerts, AngVel, Centroid, dt );
-	
+	ForceDistributionZ, Velocity, VertControlPts,numVerts, AngVel, Centroid, dt);
 
 	AngVel = AngVel * (1 - this->theForce->GetAtmDen() );
 	temp3 = Velocity * Velocity;
