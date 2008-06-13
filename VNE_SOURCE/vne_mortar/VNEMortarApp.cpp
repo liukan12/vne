@@ -109,9 +109,9 @@ valarray<double> tilt(3);
 // x = 1, y = 1 is the upper left cornder of the window
 void VNEMortarApp::KeyboardCallback(unsigned char key, int x, int y)
 {	
+	Mortar* focusMortar = dynamic_cast<Mortar*>(this->objControl->GetPhysObj(this->iControlObjIdx));
 	tilt = 0.0;
 	if( key == 'f' ) {
-		Mortar* focusMortar = dynamic_cast<Mortar*>(this->objControl->GetPhysObj(this->iControlObjIdx));
 		focusMortar->Fire();
 	}
 
@@ -123,7 +123,7 @@ void VNEMortarApp::KeyboardCallback(unsigned char key, int x, int y)
 		cin>>tilt[1];
 		cout<<"z dir? ";
 		cin>>tilt[2];
-		Mortar* focusMortar = dynamic_cast<Mortar*>(this->objControl->GetPhysObj(this->iControlObjIdx));
+		
 		focusMortar->TiltTo(tilt);
 	}
 	
@@ -146,18 +146,36 @@ void VNEMortarApp::KeyboardCallback(unsigned char key, int x, int y)
 		this->objControl->GetPhysObj(this->iControlObjIdx)->SetVelocity(1.0,1.0,1.0);
 	}
 	if( key == 'i' ) {
-		this->objControl->GetPhysObj(this->iControlObjIdx)->AddForceAllVerts(0.0,0.0,1.0);
-		this->objControl->GetPhysObj(this->iControlObjIdx)->UpdateSelf();
+		this->objControl->GetPhysObj(this->iControlObjIdx)->TranslateBy(0.0,0.0,0.05);
 	}
 	if( key == 'k' ) {
-		this->objControl->GetPhysObj(this->iControlObjIdx)->AddForceAllVerts(0.0,0.0,-1.0);
+		this->objControl->GetPhysObj(this->iControlObjIdx)->TranslateBy(0.0,0.0,-0.05);
 	}
 	if( key == 'j' ) {
-		this->objControl->GetPhysObj(this->iControlObjIdx)->AddForceAllVerts(-1.0,0.0,0.0);
+		this->objControl->GetPhysObj(this->iControlObjIdx)->TranslateBy(-0.05,0.0,0.0);
 	}
 	if( key == 'l' ) {
-		this->objControl->GetPhysObj(this->iControlObjIdx)->AddForceAllVerts(1.0,0.0,0.0);
+		this->objControl->GetPhysObj(this->iControlObjIdx)->TranslateBy(0.05,0.0,0.0);
 	}
+
+	//power adjustments
+	if( key == '=' ) {
+		focusMortar->SetPower( focusMortar->GetPower()+0.5 );
+		cout<<focusMortar->Name().c_str()<<" has power of "<<focusMortar->GetPower()<<"\n";
+	}
+	if( key == '+' ) {
+		focusMortar->SetPower( focusMortar->GetPower() + 0.1 );
+		cout<<focusMortar->Name().c_str()<<" has power of "<<focusMortar->GetPower()<<"\n";
+	}
+	if( key == '-' ) {
+		focusMortar->SetPower( focusMortar->GetPower()-0.5 );
+		cout<<focusMortar->Name().c_str()<<" has power of "<<focusMortar->GetPower()<<"\n";
+	}
+	if( key == '_' ) {
+		focusMortar->SetPower( focusMortar->GetPower() - 0.1 );
+		cout<<focusMortar->Name().c_str()<<" has power of "<<focusMortar->GetPower()<<"\n";
+	}
+
 
 	
 }

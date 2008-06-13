@@ -23,7 +23,7 @@ public:
 	void Fire(); // mortar fires a shell
 	void Destruct(); // mortar is hit by a shell
 	void GrabCamera(CameraControl* camera); // view the mortar up close
-	void SetPower( double d ) { power = d; }
+	void SetPower( double d ) { power = d;  }
 	void TiltBy( const valarray<double> &delta );
 	void TiltTo( const valarray<double> &vec );
 	double GetPower() {return power; }

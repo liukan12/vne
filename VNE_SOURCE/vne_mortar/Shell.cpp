@@ -25,8 +25,11 @@ void Shell::UpdateSelf()
 	this->SyncDrawObj();
 	this->GetMinMaxVert();
 
-	if( Velocity[1] < 0 && CurVertY[this->VertControlPts[1]] <= 0 )
+	if( Velocity[1] < 0 && CurVertY[this->VertControlPts[1]] <= 0 ) {
+		Velocity = 0.0;
 		Explode();
+	}
+		
 }
 
 Shell::Shell(const Shell &)
@@ -41,5 +44,5 @@ void Shell::GrabCamera()
 
 void Shell::Explode()
 {
-	cout<<"Shell Explodes at Location (x,y,z) = "<<Centroid[0]<<","<<Centroid[1]<<","<<Centroid[2]<<"\n";
+	//cout<<"Shell Explodes at Location (x,y,z) = "<<Centroid[0]<<","<<Centroid[1]<<","<<Centroid[2]<<"\n";
 }
