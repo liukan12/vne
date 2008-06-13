@@ -24,6 +24,7 @@ public:
 	Object(const Object & ) {};
 	Object(const vector<string> &filenames) {};
 	virtual void SetName( const string &name ) { objName = name; }
+	virtual string Name() { return objName; }
 	virtual void UpdateSelf() {};
 	virtual void InitFromFile(const vector<string> &filenames){};
 	virtual Object* GetSpawnedObject() {return NULL;}
