@@ -9,11 +9,11 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include "VNEApp.h"
+#include "VNEMortarApp.h"
 
 using namespace std;
 
-#define ETHAN_GAMENO
+#define ETHAN_GAME
 #ifndef ETHAN_GAME
 VNEApp* app;
 #else

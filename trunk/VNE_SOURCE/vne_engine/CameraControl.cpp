@@ -10,18 +10,16 @@
 //#include "VNEObject.h"
 #include "CameraControl.h"
 
-CameraControl::CameraControl( VNEWorld* aWorld)
+CameraControl::CameraControl( )//VNEWorld* aWorld)
 {
 	atx = 0.0;
 	aty = 0.0;
 	atz = 0.0;
-	world = aWorld;
+//	world = aWorld;
 	this->bIsAttached = false; // am I attached to an object now?
-	glClearColor(0.0, 0.0 , 0.0, 0.0 );
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_DEPTH_TEST);
+
 }
-CameraControl::CameraControl(double ex, double ey, double ez, VNEWorld* aWorld)
+CameraControl::CameraControl(double ex, double ey, double ez, double minz, double maxz)
 {
 	eyex = ex;
 	eyey = ey;
@@ -32,21 +30,19 @@ CameraControl::CameraControl(double ex, double ey, double ez, VNEWorld* aWorld)
 	initx = ex;
 	inity = ey;
 	initz = ez;
-	world = aWorld;
 	bIsAttached = false;
-	glClearColor(0.0, 0.0 , 0.0, 0.0 );
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_DEPTH_TEST);
+	zmin = minz;
+	zmax = maxz;
 }
 
-
+/*
 void CameraControl::AttachToObject( VNEObject* obj )
 {
 	this->targetObj = obj;
 	
 	bIsAttached = true;
 	UpdateAttachedCamera();
-}
+}*/
 
 void CameraControl::ResetPosition( )
 {
@@ -62,25 +58,7 @@ void CameraControl::ResetPosition( )
 }
 void CameraControl::UpdateAttachedCamera()
 {
-	if( this->bIsAttached )
-	{	
-		double vx,vy,vz;
-		vx = (*this->targetObj->GetVelocity())[0];
-		vy = (*this->targetObj->GetVelocity())[1];
-		vz = (*this->targetObj->GetVelocity())[2];
-		double cx,cy,cz;
-		this->targetObj->GetCentroid(&cx,&cy,&cz);
-		double eyeOffset = 0.5;
-		
-		double dScale = sqrt(vx*vx + vy*vy + vz*vz);
-		this->eyex = cx + vx * eyeOffset / dScale;
-		this->eyey = cy + vy * eyeOffset / dScale;
-		this->eyez = cz + vz * eyeOffset / dScale;
-
-		this->atx = cx + 2 * vx * eyeOffset;
-		this->aty = cy + 2 * vy * eyeOffset;
-		this->atz = cz + 2 * vz * eyeOffset;
-
+	if( this->bIsAttached )	{
 		this->ResizeCallbackHandler(this->iWindowW, this->iWindowH);
 	}
 	else;
@@ -123,7 +101,7 @@ void CameraControl::ResizeCallbackHandler(int w, int h)
 	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60.0, (GLfloat) w / (GLfloat) h, 1.0, 20.0);
+	gluPerspective(60.0, (GLfloat) w / (GLfloat) h, 1.0, abs(zmax-zmin));
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(eyex, eyey, eyez, atx, aty, atz, 0.0, 1.0, 0.0);
