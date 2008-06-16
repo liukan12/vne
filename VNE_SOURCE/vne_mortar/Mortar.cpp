@@ -6,11 +6,13 @@
 Mortar::Mortar()
 {
 	bIsFiring = false;
+	bIsHit = false;
 	this->direction = valarray<double>(3);
 	this->direction[1] = 1.0; // initially point up
 	this->refdirection = valarray<double>(3);
 	this->refdirection[1] = 1.0; // initially point up
-	power = 10.0;
+	power = 4.0;
+	dHitDist = 1.0;
 }
 
 Mortar::Mortar(const Mortar &)
@@ -60,8 +62,20 @@ Shell* Mortar::GetSpawnedObject()
 void Mortar::GrabCamera(CameraControl* camera)
 {
 	// do this SLOWLY with animation!
-	camera->TranslateTo( 0,2.0,0 );
-	camera->PointAt( Centroid[0], Centroid[1], Centroid[2] );
+	camera->TranslateTo( Centroid[0]-direction[0]*3, 3.0, Centroid[2]-direction[2]*3 );
+	camera->PointAt( 0, 0, 0 );
+}
+
+void Mortar::GrabCamera(CameraControl* camera, PhysObject* target)
+{
+	// do this SLOWLY with animation!
+	valarray<double> temp = target->GetCentroid();
+	valarray<double> toMe = Centroid - temp;
+	toMe = toMe / sqrt( (toMe*toMe).sum() );
+
+	camera->TranslateTo( Centroid[0] + 5*toMe[0], 3.0 , Centroid[2] + 5*toMe[2] );
+	
+	camera->PointAt( temp[0], temp[1], temp[2] );
 }
 
 void Mortar::UpdateSelf()
@@ -78,5 +92,26 @@ void Mortar::StopSpawn()
 void Mortar::Fire()
 {
 	this->bIsFiring = true;
+}
+
+void Mortar::Destruct()
+{
+	cout<<this->objName<<" is hit!\n";
+}
+
+void Mortar::HandleDestruct( Object* other )
+{
+	Shell* shell = dynamic_cast<Shell*>(other);
+	if( !shell ) // something other than a shell
+		return;
+	else {
+		valarray<double> loc = shell->GetCentroid();
+		loc = Centroid - loc;
+		loc[1] = 0.0;
+		double dist = sqrt((loc*loc).sum());
+		if( dist < dHitDist ) {
+			this->bIsHit = true;
+		}
+	}
 }
 

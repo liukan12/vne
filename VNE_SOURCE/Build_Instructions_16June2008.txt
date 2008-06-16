@@ -1,0 +1,26 @@
+Current State of Building: June 16 2008
+
+There are three projects in vne.sln:
+
+1. vne_engine; this guy builds a static library. any game / app using the engine needs to add
+ "vne_engined.lib" or "vne_engine.lib" for debug and release versions of itself respectively.
+ as a library it does not have a main function; the app using it will
+ 
+ 2. vne_mortar; this is a/the demo app. it includes the stuff from the engine. several
+ of the files here are classes that inherit from base classes in the engine (ie a Mortar
+ extends the PhysObject in the engine).
+ 
+ 3. vne_data; this is non-binary stuff like graphics, matlab scripts, etc
+ 
+ 
+ To build you need to also make sure the SOIL library is correctly linked with; the projects
+ should already be setup to do so, make sure they have libSOIL.lib in their additional
+ dependecies and that the path to libSOIL.lib is in your VC projects libraries directory list.
+ 
+ 
+ vne_build: this is a directory to put actual builds into when we are about to put them up
+ as downloads.
+ 
+ bin: this is where built stuff goes. When you compile, look for it to be located there.
+ It is possible that it is not setup right for release mode build right now; do it in debug.
+ You should see vne_mortard.exe and vne_engined.lib get built and put there.

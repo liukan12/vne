@@ -18,6 +18,11 @@ TriObject::TriObject(const valarray<double> &NX, const valarray<double> &NY,
 
 }
 
+TriObject::~TriObject()
+{
+	
+}
+
 void TriObject::DrawSelf()
 {
 	int i;

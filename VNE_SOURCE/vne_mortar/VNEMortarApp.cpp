@@ -7,12 +7,15 @@
 #include <GL/glut.h>
 #include <math.h>
 #include "VNEMortarApp.h"
+#include "Globals.h"
 
 using namespace std;
 
 #ifdef _DEBUG
 int frame=0,mytime,timebase=0;
 #endif
+
+int gameNum = 0;
 
 VNEMortarApp::VNEMortarApp()
 {
@@ -55,8 +58,18 @@ void VNEMortarApp::Init()
 	mortar2->InitFromFile( input2 );
 	mortar1->SetName("Mortar One");
 	mortar2->SetName("Mortar Two");
-	mortar1->TranslateTo(2.0,0.0,-35.0);
-	mortar2->TranslateTo(-2.0,0.0,10.0);
+	mortar1->TranslateTo(4.0,0.0,-35.0);
+	mortar2->TranslateTo(-4.0,0.0,10.0);
+
+	valarray<double> initTilt1(3);
+	initTilt1[0] = 0;
+	initTilt1[1] = 1;
+	initTilt1[2] = 2;
+	mortar1->TiltTo( initTilt1 );
+	initTilt1[0] = 0;
+	initTilt1[1] = 1;
+	initTilt1[2] = -2;
+	mortar2->TiltTo( initTilt1 );
 
 	valarray<double> red1 = valarray<double>(mortar1->GetNumVerts() );
 	red1 = 0.5;
@@ -69,11 +82,29 @@ void VNEMortarApp::Init()
 	this->objControl->AddPhysObj(mortar1);
 	this->objControl->AddPhysObj(mortar2);
 
-	floorTex=new VNETexture("..\\vne_data\\ground.jpg");
-
+	if( gameNum == 0 ) {
+		floorTex=new VNETexture("..\\vne_data\\ground.jpg");
+		this->backTex = NULL;
+	}
+	cout<<"Starting game # "<<gameNum<<"\n";
+	gameNum++;
 	glClearColor(0.0, 0.0 , 0.0, 0.0 );
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_DEPTH_TEST);
+}
+
+VNEMortarApp::~VNEMortarApp()
+{
+	if( this->floorTex )
+		delete floorTex;
+	delete this->objControl;
+}
+
+void VNEMortarApp::Reset()
+{
+	delete this->objControl;
+	delete this->camera;
+	Init();
 }
 
 void VNEMortarApp::DrawWalls()
@@ -109,10 +140,37 @@ valarray<double> tilt(3);
 // x = 1, y = 1 is the upper left cornder of the window
 void VNEMortarApp::KeyboardCallback(unsigned char key, int x, int y)
 {	
+
 	Mortar* focusMortar = dynamic_cast<Mortar*>(this->objControl->GetPhysObj(this->iControlObjIdx));
+	Mortar* targetMortar;
+
+	if(iControlObjIdx == 0)
+		targetMortar = dynamic_cast<Mortar*>(this->objControl->GetPhysObj(1));
+	else if (iControlObjIdx == 1)
+		targetMortar = dynamic_cast<Mortar*>(this->objControl->GetPhysObj(0));
+
+	if( !targetMortar || !focusMortar )
+		return;
+
 	tilt = 0.0;
+	if( key == 'c' ) {
+		valarray<double> delta = ( targetMortar->GetCentroid() - focusMortar->GetCentroid() );
+		double L = sqrt( (delta*delta).sum() );
+		double minE = -GRAV * 0.5 * L; // mass of shell is 1.0
+		cout<<"Challenge: hit target with minimum possible kinetic energy. \n ";
+		cout<<"Computer predicts this to be mgL/2 = "<<minE<<"\n";
+	}
 	if( key == 'f' ) {
 		focusMortar->Fire();
+		
+		if( iControlObjIdx == 0 ) {
+			cout<<"Player 2 has next turn! \n";
+			iControlObjIdx = 1;
+		}
+		else {
+			iControlObjIdx = 0;
+			cout<<"Player 1 has next turn! \n";
+		}
 	}
 
 	//Tilt Controls
@@ -131,7 +189,7 @@ void VNEMortarApp::KeyboardCallback(unsigned char key, int x, int y)
 
 
 	if( key == 'g' ) {
-		this->objControl->GetPhysObj(this->iControlObjIdx)->GrabCamera(this->camera);
+		focusMortar->GrabCamera(this->camera, targetMortar);
 	}
 	if( key == 'r' ) {
 		this->camera->ResetPosition();
@@ -141,9 +199,6 @@ void VNEMortarApp::KeyboardCallback(unsigned char key, int x, int y)
 	}
 	if( key == '2' ) {
 		iControlObjIdx = 1;
-	}
-	if( key == 'v' ) {
-		this->objControl->GetPhysObj(this->iControlObjIdx)->SetVelocity(1.0,1.0,1.0);
 	}
 	if( key == 'i' ) {
 		this->objControl->GetPhysObj(this->iControlObjIdx)->TranslateBy(0.0,0.0,0.05);
@@ -164,7 +219,7 @@ void VNEMortarApp::KeyboardCallback(unsigned char key, int x, int y)
 		cout<<focusMortar->Name().c_str()<<" has power of "<<focusMortar->GetPower()<<"\n";
 	}
 	if( key == '+' ) {
-		focusMortar->SetPower( focusMortar->GetPower() + 0.1 );
+		focusMortar->SetPower( focusMortar->GetPower() + 0.05 );
 		cout<<focusMortar->Name().c_str()<<" has power of "<<focusMortar->GetPower()<<"\n";
 	}
 	if( key == '-' ) {
@@ -172,8 +227,46 @@ void VNEMortarApp::KeyboardCallback(unsigned char key, int x, int y)
 		cout<<focusMortar->Name().c_str()<<" has power of "<<focusMortar->GetPower()<<"\n";
 	}
 	if( key == '_' ) {
-		focusMortar->SetPower( focusMortar->GetPower() - 0.1 );
+		focusMortar->SetPower( focusMortar->GetPower() - 0.05 );
 		cout<<focusMortar->Name().c_str()<<" has power of "<<focusMortar->GetPower()<<"\n";
+	}
+
+	valarray<double> newdir(3);
+	
+	if( key == 'v' ) {
+		newdir = focusMortar->GetDir();
+		newdir[0] += 0.01;
+		focusMortar->TiltTo( newdir );
+	}
+	if( key == 'V' ) {
+		newdir = focusMortar->GetDir();
+		newdir[0] -= 0.01;
+		focusMortar->TiltTo( newdir );
+	}
+	if( key == 'b' ) {
+		newdir = focusMortar->GetDir();
+		newdir[1] += 0.01;
+		focusMortar->TiltTo( newdir );
+	}
+	if( key == 'B' ) {
+		newdir = focusMortar->GetDir();
+		newdir[1] -= 0.01;
+		focusMortar->TiltTo( newdir );
+	}
+	if( key == 'n' ) {
+		newdir = focusMortar->GetDir();
+		newdir[2] += 0.01;
+		focusMortar->TiltTo( newdir );
+	}
+	if( key == 'N' ) {
+		newdir = focusMortar->GetDir();
+		newdir[2] -= 0.01;
+		focusMortar->TiltTo( newdir );
+	}
+
+	if( key == 'R' ) {
+		cout<<"Resetting VNEMortar... \n";
+		this->Reset();
 	}
 
 
@@ -218,8 +311,44 @@ void VNEMortarApp::MouseCallback(int button, int state, int x, int y)
 
 void VNEMortarApp::DisplayCallback()
 {
+	this->objControl->Update();
+	this->DrawWalls();
+	glFinish();
+	glutSwapBuffers();
+
 	this->camera->UpdateAttachedCamera();
-	
+	Mortar* focusMortar = dynamic_cast<Mortar*>(this->objControl->GetPhysObj(this->iControlObjIdx));
+	Mortar* targetMortar;
+
+	if(iControlObjIdx == 0)
+		targetMortar = dynamic_cast<Mortar*>(this->objControl->GetPhysObj(1));
+	else if (iControlObjIdx == 1)
+		targetMortar = dynamic_cast<Mortar*>(this->objControl->GetPhysObj(0));
+
+	int numObjs = this->objControl->NumPhysObjs();
+
+	if( numObjs < 3 ) {
+		// if there are more than 2 objects, there is a shell flying
+		// let it land before updating the view
+		if( targetMortar && focusMortar )
+			focusMortar->GrabCamera(camera, targetMortar );
+
+		if( numObjs < 2 ) {
+			char ans = 'b';
+			while( ans != 'y' && ans != 'Y' && ans != 'n' && ans != 'N' ) {
+				cout<<"A mortar has been destroyed; play again? (y/n) \n";
+				cin>>ans;
+			}
+			if( ans == 'y' || ans == 'Y' ) {
+				this->Reset();
+			}
+			else
+				exit(0);
+			
+			return;
+		}
+	}
+
 	
 #ifdef _DEBUG
 	frame++;
@@ -231,14 +360,6 @@ void VNEMortarApp::DisplayCallback()
 		frame = 0;
 	}
 #endif
- 
-	//this->objControl->ApplyGravity(9.8 * 0.001 );
-	this->objControl->Update();
-	this->DrawWalls();
-	glFinish();
-	
-
-	glutSwapBuffers();
 
 }
 
