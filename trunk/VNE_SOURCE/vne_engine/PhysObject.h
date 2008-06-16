@@ -82,6 +82,7 @@ public:
 	PhysObject();
 	PhysObject(const PhysObject &);
 	PhysObject(const vector<string> &filenames);
+	~PhysObject();
 	
 	virtual void UpdateSelf() {};
 	virtual void InitFromFile(const vector<string> &filenames);
@@ -100,6 +101,7 @@ public:
 	virtual void TranslateBy(double dx, double dy, double dz);
 	virtual void AccelerateBy(double dx, double dy, double dz);
 	virtual void ClearForce();
+	virtual valarray<double> GetCentroid() { return Centroid; }
 };
 
 #endif

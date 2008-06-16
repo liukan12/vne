@@ -19,12 +19,13 @@ private:
 	bool bIsCollision;	
 public:
 	ObjectController();
+	~ObjectController();
 	PhysObject* GetPhysObj( unsigned int idx );
 	void AddPhysObj( PhysObject* obj );
 	void DeletePhysObj( int idx );
 	void Update();
 	void ApplyGravity(double g);
-
+	int NumPhysObjs() { return physObjs.size(); }
 	CameraControl* GetCamera();
 	bool IsCollision();
 	void GetCollisionID( int* idx1, int* idx2);

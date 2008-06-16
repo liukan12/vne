@@ -1,0 +1,1 @@
+#define GRAV -9.8 * .01

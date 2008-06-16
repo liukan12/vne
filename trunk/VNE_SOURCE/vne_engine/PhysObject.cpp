@@ -10,6 +10,11 @@ PhysObject::PhysObject()
 
 }
 
+PhysObject::~PhysObject()
+{
+
+}
+
 PhysObject::PhysObject(const vector<string> &filenames)
 {
 

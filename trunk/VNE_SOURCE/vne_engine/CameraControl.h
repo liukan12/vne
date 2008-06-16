@@ -9,21 +9,17 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include <math.h>
-//#include "VNEApp.h"
-#include "CameraControl.h"
 
 class CameraControl
 {
 public:
-	CameraControl( );//VNEWorld* aWorld);
-	CameraControl(double ex, double ey, double ez, double zmin, double zmax);//, VNEWorld* aWorld); // default camera position. point to origin.
+	CameraControl( );
+	CameraControl(double ex, double ey, double ez, double zmin, double zmax);
 	~CameraControl();
 	void GetEyeLocs( double* ex, double* ey, double* ez );
 	void GetEyeDirs( double* dx, double* ey, double* ez );
 	void RotateLocal( double x, double y, double z, double theta );
-	//void AttachToObject( VNEObject* obj );
 	void Detach() { bIsAttached = false; }
-	//VNEObject* GetCurrentObject() {return targetObj;}
 	void ResetPosition( );
 	void TranslateBy( double dx, double dy, double dz );
 	void TranslateTo( double x, double y, double z );
@@ -34,8 +30,6 @@ public:
 	void ModelView();
 	
 private:
-	//VNEObject* targetObj; // object to view from
-	//VNEWorld* world;
 	bool bIsAttached;
 	int iWindowW;
 	int iWindowH;

@@ -20,11 +20,20 @@ DrawObject::DrawObject( const valarray<double> &NX, const valarray<double> &NY, 
 	bseed = 0.5;
 	gseed = 0.5;
 	this->bHasTexture = false;
+	objTexture = NULL;
 }
 
 DrawObject::~DrawObject()
 {
-	delete objTexture;
+	if( objTexture )
+		delete objTexture;
+	 /*CurVertX.~valarray(); 
+	 CurVertY.~valarray(); 
+	 CurVertZ.~valarray();
+	 CurNormX.~valarray();	
+	 CurNormY.~valarray();	
+	 CurNormZ.~valarray();	
+	 CurIdx.~valarray();	*/
 }
 
 void DrawObject::UpdateData( const valarray<double> &NX, const valarray<double> &NY, const valarray<double> &NZ,

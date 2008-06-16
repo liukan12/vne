@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C++ Express 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vne", "vne.vcproj", "{B8D6C200-9E36-4C13-8209-BBAB6157F3A6}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vne_data", "..\vne_data\vne_data.vcproj", "{6255F85E-6E12-45DA-B54F-B4D362CBBF11}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vne_mortar", "..\vne_mortar\vne_mortar.vcproj", "{6B67E97B-D30D-4413-9F31-1D09585B9C99}"
@@ -19,8 +17,6 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B8D6C200-9E36-4C13-8209-BBAB6157F3A6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{B8D6C200-9E36-4C13-8209-BBAB6157F3A6}.Release|Win32.ActiveCfg = Release|Win32
 		{6255F85E-6E12-45DA-B54F-B4D362CBBF11}.Debug|Win32.ActiveCfg = Debug|Win32
 		{6255F85E-6E12-45DA-B54F-B4D362CBBF11}.Debug|Win32.Build.0 = Debug|Win32
 		{6255F85E-6E12-45DA-B54F-B4D362CBBF11}.Release|Win32.ActiveCfg = Release|Win32

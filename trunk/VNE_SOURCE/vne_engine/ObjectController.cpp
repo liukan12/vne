@@ -7,8 +7,20 @@ ObjectController::ObjectController()
 {
 	this->physObjs = vector<PhysObject*>(0);
 }
+
+ObjectController::~ObjectController() {
+	for( int i = physObjs.size()-1; i >= 0; i-- ) {
+			delete this->physObjs.at( i );
+			this->physObjs.erase( physObjs.begin() + i );
+	}
+}
+
 PhysObject* ObjectController::GetPhysObj( unsigned int idx )
 {
+	if( physObjs.size() < 1 ) {
+		cout<<"There are no phys objects to return! \n";
+		return NULL;
+	}
 	if( idx >= physObjs.size() ) {
 		cout<<"error, entered index of object is out of bounds!\n";
 		return physObjs[physObjs.size()-1];
@@ -42,6 +54,19 @@ void ObjectController::Update()
 			PhysObject* newObj = physObjs[i]->GetSpawnedObject();
 			this->physObjs.push_back(newObj);
 			physObjs[i]->StopSpawn();
+		}
+	}
+	for( unsigned int i = 0; i < physObjs.size(); i++ ) {
+		if( this->physObjs[i]->IsDestructing() ) {
+			this->physObjs[i]->Destruct();
+
+			for( unsigned int j = 0; j < physObjs.size(); j++ ) {
+				if( j == i ) continue;
+				this->physObjs[j]->HandleDestruct( physObjs[i] );
+			}
+			
+			delete this->physObjs.at( i );
+			this->physObjs.erase( physObjs.begin() + i );
 		}
 	}
 	for( unsigned int i = 0; i < physObjs.size(); i++ ) {

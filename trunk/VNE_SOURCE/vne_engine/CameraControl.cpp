@@ -9,6 +9,7 @@
 //#include "VNEWorld.h"
 //#include "VNEObject.h"
 #include "CameraControl.h"
+#include <valarray>
 
 CameraControl::CameraControl( )//VNEWorld* aWorld)
 {
@@ -19,6 +20,12 @@ CameraControl::CameraControl( )//VNEWorld* aWorld)
 	this->bIsAttached = false; // am I attached to an object now?
 
 }
+
+CameraControl::~CameraControl()
+{
+
+}
+
 CameraControl::CameraControl(double ex, double ey, double ez, double minz, double maxz)
 {
 	eyex = ex;
