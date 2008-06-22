@@ -16,7 +16,7 @@ private:
 	//vector<SurfaceObject*> surfObjs;
 	//Solver* solver;
 	CameraControl* camera;
-	bool bIsCollision;	
+	bool bIsCollision;
 public:
 	ObjectController();
 	~ObjectController();

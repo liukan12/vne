@@ -50,12 +50,12 @@ Shell* Mortar::GetSpawnedObject()
 	params.InitPosition = valarray<double>(3);
 	params.InitPosition = Centroid;
 	params.InitVelocity = valarray<double>(3);
-	params.InitVelocity = power * direction; // TODO: change this!
+	params.InitVelocity = power * direction;
 	params.input = vector<string>(4);
 	params.input[3] = "tri";
-	params.input[0] = "..\\vne_data\\facesshell.dat"; 
-	params.input[1] = "..\\vne_data\\normsshell.dat";
-	params.input[2] = "..\\vne_data\\vertsshell.dat";
+	params.input[0] = "..\\vne_data\\faces7.dat";//facesshell.dat"; 
+	params.input[1] = "..\\vne_data\\norms7.dat";//normsshell.dat";
+	params.input[2] = "..\\vne_data\\verts7.dat";//vertsshell.dat";
 	return new Shell(params);
 }
 

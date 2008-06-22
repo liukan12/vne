@@ -72,6 +72,16 @@ void ObjectController::Update()
 	for( unsigned int i = 0; i < physObjs.size(); i++ ) {
 		physObjs[i]->UpdateSelf();
 	}
+
+	for( unsigned int i = 0; i < physObjs.size(); i++ ) {
+		PhysObject* obj1 = physObjs[i];
+		for( unsigned int j = i+1; j < physObjs.size(); j++ ) {
+			PhysObject* obj2 = physObjs[j];
+			if( ! (obj1->isStatic() || obj2->isStatic() ) )
+				obj1->CheckAndHandleCollision(obj2);
+		}
+	}
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	for( unsigned int i = 0; i < physObjs.size(); i++ ) {
 		physObjs[i]->GetDrawObj()->DrawSelf();

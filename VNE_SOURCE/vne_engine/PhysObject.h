@@ -57,8 +57,16 @@ protected:
 	valarray<double> CurNormZ;	// normals at vertices
 	valarray<int>	 CurIdx;	// indices into Verts & Norms
 	
+	vector<PhysObject*> CollisionCandidates; // guys whose bounding sphere intersects my bounding sphere
+
 	int numFaces;
 	int numVerts;
+	double maxVertSpace;     
+	double boundingSphereRad;
+	double timeStep;
+
+	void ComputeMaxVertexSpacing();
+	void ComputeBoundSphereRad();
 
 	virtual void ComputeInertia();
 	virtual void ComputeTorqueDistribution();
@@ -72,6 +80,12 @@ protected:
 	virtual void UpdateTotals();
 	virtual void UpdateAngVel(double dt);
 	virtual void EulerTimeStep(double dt);
+	virtual void ProcessCollisions();
+
+	// helper function for general-purpose collision handling
+	double GetMinInterObjVertDist( PhysObject* obj1, PhysObject* obj2 );
+	double FindCollideTimeAndAdjust( PhysObject* obj1, PhysObject* obj2);
+	void ApplyCollisionImpulse( PhysObject* obj1, PhysObject* obj2 );
 
 	virtual void ProcessTriDataFiles( const vector<string> filenames );
 	virtual void SyncDrawObj();
@@ -88,8 +102,8 @@ public:
 	virtual void InitFromFile(const vector<string> &filenames);
 	virtual PhysObject* GetSpawnedObject() { return NULL; }
 	virtual bool IsSpawning() { return false; }
-	virtual int GetNumVerts() { return numVerts; }
-	virtual int GetNumFaces() { return numFaces; }
+	int GetNumVerts() { return numVerts; }
+	int GetNumFaces() { return numFaces; }
 	virtual void TimeStep( double dt = step ) {}
 	virtual void GetMinMaxVert( );
 	virtual void AddForceAllVerts( const valarray<double> &Force );
@@ -100,8 +114,13 @@ public:
 	virtual void TranslateTo(double dx, double dy, double dz);
 	virtual void TranslateBy(double dx, double dy, double dz);
 	virtual void AccelerateBy(double dx, double dy, double dz);
+	virtual bool CheckAndHandleCollision(PhysObject* otherObj);
 	virtual void ClearForce();
-	virtual valarray<double> GetCentroid() { return Centroid; }
+	virtual bool isStatic() { return false; }
+	double GetMaxVertexSpacing() { return maxVertSpace;      }
+	double GetBoundSphereRad() { return   boundingSphereRad; }
+	double GetTimeStep() { return timeStep; }
+	valarray<double> GetCentroid() { return Centroid; }
 };
 
 #endif

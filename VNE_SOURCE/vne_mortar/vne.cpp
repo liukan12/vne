@@ -56,7 +56,7 @@ int main( int argc, char* argv[] )
 	glutInit( &argc, argv );
 	//cout<<"done glutInit...\n";
 	glutInitDisplayMode( GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGB );
-	glutInitWindowSize(800, 800);
+	glutInitWindowSize(1000, 800);
 	glutInitWindowPosition(100,100);
 	glutCreateWindow(argv[0]);
 

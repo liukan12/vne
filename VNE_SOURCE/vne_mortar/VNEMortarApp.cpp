@@ -44,6 +44,9 @@ void VNEMortarApp::Init()
 	//4 strings: faces, norms, verts, draw type
 	vector<string> input1(4);
 	vector<string> input2(4);
+	vector<string> input3(4);
+	vector<string> input4(4);
+	vector<string> input5(4);
 	
 	input1[0] = "..\\vne_data\\facesmortar.dat"; 
 	input1[1] = "..\\vne_data\\normsmortar.dat";
@@ -53,6 +56,31 @@ void VNEMortarApp::Init()
 	input2[1] = "..\\vne_data\\normsmortar.dat";
 	input2[2] = "..\\vne_data\\vertsmortar.dat";
 	input2[3] = "tri";
+	input3[0] = "..\\vne_data\\facesmortar.dat"; 
+	input3[1] = "..\\vne_data\\normsmortar.dat";
+	input3[2] = "..\\vne_data\\vertsmortar.dat";
+	input3[3] = "tri";
+	input4[0] = "..\\vne_data\\facesmortar.dat"; 
+	input4[1] = "..\\vne_data\\normsmortar.dat";
+	input4[2] = "..\\vne_data\\vertsmortar.dat";
+	input4[3] = "tri";
+	input5[0] = "..\\vne_data\\facesmortar.dat"; 
+	input5[1] = "..\\vne_data\\normsmortar.dat";
+	input5[2] = "..\\vne_data\\vertsmortar.dat";
+	input5[3] = "tri";
+
+	Obstacle* obst = new Obstacle();
+	obst->InitFromFile( input3 );
+	obst->TranslateTo( 8.0,10.0,-10.0 );
+	obst->SetName("Obstacle One");
+	Obstacle* obst2 = new Obstacle();
+	obst2->InitFromFile( input4 );
+	obst2->TranslateTo( -8.0,5.0,0.0 );
+	obst2->SetName("Obstacle Two");
+	Obstacle* obst3 = new Obstacle();
+	obst3->InitFromFile( input5 );
+	obst3->TranslateTo( 0.0,5.0,-15.0 );
+	obst3->SetName("Obstacle Three");
 
 	mortar1->InitFromFile( input1 );
 	mortar2->InitFromFile( input2 );
@@ -72,15 +100,44 @@ void VNEMortarApp::Init()
 	mortar2->TiltTo( initTilt1 );
 
 	valarray<double> red1 = valarray<double>(mortar1->GetNumVerts() );
-	red1 = 0.5;
 	valarray<double> green1 = valarray<double>(mortar1->GetNumVerts() );
-	green1 = 0.0;
 	valarray<double> blue1 = valarray<double>(mortar1->GetNumVerts() );
-	blue1 = 1.0;
+	valarray<double> red2 = valarray<double>(obst->GetNumVerts() );
+	valarray<double> green2 = valarray<double>(obst->GetNumVerts() );
+	valarray<double> blue2 = valarray<double>(obst->GetNumVerts() );
+	valarray<double> red3 = valarray<double>(obst2->GetNumVerts() );
+	valarray<double> green3 = valarray<double>(obst2->GetNumVerts() );
+	valarray<double> blue3 = valarray<double>(obst2->GetNumVerts() );
+	valarray<double> red4 = valarray<double>(obst3->GetNumVerts() );
+	valarray<double> green4 = valarray<double>(obst3->GetNumVerts() );
+	valarray<double> blue4 = valarray<double>(obst3->GetNumVerts() );
+	for( int i = 0; i < mortar1->GetNumVerts(); i++ ) {
+		red1[i] = i * 1.0/ mortar1->GetNumVerts();
+		green1[i] = 0.0;
+		blue1[i] = i * 1.0 / mortar1->GetNumVerts();
+		red2[i] = 0.0;
+		green2[i] = 0.5 + (rand()%7)/20.0;
+		blue2[i] = 0.5 + (rand()%7)/20.0;
+		red3[i] = 0.5 + (rand()%7)/20.0;
+		green3[i] = 0.5 + (rand()%7)/20.0;
+		blue3[i] = 0.5 + (rand()%7)/20.0;
+		red4[i] = 0.2 + (rand()%7)/20.0;
+		green4[i] = 0.0;
+		blue4[i] = 0.9 + (rand()%7)/20.0;
+
+	}
 	mortar1->GetDrawObj()->SetColors( red1, green1, blue1 );
+	obst->GetDrawObj()->SetColors( red2, green2, blue2 );
+	obst2->GetDrawObj()->SetColors( red3, green3, blue3 );
+	obst3->GetDrawObj()->SetColors( red4, green4, blue4 );
 
 	this->objControl->AddPhysObj(mortar1);
 	this->objControl->AddPhysObj(mortar2);
+	this->objControl->AddPhysObj(obst);
+	this->objControl->AddPhysObj(obst2);
+	this->objControl->AddPhysObj(obst3);
+
+	mortar2->GrabCamera( camera, mortar1 );
 
 	if( gameNum == 0 ) {
 		floorTex=new VNETexture("..\\vne_data\\ground.jpg");
@@ -327,13 +384,13 @@ void VNEMortarApp::DisplayCallback()
 
 	int numObjs = this->objControl->NumPhysObjs();
 
-	if( numObjs < 3 ) {
+	if( numObjs < (3+3) ) {
 		// if there are more than 2 objects, there is a shell flying
 		// let it land before updating the view
 		if( targetMortar && focusMortar )
 			focusMortar->GrabCamera(camera, targetMortar );
 
-		if( numObjs < 2 ) {
+		if( numObjs < (2+3) ) {
 			char ans = 'b';
 			while( ans != 'y' && ans != 'Y' && ans != 'n' && ans != 'N' ) {
 				cout<<"A mortar has been destroyed; play again? (y/n) \n";
