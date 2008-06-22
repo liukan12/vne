@@ -33,6 +33,7 @@ public:
 	void TiltBy( const valarray<double> &delta );
 	void TiltTo( const valarray<double> &vec );
 	double GetPower() {return power; }
+	bool isStatic() { return true; }
 	valarray<double> GetDir() { return direction; }
 
 };

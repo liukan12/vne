@@ -5,6 +5,7 @@
 #include "../vne_engine/ObjectController.h"
 #include "Mortar.h"
 #include "Shell.h"
+#include "Obstacle.h"
 
 class VNEMortarApp
 {

@@ -20,13 +20,12 @@ Shell::Shell( ObjParams params )
 void Shell::UpdateSelf()
 {
 	valarray<double> gravity(3);
-	valarray<double> airres(3);
-	airres = -0.000 * Velocity;
 	gravity[1] = GRAV/numVerts;
+
 	this->AddForceAllVerts(gravity);
-	this->AddForceAllVerts(airres);
+	this->ProcessCollisions();
 	this->UpdateTotals();
-	this->EulerTimeStep( 0.15 );
+	this->EulerTimeStep( TIMESTEP );
 	this->SyncDrawObj();
 	this->GetMinMaxVert();
 

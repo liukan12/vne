@@ -78,7 +78,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			OutputDirectory="..\bin"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="2"
@@ -119,6 +119,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="libSOIL.lib"
+				OutputFile="$(OutDir)\vne_engine.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

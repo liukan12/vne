@@ -5,6 +5,13 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 
+#ifdef min
+#undef min
+#endif 
+#ifdef max
+#undef max
+#endif
+
 PhysObject::PhysObject()
 {
 
@@ -301,6 +308,8 @@ void PhysObject::InitFromFile(const vector<string> &input)
 	ComputeCentroid();
 	ComputeInertia();
 	Quarternion[0] = 1.0;
+	this->ComputeBoundSphereRad();
+	this->ComputeMaxVertexSpacing();
 }
 
 void PhysObject::ProcessTriDataFiles( const vector<string> filenames )
@@ -504,13 +513,177 @@ void PhysObject::UpdateAngVel(double dt)
 	Quarternion = Quarternion / sqrt(tempq.sum());
 }
 
+double PhysObject::GetMinInterObjVertDist( PhysObject* obj1, PhysObject* obj2 )
+{ 
+	double minDist = 1e9;
+	double dist;
+	valarray<double> diffx(obj2->numVerts);
+	valarray<double> diffy(obj2->numVerts);
+	valarray<double> diffz(obj2->numVerts);
+	valarray<double> dists(obj2->numVerts);
+	for( int i = 0; i < obj1->numVerts; i++ ) {
+		diffx = obj2->CurVertX - obj1->CurVertX[i];
+		diffy = obj2->CurVertY - obj1->CurVertY[i];
+		diffz = obj2->CurVertZ - obj1->CurVertZ[i];
+		dists = sqrt( (diffx*diffx + diffy*diffy + diffz*diffz) );
+		dist = dists.min();
+		if( dist < minDist )
+			minDist = dist;
+	}
+	
+	return minDist;
+}
+
+void PhysObject::ApplyCollisionImpulse( PhysObject* obj1, PhysObject* obj2 )
+{
+	// step 1: find the vertex in both obj1 and obj2 where they are closest
+	// that is where the impulse will be applied
+	double minDist = 1e9;
+	int min_i;
+	int min_j;
+	double dist;
+	for( int i = 0; i < obj1->numVerts; i++ ) {
+		for( int j = 0; j < obj2->numVerts; j++ ) {
+			dist = sqrt( pow( obj1->CurVertX[i] - obj2->CurVertX[j],2.0 ) + pow( obj1->CurVertY[i] - obj2->CurVertY[j],2.0 ) + pow( obj1->CurVertZ[i] - obj2->CurVertZ[j],2.0 ) );
+			if( dist < minDist ) {
+				minDist = dist;
+				min_i = i;
+				min_j = j;
+			}
+		}
+	}
+
+	// step 2: ok we know where the collision occured. now apply conservation of momentum along that direction.
+	valarray<double> vert1(3); vert1[0] = obj1->CurVertX[min_i]; vert1[1] = obj1->CurVertY[min_i]; vert1[2] = obj1->CurVertZ[min_i];
+	valarray<double> vert2(3); vert2[0] = obj2->CurVertX[min_j]; vert2[1] = obj2->CurVertY[min_j]; vert2[2] = obj2->CurVertZ[min_j];
+
+	valarray<double> obj1_to_obj2 = vert2 - vert1;
+	valarray<double> obj2_to_obj1 = vert1 - vert2;
+	double mag = ( ( obj1_to_obj2 * obj1_to_obj2 ).sum() );
+
+	valarray<double> v1normal = ( obj1->Velocity * obj1_to_obj2 ).sum() / mag * obj1_to_obj2;
+	valarray<double> v2normal = ( obj2->Velocity * obj2_to_obj1 ).sum() / mag * obj2_to_obj1;
+
+	valarray<double> v1normal_new = (v1normal*(obj1->massTotal - obj2->massTotal) + 2*obj2->massTotal*v2normal) / ( obj1->massTotal + obj2->massTotal );
+	valarray<double> v2normal_new = (v2normal*(obj2->massTotal - obj1->massTotal) + 2*obj1->massTotal*v1normal) / ( obj1->massTotal + obj2->massTotal );
+
+	obj1->AddForceAt( min_i, (v1normal_new - v1normal) / obj1->timeStep );
+	obj2->AddForceAt( min_j, (v2normal_new - v2normal) / obj2->timeStep );
+
+	obj1->UpdateTotals();
+	obj1->EulerTimeStep( obj1->timeStep );
+	obj2->UpdateTotals();
+	obj2->EulerTimeStep( obj2->timeStep );
+
+	double testdist = GetMinInterObjVertDist( obj1, obj2 );
+
+	int breakhere = 1;
+
+}
+
+double PhysObject::FindCollideTimeAndAdjust( PhysObject* obj1, PhysObject* obj2)
+{
+	double tcross = 0.0;
+	double distThresh = 0.5*(obj1->GetMaxVertexSpacing() + obj2->GetMaxVertexSpacing() );
+	double errorMax = 1e-3;
+	double dist = GetMinInterObjVertDist( obj1, obj2 );
+	double t1lo = -1.0*obj1->GetTimeStep();
+	double t1hi = 0.0;
+	double t2lo = -1.0*obj2->GetTimeStep();
+	double t2hi = 0.0;
+	double tshift1 = 0.5*(t1lo + t1hi);
+	double tshift2 = 0.5*(t2lo + t2hi);
+
+	// find a backward step that definately takes us out of collision
+	while( dist < distThresh ) {
+		obj1->TranslateBy( obj1->Velocity[0]*t1lo, obj1->Velocity[1]*t1lo, obj1->Velocity[2]*t1lo );
+		obj2->TranslateBy( obj2->Velocity[0]*t2lo, obj2->Velocity[1]*t2lo, obj2->Velocity[2]*t2lo );
+		dist = GetMinInterObjVertDist( obj1, obj2 );
+		obj1->TranslateBy( -obj1->Velocity[0]*t1lo, -obj1->Velocity[1]*t1lo, -obj1->Velocity[2]*t1lo );
+		obj2->TranslateBy( -obj2->Velocity[0]*t2lo, -obj2->Velocity[1]*t2lo, -obj2->Velocity[2]*t2lo );
+		if ( dist < distThresh ) {
+			t1lo *= 2;
+			t2lo *= 2;
+		}
+	}
+
+	int i = 0;
+	int iMax = 30;
+	while( i <= iMax && abs(dist - distThresh) > errorMax ) {
+	// ok at the current situation we have a collision, but not at previous time step.
+	// subdivide time (bisection) until the distance is "close" to distThresh. this is the collision time.
+	
+		tshift1 = 0.5*(t1lo + t1hi);
+		tshift2 = 0.5*(t2lo + t2hi);
+
+		obj1->TranslateBy( obj1->Velocity[0]*tshift1, obj1->Velocity[1]*tshift1, obj1->Velocity[2]*tshift1 );
+		obj2->TranslateBy( obj2->Velocity[0]*tshift2, obj2->Velocity[1]*tshift2, obj2->Velocity[2]*tshift2 );
+		dist = GetMinInterObjVertDist( obj1, obj2 );
+		if( abs(dist - distThresh) <= errorMax )
+			break;
+		if( dist > distThresh ) { // we moved too far back. lo times need to increase
+			obj1->TranslateBy( -obj1->Velocity[0]*tshift1, -obj1->Velocity[1]*tshift1, -obj1->Velocity[2]*tshift1 );
+			obj2->TranslateBy( -obj2->Velocity[0]*tshift2, -obj2->Velocity[1]*tshift2, -obj2->Velocity[2]*tshift2 );
+			t1lo = tshift1;
+			t2lo = tshift2;
+		}
+		else { // not far enough. decrease hi time.
+			obj1->TranslateBy( -obj1->Velocity[0]*tshift1, -obj1->Velocity[1]*tshift1, -obj1->Velocity[2]*tshift1 );
+			obj2->TranslateBy( -obj2->Velocity[0]*tshift2, -obj2->Velocity[1]*tshift2, -obj2->Velocity[2]*tshift2 );
+			t1hi = tshift1;
+			t2hi = tshift2;
+		}
+		i++;
+	}
+	cout<<"Collision temporal error: "<<0.5*(t2hi-t2lo+t1hi-t1lo)<<"\n";
+	cout<<"Collision spatial  error: "<<abs(dist-distThresh)<<"\n";
+	valarray<double> randf(3);
+	randf = (rand()%7)*0.05;
+	obj1->AddForceAllVerts( randf );
+	obj2->AddForceAllVerts( -randf );
+
+	// return the time for debug purposes
+	// the objects have been shifted however; now one can compute collision impulses
+	return tcross;
+}
+
+void PhysObject::ProcessCollisions()
+{
+	for ( int i = CollisionCandidates.size()-1; i >= 0; i-- ) {
+
+		// step 0: is there really a collision? check per-vertex
+		double minDist = GetMinInterObjVertDist( this, CollisionCandidates[i] );
+		if ( minDist < 0.5*(this->maxVertSpace + CollisionCandidates[i]->GetMaxVertexSpacing() ) )
+		{ // ok there is a collision
+			// step 1: back trace the time to find exactly when this occured
+			// objects need to be shifted back according to their velocity so they are "just barely"
+			// in contact before impulse is applied
+			double tcross = FindCollideTimeAndAdjust( this, CollisionCandidates[i] );
+
+			// ok, now we are shifted to just barely colliding.
+			// now apply a force to both guys.
+			ApplyCollisionImpulse( this, CollisionCandidates[i] );
+		}
+
+		
+
+		// done computing. pop this candidate off the back
+		CollisionCandidates.erase( CollisionCandidates.begin() + i );
+	}
+		
+
+
+}
+
 void PhysObject::EulerTimeStep(double dt)
 {
+	timeStep = dt;
 	// update position, velocity, angular velocity
+	Velocity += dt * NetForce / massTotal;
 	CurVertX = CurVertX + dt*Velocity[0] + 0.5*dt*dt*NetForce[0]/massTotal;
 	CurVertY = CurVertY + dt*Velocity[1] + 0.5*dt*dt*NetForce[1]/massTotal;
 	CurVertZ = CurVertZ + dt*Velocity[2] + 0.5*dt*dt*NetForce[2]/massTotal;
-	Velocity += dt * NetForce / massTotal;
+	
 
 	this->ComputeCentroid();
 	this->UpdateAngVel(dt);
@@ -526,4 +699,61 @@ void PhysObject::ClearForce()
 	ForceDistributionX = 0.0;
 	ForceDistributionY = 0.0;
 	ForceDistributionZ = 0.0;
+}
+
+bool PhysObject::CheckAndHandleCollision(PhysObject* otherObj)
+{
+	bool isCollision = false;
+
+	double dist = sqrt(((Centroid - otherObj->GetCentroid())*(Centroid - otherObj->GetCentroid())).sum());
+	if( dist < ( this->boundingSphereRad + otherObj->GetBoundSphereRad() ) ) {
+		this->CollisionCandidates.push_back( otherObj );
+		otherObj->CollisionCandidates.push_back( this );
+		isCollision = true;
+	}
+
+	return isCollision;
+}
+
+void PhysObject::ComputeMaxVertexSpacing()
+{
+	// for every vertex in this object
+	// find distance to every vertex in this object
+	double maxDist = 0;
+	double d1,d2,d3;
+	valarray<double> v1(3);
+	valarray<double> v2(3);
+	valarray<double> v3(3);
+	
+	for( int i = 0; i < numFaces; i++ )	{
+			
+			v1[0] = CurVertX[ CurIdx[3*i+0] ]; v1[1] = CurVertY[ CurIdx[3*i+0] ]; v1[2]=CurVertZ[ CurIdx[3*i+0] ];
+			v2[0] = CurVertX[ CurIdx[3*i+1] ]; v2[1] = CurVertY[ CurIdx[3*i+1] ]; v2[2]=CurVertZ[ CurIdx[3*i+1] ];
+			v3[0] = CurVertX[ CurIdx[3*i+2] ]; v3[1] = CurVertY[ CurIdx[3*i+2] ]; v3[2]=CurVertZ[ CurIdx[3*i+2] ];
+
+			d1 = sqrt( ((v1-v2)*(v1-v2)).sum() );
+			d2 = sqrt( ((v3-v2)*(v3-v2)).sum() );
+			d3 = sqrt( ((v1-v3)*(v1-v3)).sum() );
+			
+			if( d1 > maxDist )
+				maxDist = d1;
+			if( d2 > maxDist )
+				maxDist = d2;
+			if( d3 > maxDist )
+				maxDist = d3;
+	}
+	
+	maxVertSpace = maxDist;
+}
+
+void PhysObject::ComputeBoundSphereRad()
+{
+	double maxRad = 0.0;
+	double rad;
+	for( int i = 0; i < numVerts; i++ ) {
+		rad = sqrt( pow(RefVertX[i],2.0)+pow(RefVertY[i],2.0)+pow(RefVertZ[i],2.0) );
+		if( rad > maxRad )
+			maxRad = rad;
+	}
+	boundingSphereRad = maxRad;
 }
