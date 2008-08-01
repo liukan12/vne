@@ -11,6 +11,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vne_mortar", "..\vne_mortar
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vne_engine", "..\vne_engine\vne_engine.vcproj", "{0F449D53-F2DF-4D4C-97E5-B9F685CD8DAF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vne_stereo", "..\vne_stereo\vne_stereo.vcproj", "{FE76FDA3-63DD-4497-B352-EB635DF01B9F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0F449D53-F2DF-4D4C-97E5-B9F685CD8DAF} = {0F449D53-F2DF-4D4C-97E5-B9F685CD8DAF}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -29,6 +34,10 @@ Global
 		{0F449D53-F2DF-4D4C-97E5-B9F685CD8DAF}.Debug|Win32.Build.0 = Debug|Win32
 		{0F449D53-F2DF-4D4C-97E5-B9F685CD8DAF}.Release|Win32.ActiveCfg = Release|Win32
 		{0F449D53-F2DF-4D4C-97E5-B9F685CD8DAF}.Release|Win32.Build.0 = Release|Win32
+		{FE76FDA3-63DD-4497-B352-EB635DF01B9F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FE76FDA3-63DD-4497-B352-EB635DF01B9F}.Debug|Win32.Build.0 = Debug|Win32
+		{FE76FDA3-63DD-4497-B352-EB635DF01B9F}.Release|Win32.ActiveCfg = Release|Win32
+		{FE76FDA3-63DD-4497-B352-EB635DF01B9F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

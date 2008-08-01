@@ -1,0 +1,21 @@
+Goals of stereo project:
+
+1. Create a bunch of data with known distance of object to camera
+2. Save the params of the camera/object location/orientation in a text file
+3. Save the resulting rendered images
+4. Use matlab to manually mark match points
+5. Now that we have a bunch of images and know correspondence points,
+use a least-squares method to compute the camera parameters (focal length in particular).
+6. Once you have the focal length known, you create an arbitrary 3D object and take two
+images with a camera offset. Find correspondence match points (manually at first),
+then use photogrammetry computation to determine the resulting distance between points in 
+3D and hence the object location
+
+
+
+Longer term goals:
+
+1. automate match point determination; then the camera could run 'at-will'
+2. note that subsequent images won't align necessarily like for rigid translation;
+there may have to be some nonlinear registration function to determine
+3. hookup a real camera rather than openGL simulated images

@@ -106,12 +106,15 @@ public:
 	int GetNumFaces() { return numFaces; }
 	virtual void TimeStep( double dt = step ) {}
 	virtual void GetMinMaxVert( );
+	virtual void GetMinMaxVert( double* xmin, double* xmax, double* ymin,
+								double* ymax, double* zmin, double* zmax);
 	virtual void AddForceAllVerts( const valarray<double> &Force );
 	virtual void AddForceAllVerts( double fx, double fy, double fz );
 	virtual void AddForceAt( int vertIdx, const valarray<double> &Force );
 	virtual void AddForceAt( int vertIdx, double fx, double fy, double fz );
 	virtual void SetVelocity( double vx, double vy, double vz );
 	virtual void TranslateTo(double dx, double dy, double dz);
+	virtual void Scale( double sx, double sy, double sz );
 	virtual void TranslateBy(double dx, double dy, double dz);
 	virtual void AccelerateBy(double dx, double dy, double dz);
 	virtual bool CheckAndHandleCollision(PhysObject* otherObj);
