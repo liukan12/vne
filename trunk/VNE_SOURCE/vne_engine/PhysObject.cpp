@@ -24,7 +24,7 @@ PhysObject::~PhysObject()
 
 PhysObject::PhysObject(const vector<string> &filenames)
 {
-
+	this->InitFromFile( filenames );
 }
 
 void PhysObject::ComputeInertia()
@@ -201,6 +201,30 @@ void PhysObject::ComputeRotationMatrix(const valarray<double> &ref, const valarr
 	Rotation[7] = y*z*t1+x*s1;
 	Rotation[8] = z*z*t1+c1;
 
+}
+
+void PhysObject::GetMinMaxVert( double* xmin, double* xmax, double* ymin,
+								double* ymax, double* zmin, double* zmax)
+{
+	GetMinMaxVert();
+	*xmin = CurVertX[ VertControlPts[0] ];
+	*ymin = CurVertY[ VertControlPts[1] ];
+	*zmin = CurVertZ[ VertControlPts[2] ];
+	*xmax = CurVertX[ VertControlPts[3] ];
+	*ymax = CurVertY[ VertControlPts[4] ];
+	*zmax = CurVertZ[ VertControlPts[5] ];
+}
+
+void PhysObject::Scale( double sx, double sy, double sz )
+{
+	this->CurVertX *= sx;
+	this->CurVertY *= sy;
+	this->CurVertZ *= sz;
+	this->RefVertX *= sx;
+	this->RefVertY *= sy;
+	this->RefVertZ *= sz;
+	this->drawObject->UpdateData( CurNormX, CurNormY, CurNormZ,
+		CurVertX, CurVertY, CurVertZ, CurIdx );
 }
 
 void PhysObject::GetMinMaxVert()
